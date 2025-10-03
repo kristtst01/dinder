@@ -1,77 +1,120 @@
-name: Feature Request
-description: Suggest a new feature or enhancement
+name: Feature Development
+description: Track development of a new feature
 title: "[Feature]: "
-labels: ["enhancement", "needs-triage"]
+labels: ["feature", "needs-review"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for suggesting a new feature! Please provide as much detail as possible.
+        Developer workflow for building new features
 
   - type: textarea
-    id: problem
+    id: overview
     attributes:
-      label: Problem Statement
-      description: Is your feature request related to a problem? Please describe.
-      placeholder: I'm frustrated when...
+      label: Feature Overview
+      description: What are we building?
+      placeholder: Brief description of the feature
     validations:
       required: true
 
   - type: textarea
-    id: solution
+    id: requirements
     attributes:
-      label: Proposed Solution
-      description: Describe the solution you'd like
-      placeholder: I would like to see...
+      label: Requirements
+      description: What does this feature need to do?
+      placeholder: |
+        - Requirement 1
+        - Requirement 2
+        - Requirement 3
     validations:
       required: true
 
   - type: textarea
-    id: alternatives
+    id: technical-design
     attributes:
-      label: Alternatives Considered
-      description: Describe any alternative solutions or features you've considered
-      placeholder: I also thought about...
+      label: Technical Design
+      description: How will this be implemented?
+      placeholder: |
+        **Components:**
+        - Component 1
+        - Component 2
+
+        **State Management:**
+        - What state is needed
+
+        **API/Backend:**
+        - Endpoints needed
+
+        **Database:**
+        - Schema changes
 
   - type: textarea
-    id: benefits
+    id: tasks
     attributes:
-      label: Benefits
-      description: How would this feature benefit users?
-      placeholder: This would help users by...
+      label: Implementation Tasks
+      description: Break down the work
+      placeholder: |
+        - [ ] Task 1
+        - [ ] Task 2
+        - [ ] Task 3
+        - [ ] Write tests
+        - [ ] Update documentation
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: What needs to happen first?
+      placeholder: |
+        - Blocked by #123
+        - Needs design approval
+        - Requires API endpoint from backend
+
+  - type: textarea
+    id: testing-plan
+    attributes:
+      label: Testing & QA Plan
+      description: How will this be tested?
+      placeholder: |
+        **Unit Tests:**
+        - [ ] Test case 1
+
+        **Integration Tests:**
+        - [ ] Test case 2
+
+        **Manual Testing:**
+        - [ ] Test scenario 1
 
   - type: dropdown
     id: priority
     attributes:
       label: Priority
-      description: How important is this feature to you?
       options:
-        - Low - Nice to have
-        - Medium - Would improve my workflow
-        - High - Blocking my work
+        - P0 - Critical/Blocking
+        - P1 - High
+        - P2 - Medium
+        - P3 - Low
     validations:
-      required: false
+      required: true
 
-  - type: textarea
-    id: mockups
+  - type: dropdown
+    id: size
     attributes:
-      label: Mockups/Examples
-      description: If applicable, add mockups, diagrams, or examples
-      placeholder: Drag and drop images here or paste links
-
-  - type: textarea
-    id: additional
-    attributes:
-      label: Additional Context
-      description: Add any other context or information about the feature request
-      placeholder: Any additional information
-
-  - type: checkboxes
-    id: terms
-    attributes:
-      label: Checklist
+      label: Estimated Size
       options:
-        - label: I have searched existing issues to avoid duplicates
-          required: true
-        - label: I have clearly described the feature and its benefits
-          required: true
+        - XS - Few hours
+        - S - 1-2 days
+        - M - 3-5 days
+        - L - 1-2 weeks
+        - XL - 2+ weeks
+    validations:
+      required: true
+
+  - type: input
+    id: assignee
+    attributes:
+      label: Assignee
+      description: Who's building this?
+      placeholder: "@username"

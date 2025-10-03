@@ -1,32 +1,30 @@
-name: Bug Report
-description: Report a bug or unexpected behavior
+name: Bug Fix
+description: Track a bug that needs to be fixed
 title: "[Bug]: "
-labels: ["bug", "needs-triage"]
+labels: ["bug", "needs-review"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to report this bug! Please fill out the information below to help us resolve it quickly.
+        Developer workflow for tracking and fixing bugs
 
   - type: textarea
     id: description
     attributes:
       label: Bug Description
-      description: A clear and concise description of what the bug is
-      placeholder: Tell us what went wrong
+      description: What's the bug?
+      placeholder: Describe the bug
     validations:
       required: true
 
   - type: textarea
     id: reproduction
     attributes:
-      label: Steps to Reproduce
-      description: Steps to reproduce the behavior
+      label: Reproduction Steps
       placeholder: |
-        1. Go to '...'
-        2. Click on '...'
-        3. Scroll down to '...'
-        4. See error
+        1. Navigate to...
+        2. Click...
+        3. Bug occurs
     validations:
       required: true
 
@@ -34,61 +32,56 @@ body:
     id: expected
     attributes:
       label: Expected Behavior
-      description: What did you expect to happen?
-      placeholder: Describe what should have happened
+      placeholder: What should happen
     validations:
       required: true
-
-  - type: textarea
-    id: actual
-    attributes:
-      label: Actual Behavior
-      description: What actually happened?
-      placeholder: Describe what actually happened
-    validations:
-      required: true
-
-  - type: textarea
-    id: screenshots
-    attributes:
-      label: Screenshots
-      description: If applicable, add screenshots to help explain your problem
-      placeholder: Drag and drop images here
-
-  - type: dropdown
-    id: browser
-    attributes:
-      label: Browser
-      description: Which browser are you using?
-      options:
-        - Chrome
-        - Firefox
-        - Safari
-        - Edge
-        - Other
-    validations:
-      required: false
 
   - type: input
-    id: os
+    id: location
     attributes:
-      label: Operating System
-      description: What OS are you running?
-      placeholder: e.g., macOS 14.0, Windows 11, Ubuntu 22.04
+      label: File/Component Location
+      description: Where is the bug located?
+      placeholder: e.g., src/components/Header.tsx:42
 
   - type: textarea
-    id: additional
+    id: root-cause
     attributes:
-      label: Additional Context
-      description: Add any other context about the problem here
-      placeholder: Any additional information that might be helpful
+      label: Root Cause Analysis
+      description: What's causing this bug?
+      placeholder: Fill in after investigation
 
-  - type: checkboxes
-    id: terms
+  - type: textarea
+    id: solution
     attributes:
-      label: Checklist
+      label: Proposed Solution
+      description: How will you fix it?
+      placeholder: Implementation approach
+
+  - type: textarea
+    id: testing
+    attributes:
+      label: Testing Plan
+      description: How will you verify the fix?
+      placeholder: |
+        - [ ] Manual testing steps
+        - [ ] Unit tests added
+        - [ ] Edge cases covered
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
       options:
-        - label: I have searched existing issues to avoid duplicates
-          required: true
-        - label: I have provided all the information requested above
-          required: true
+        - P0 - Critical/Blocking
+        - P1 - High
+        - P2 - Medium
+        - P3 - Low
+    validations:
+      required: true
+
+  - type: input
+    id: assignee
+    attributes:
+      label: Assignee
+      description: Who's working on this?
+      placeholder: "@username"
