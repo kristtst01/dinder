@@ -1,6 +1,6 @@
 import { Bell, Bookmark, Home, Search, User } from 'lucide-react';
-import { RecipeCard } from '../components/RecipeCard';
-import { convertMealDBArrayToRecipes } from '../utils/mealDbHelpers';
+import { RecipeCard } from '../components/recipe-card';
+import { convertMealDBArrayToRecipes } from '../utils/meal-db-helpers';
 import chickenData from '../assets/mealdb-chicken.json';
 import soupData from '../assets/mealdb-soup.json';
 

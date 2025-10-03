@@ -1,4 +1,4 @@
-import type { MealDBRecipe, Recipe } from '../types/Recipe';
+import type { MealDBRecipe, Recipe } from '../types/recipe';
 
 export function convertMealDBToRecipe(meal: MealDBRecipe): Recipe {
   return {
