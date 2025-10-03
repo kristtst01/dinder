@@ -100,17 +100,13 @@ export function HomePage() {
         <div className="flex gap-5 overflow-x-auto pb-2 -mx-6 px-6 scrollbar-hide md:hidden">
           {chickenRecipes.map((recipe) => (
             <div key={recipe.id} className="flex-shrink-0 w-72">
-              <RecipeCard recipe={recipe} onClick={() => console.log('Clicked:', recipe.title)} />
+              <RecipeCard recipe={recipe} />
             </div>
           ))}
         </div>
         <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 max-w-7xl mx-auto">
           {chickenRecipes.map((recipe) => (
-            <RecipeCard
-              key={recipe.id}
-              recipe={recipe}
-              onClick={() => console.log('Clicked:', recipe.title)}
-            />
+            <RecipeCard key={recipe.id} recipe={recipe} />
           ))}
         </div>
       </div>
