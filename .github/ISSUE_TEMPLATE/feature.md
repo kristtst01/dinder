@@ -1,6 +1,6 @@
 ---
 name: Feature
-about: Feature
+about: New Feature Issue
 title: ''
 labels: ''
 assignees: ''
