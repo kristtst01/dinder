@@ -13,7 +13,8 @@ body:
     attributes:
       label: Bug Description
       description: What's the bug?
-      placeholder: Describe the bug
+      value: |
+
     validations:
       required: true
 
@@ -21,10 +22,10 @@ body:
     id: reproduction
     attributes:
       label: Reproduction Steps
-      placeholder: |
-        1. Navigate to...
-        2. Click...
-        3. Bug occurs
+      value: |
+        1.
+        2.
+        3.
     validations:
       required: true
 
@@ -32,7 +33,8 @@ body:
     id: expected
     attributes:
       label: Expected Behavior
-      placeholder: What should happen
+      value: |
+
     validations:
       required: true
 
@@ -48,21 +50,21 @@ body:
     attributes:
       label: Root Cause Analysis
       description: What's causing this bug?
-      placeholder: Fill in after investigation
+      value: |
 
   - type: textarea
     id: solution
     attributes:
       label: Proposed Solution
       description: How will you fix it?
-      placeholder: Implementation approach
+      value: |
 
   - type: textarea
     id: testing
     attributes:
       label: Testing Plan
       description: How will you verify the fix?
-      placeholder: |
+      value: |
         - [ ] Manual testing steps
         - [ ] Unit tests added
         - [ ] Edge cases covered

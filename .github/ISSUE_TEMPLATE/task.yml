@@ -13,7 +13,8 @@ body:
     attributes:
       label: Task Description
       description: What needs to be done?
-      placeholder: Describe the task
+      value: |
+
     validations:
       required: true
 
@@ -22,17 +23,17 @@ body:
     attributes:
       label: Context
       description: Why are we doing this?
-      placeholder: Background and reasoning
+      value: |
 
   - type: textarea
     id: acceptance-criteria
     attributes:
       label: Acceptance Criteria
       description: How do we know when this is done?
-      placeholder: |
-        - [ ] Criteria 1
-        - [ ] Criteria 2
-        - [ ] Criteria 3
+      value: |
+        - [ ]
+        - [ ]
+        - [ ]
     validations:
       required: true
 
@@ -41,7 +42,8 @@ body:
     attributes:
       label: Implementation Notes
       description: Any technical details or constraints?
-      placeholder: Technical approach, gotchas, considerations
+      value: |
+
 
   - type: dropdown
     id: type

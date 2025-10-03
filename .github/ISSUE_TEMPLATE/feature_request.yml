@@ -13,7 +13,8 @@ body:
     attributes:
       label: Feature Overview
       description: What are we building?
-      placeholder: Brief description of the feature
+      value: |
+
     validations:
       required: true
 
@@ -22,10 +23,10 @@ body:
     attributes:
       label: Requirements
       description: What does this feature need to do?
-      placeholder: |
-        - Requirement 1
-        - Requirement 2
-        - Requirement 3
+      value: |
+        -
+        -
+        -
     validations:
       required: true
 
@@ -34,29 +35,28 @@ body:
     attributes:
       label: Technical Design
       description: How will this be implemented?
-      placeholder: |
+      value: |
         **Components:**
-        - Component 1
-        - Component 2
+        -
 
         **State Management:**
-        - What state is needed
+        -
 
         **API/Backend:**
-        - Endpoints needed
+        -
 
         **Database:**
-        - Schema changes
+        -
 
   - type: textarea
     id: tasks
     attributes:
       label: Implementation Tasks
       description: Break down the work
-      placeholder: |
-        - [ ] Task 1
-        - [ ] Task 2
-        - [ ] Task 3
+      value: |
+        - [ ]
+        - [ ]
+        - [ ]
         - [ ] Write tests
         - [ ] Update documentation
     validations:
@@ -67,25 +67,23 @@ body:
     attributes:
       label: Dependencies
       description: What needs to happen first?
-      placeholder: |
-        - Blocked by #123
-        - Needs design approval
-        - Requires API endpoint from backend
+      value: |
+        -
 
   - type: textarea
     id: testing-plan
     attributes:
       label: Testing & QA Plan
       description: How will this be tested?
-      placeholder: |
+      value: |
         **Unit Tests:**
-        - [ ] Test case 1
+        - [ ]
 
         **Integration Tests:**
-        - [ ] Test case 2
+        - [ ]
 
         **Manual Testing:**
-        - [ ] Test scenario 1
+        - [ ]
 
   - type: dropdown
     id: priority
