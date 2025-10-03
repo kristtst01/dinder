@@ -72,9 +72,7 @@ export function RecipeCard({ recipe, onClick, badge }: RecipeCardProps) {
         </div>
 
         {recipe.category && (
-          <span className="text-xs text-gray-500 font-medium mt-auto">
-            {recipe.category}
-          </span>
+          <span className="text-xs text-gray-500 font-medium mt-auto">{recipe.category}</span>
         )}
       </div>
     </div>
