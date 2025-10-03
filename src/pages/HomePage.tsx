@@ -1,6 +1,10 @@
-import { Bell, Bookmark, Heart, Home, Search, User } from 'lucide-react';
+import { Bell, Bookmark, Home, Search, User } from 'lucide-react';
+import { RecipeCard } from '../components/RecipeCard';
+import { convertMealDBArrayToRecipes } from '../utils/mealDbHelpers';
+import chickenData from '../assets/mealdb-chicken.json';
+import soupData from '../assets/mealdb-soup.json';
 
-export function LandingPage() {
+export function HomePage() {
   const categories = [
     { icon: '🍔', label: 'Western' },
     { icon: '🍞', label: 'Bread' },
@@ -12,30 +16,25 @@ export function LandingPage() {
     { icon: '☕', label: 'Coffee' },
   ];
 
-  const recommendations = [
-    {
-      image: 'https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=400&h=300&fit=crop',
-      title: 'Spicy Garlic Butter Shrimp Delight',
-      chef: 'Chef Emma Brown',
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=300&fit=crop',
-      title: 'Spicy Garlic Butter Shrimp Delight',
-      chef: 'Chef Emma Brown',
-    },
-  ];
+  const chickenRecipes = convertMealDBArrayToRecipes(chickenData.meals.slice(0, 6)).map(
+    (recipe, index) => ({
+      ...recipe,
+      cookingTime: [30, 45, 60][index % 3],
+      difficulty: (['Easy', 'Medium', 'Hard'] as const)[index % 3],
+      badge: index === 0 ? 'New' : undefined,
+    })
+  );
 
-  const breakfastRecipes = [
-    {
-      image: 'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=400&h=300&fit=crop',
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&h=300&fit=crop',
-    },
-  ];
+  const soupRecipes = convertMealDBArrayToRecipes(soupData.meals.slice(0, 6)).map(
+    (recipe, index) => ({
+      ...recipe,
+      cookingTime: [20, 35, 50][index % 3],
+      difficulty: (['Easy', 'Medium'] as const)[index % 2],
+    })
+  );
 
   return (
-    <div className="max-w-md mx-auto bg-gray-50 min-h-screen pb-32">
+    <div className="w-full bg-gray-50 min-h-screen pb-32">
       {/* Header */}
       <div className="bg-white px-6 pt-14 pb-6 rounded-b-3xl">
         <div className="flex items-center justify-between mb-8">
@@ -90,57 +89,50 @@ export function LandingPage() {
         </div>
       </div>
 
-      {/* Recommendations */}
-      <div className="px-6 mb-8">
-        <div className="flex items-center justify-between mb-5">
-          <h3 className="text-2xl font-bold text-gray-900">14 Recomendations</h3>
+      {/* Chicken Recipes */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-5 px-6 max-w-7xl mx-auto">
+          <h3 className="text-2xl font-bold text-gray-900">Chicken Recipes</h3>
           <button className="text-sm text-gray-500 flex items-center gap-1 font-medium">
             See More <span className="text-lg">›</span>
           </button>
         </div>
-        <div className="flex gap-5 overflow-x-auto pb-2 -mx-6 px-6 scrollbar-hide">
-          {recommendations.map((recipe, index) => (
-            <div
-              key={index}
-              className="relative flex-shrink-0 w-72 h-80 rounded-3xl overflow-hidden shadow-lg"
-            >
-              <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-              <button className="absolute top-5 right-5 w-11 h-11 bg-white/95 rounded-full flex items-center justify-center hover:bg-white transition-all shadow-md">
-                <Heart className="w-5 h-5 text-gray-700" />
-              </button>
-              <div className="absolute bottom-0 left-0 right-0 p-7">
-                <h4 className="text-white font-bold text-xl mb-2 leading-tight">{recipe.title}</h4>
-                <p className="text-white/90 text-sm font-medium">By : {recipe.chef}</p>
-              </div>
+        <div className="flex gap-5 overflow-x-auto pb-2 -mx-6 px-6 scrollbar-hide md:hidden">
+          {chickenRecipes.map((recipe) => (
+            <div key={recipe.id} className="flex-shrink-0 w-72">
+              <RecipeCard recipe={recipe} onClick={() => console.log('Clicked:', recipe.title)} />
             </div>
+          ))}
+        </div>
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 max-w-7xl mx-auto">
+          {chickenRecipes.map((recipe) => (
+            <RecipeCard
+              key={recipe.id}
+              recipe={recipe}
+              onClick={() => console.log('Clicked:', recipe.title)}
+            />
           ))}
         </div>
       </div>
 
-      {/* Breakfast Recipes */}
-      <div className="px-6 mb-8">
-        <div className="flex items-center justify-between mb-5">
-          <h3 className="text-2xl font-bold text-gray-900">20 Breakfast Recipes</h3>
+      {/* Soup Recipes */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-5 px-6 max-w-7xl mx-auto">
+          <h3 className="text-2xl font-bold text-gray-900">Soup Recipes</h3>
           <button className="text-sm text-gray-500 flex items-center gap-1 font-medium">
             See More <span className="text-lg">›</span>
           </button>
         </div>
-        <div className="flex gap-5 overflow-x-auto pb-2 -mx-6 px-6 scrollbar-hide">
-          {breakfastRecipes.map((recipe, index) => (
-            <div
-              key={index}
-              className="relative flex-shrink-0 w-72 h-80 rounded-3xl overflow-hidden shadow-lg"
-            >
-              <img
-                src={recipe.image}
-                alt="Breakfast recipe"
-                className="w-full h-full object-cover"
-              />
-              <button className="absolute top-5 right-5 w-11 h-11 bg-white/95 rounded-full flex items-center justify-center hover:bg-white transition-all shadow-md">
-                <Heart className="w-5 h-5 text-gray-700" />
-              </button>
+        <div className="flex gap-5 overflow-x-auto pb-2 -mx-6 px-6 scrollbar-hide md:hidden">
+          {soupRecipes.map((recipe) => (
+            <div key={recipe.id} className="flex-shrink-0 w-72">
+              <RecipeCard recipe={recipe} />
             </div>
+          ))}
+        </div>
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 max-w-7xl mx-auto">
+          {soupRecipes.map((recipe) => (
+            <RecipeCard key={recipe.id} recipe={recipe} />
           ))}
         </div>
       </div>
@@ -164,4 +156,4 @@ export function LandingPage() {
   );
 }
 
-export default LandingPage;
+export default HomePage;
