@@ -13,8 +13,6 @@ body:
     attributes:
       label: Bug Description
       description: What's the bug?
-      value: |
-
     validations:
       required: true
 
@@ -33,8 +31,6 @@ body:
     id: expected
     attributes:
       label: Expected Behavior
-      value: |
-
     validations:
       required: true
 
@@ -50,14 +46,12 @@ body:
     attributes:
       label: Root Cause Analysis
       description: What's causing this bug?
-      value: |
 
   - type: textarea
     id: solution
     attributes:
       label: Proposed Solution
       description: How will you fix it?
-      value: |
 
   - type: textarea
     id: testing

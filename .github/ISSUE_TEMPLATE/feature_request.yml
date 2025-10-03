@@ -13,8 +13,6 @@ body:
     attributes:
       label: Feature Overview
       description: What are we building?
-      value: |
-
     validations:
       required: true
 
