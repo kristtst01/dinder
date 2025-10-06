@@ -1,97 +1,116 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
+import { Menu, Plus } from 'lucide-react';
 import { RecipeCard } from '../components/recipe-card';
-import type { Recipe } from '../types/recipe';
-import { FilterSidebar, type Filters } from '../components/filter-sidebar';
+import { FilterSidebar, type FilterState } from '../components/filter-sidebar';
+import { SavedPageNavbar } from '../components/saved-page-navbar';
 import { useSavedRecipesContext } from '../context/SavedRecipesContext';
 import { ALL_RECIPES } from '../data/recipes';
-
-// Map our sample data to the RecipeCard type used across the app
-function mapSampleToRecipeCardType() : Recipe[] {
-  return ALL_RECIPES.map((s) => {
-    const cookingTime = s.prepMinutes ?? 30;
-    const difficulty: Recipe['difficulty'] = cookingTime <= 20 ? 'Easy' : cookingTime <= 35 ? 'Medium' : 'Hard';
-    const area = s.kitchen ?? 'Other';
-    const category = s.vegetarian ? 'Vegetarian' : 'Main';
-    return {
-      id: s.id,
-      title: s.title,
-      image: s.image,
-      category,
-      area,
-      difficulty,
-      cookingTime,
-    };
-  });
-}
-
-const ALL: Recipe[] = mapSampleToRecipeCardType();
+import type { Recipe } from '../types/recipe';
+import { Link } from 'react-router-dom';
 
 export function SavedPage() {
-  const { saved } = useSavedRecipesContext();
+  const { isSaved } = useSavedRecipesContext();
+  const [navOpen, setNavOpen] = useState(false);
+  const [filters, setFilters] = useState<FilterState>({
+    kitchen: 'all',
+    difficulty: 'all',
+    maxPrepTime: undefined,
+    vegetarian: 'any',
+    searchQuery: '',
+  });
 
-  const [filters, setFilters] = useState<Filters>({ area: 'All', difficulty: 'All', maxTime: null, vegetarian: 'Any' });
-  const [showFilters, setShowFilters] = useState(false);
+  // Map sample recipes from data/recipes to types/recipe format
+  const sampleRecipes: Recipe[] = ALL_RECIPES.map((r, i) => ({
+    id: r.id,
+    title: r.title,
+    image: r.image,
+    category: r.vegetarian ? 'Vegetarian' : 'Main Course',
+    area: r.kitchen || 'Other',
+    difficulty: (['Easy', 'Medium', 'Hard'] as const)[i % 3],
+    cookingTime: r.prepMinutes || 30,
+  }));
 
-  const savedItems = useMemo(() => ALL.filter((r) => saved.has(r.id)), [saved]);
-  // Fallback to samples so the page and filters demonstrate on first load
-  const items = savedItems.length > 0 ? savedItems : ALL;
+  // Get saved recipes or show samples
+  const savedRecipes = sampleRecipes.filter((r) => isSaved(r.id));
+  const recipesToShow = savedRecipes.length > 0 ? savedRecipes : sampleRecipes;
 
-  const filtered = useMemo(() => {
-    return items.filter((r) => {
-      if (filters.area !== 'All' && r.area !== filters.area) return false;
-      if (filters.difficulty !== 'All' && r.difficulty !== filters.difficulty) return false;
-      if (typeof filters.maxTime === 'number' && r.cookingTime && r.cookingTime > filters.maxTime) return false;
-      if (filters.vegetarian !== 'Any') {
-        const isVeg = r.category?.toLowerCase().includes('veget') || false;
-        if (filters.vegetarian === true && !isVeg) return false;
-        if (filters.vegetarian === false && isVeg) return false;
-      }
-      return true;
-    });
-  }, [items, filters]);
+  // Apply filters and search
+  const filteredRecipes = recipesToShow.filter((recipe) => {
+    // Search filter
+    if (filters.searchQuery) {
+      const query = filters.searchQuery.toLowerCase();
+      const matchesSearch = recipe.title.toLowerCase().includes(query) || 
+                           recipe.category.toLowerCase().includes(query) ||
+                           recipe.area.toLowerCase().includes(query);
+      if (!matchesSearch) return false;
+    }
+    // Other filters
+    if (filters.kitchen !== 'all' && recipe.area !== filters.kitchen) return false;
+    if (filters.difficulty !== 'all' && recipe.difficulty !== filters.difficulty) return false;
+    if (filters.maxPrepTime && recipe.cookingTime && recipe.cookingTime > filters.maxPrepTime) return false;
+    if (filters.vegetarian === 'only' && !recipe.category.toLowerCase().includes('veget')) return false;
+    if (filters.vegetarian === 'exclude' && recipe.category.toLowerCase().includes('veget')) return false;
+    return true;
+  });
 
   return (
-    <div className="w-full min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-6">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold text-gray-900">Saved Recipes</h1>
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Left Navbar */}
+      <SavedPageNavbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-4 sticky top-0 z-30">
           <button
-            className="md:hidden inline-flex items-center gap-2 text-sm font-semibold text-orange-600 bg-orange-50 border border-orange-200 px-3 py-1.5 rounded-full"
-            onClick={() => setShowFilters((s) => !s)}
+            onClick={() => setNavOpen(true)}
+            className="p-2 hover:bg-gray-100 rounded-lg md:hidden"
           >
-            Filters
+            <Menu size={24} className="text-gray-700" />
           </button>
-        </div>
+          <h1 className="text-xl font-bold text-gray-900">Saved Recipes</h1>
+        </header>
 
-        {/* Mobile filters panel */}
-        {showFilters && (
-          <div className="md:hidden bg-white border border-gray-100 rounded-2xl p-4 mb-4">
-            <FilterSidebar recipes={items} filters={filters} onChange={setFilters} />
-          </div>
-        )}
+        {/* Main Content Area */}
+        <main className="flex-1 p-4">
+          {/* Filter Bar - Always visible above grid */}
+          <FilterSidebar filters={filters} onChange={setFilters} recipes={recipesToShow} />
 
-        {/* Desktop layout */}
-        <div className="md:flex md:gap-6">
-          <div className="hidden md:block">
-            <FilterSidebar recipes={items} filters={filters} onChange={setFilters} />
-          </div>
+          {/* Sample Indicator */}
+          {savedRecipes.length === 0 && (
+            <div className="mb-4 px-3 py-2 bg-orange-50 border border-orange-200 rounded-lg text-sm text-orange-700">
+              Showing sample favorites
+            </div>
+          )}
 
-          <div className="flex-1">
-            {savedItems.length === 0 && (
-              <div className="flex items-center gap-2 text-xs text-orange-700 bg-orange-50 border border-orange-200 rounded-full px-3 py-1 mb-3 w-max">
-                Showing sample favorites
-              </div>
-            )}
+          {/* Recipe Grid or Empty State */}
+          {filteredRecipes.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500 mb-4">No recipes match your filters</p>
+              <button
+                onClick={() => setFilters({ kitchen: 'all', difficulty: 'all', maxPrepTime: undefined, vegetarian: 'any', searchQuery: '' })}
+                className="text-orange-500 hover:text-orange-600 font-medium"
+              >
+                Clear filters
+              </button>
+            </div>
+          ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {filtered.map((r) => (
-                <RecipeCard key={r.id} recipe={r} />
+              {filteredRecipes.map((recipe) => (
+                <RecipeCard key={recipe.id} recipe={recipe} />
               ))}
             </div>
-          </div>
-        </div>
+          )}
+        </main>
+
+        {/* Floating Create Weekplan Button */}
+        <Link
+          to="/weekplans/new"
+          className="fixed bottom-20 right-4 w-14 h-14 bg-orange-500 hover:bg-orange-600 text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 z-30"
+        >
+          <Plus size={24} />
+        </Link>
       </div>
     </div>
   );
 }
-
-export default SavedPage;
