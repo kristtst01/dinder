@@ -1,7 +1,7 @@
-import { Search, Sliders, X } from 'lucide-react';
+import { Plus, Search, Sliders, X } from 'lucide-react';
 import { useState } from 'react';
 import type { Recipe } from '../types/recipe';
-
+import { Link } from 'react-router-dom';
 export type FilterState = {
   kitchen: string | 'all';
   difficulty: 'all' | 'Easy' | 'Medium' | 'Hard';
@@ -14,12 +14,26 @@ export function FilterSidebar({
   filters,
   onChange,
   recipes = [],
+  showFilters: controlledShowFilters,
+  onToggleFilters,
 }: {
   filters: FilterState;
   onChange: (next: FilterState) => void;
   recipes?: Recipe[];
+  showFilters?: boolean;
+  onToggleFilters?: (show: boolean) => void;
 }) {
-  const [showFilters, setShowFilters] = useState(false);
+  const [internalShowFilters, setInternalShowFilters] = useState(false);
+  const showFilters = controlledShowFilters ?? internalShowFilters;
+  
+  const toggleFilters = (newValue: boolean) => {
+    if (onToggleFilters) {
+      onToggleFilters(newValue);
+    } else {
+      setInternalShowFilters(newValue);
+    }
+  };
+  
   const areas = Array.from(new Set(recipes.map((r) => r.area))).filter(Boolean);
 
   const activeFilterCount = [
@@ -44,7 +58,7 @@ export function FilterSidebar({
           />
         </div>
         <button
-          onClick={() => setShowFilters(!showFilters)}
+          onClick={() => toggleFilters(!showFilters)}
           className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100 transition-colors font-medium text-gray-700"
         >
           <Sliders className="w-4 h-4" />
@@ -55,6 +69,13 @@ export function FilterSidebar({
             </span>
           )}
         </button>
+           {/* Create Weekplan Button - Inline with filter */}
+            <Link
+              to="/weekplans/new"
+              className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl border border-orange-600 transition-colors flex items-center justify-center px-4 h-[42px] min-w-[42px]"
+            >
+              <Plus size={20} />
+            </Link>
       </div>
 
       {/* Expandable Filters */}

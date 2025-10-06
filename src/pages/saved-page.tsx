@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Menu, Plus } from 'lucide-react';
 import { RecipeCard } from '../components/recipe-card';
 import { FilterSidebar, type FilterState } from '../components/filter-sidebar';
@@ -6,7 +6,7 @@ import { SavedPageNavbar } from '../components/saved-page-navbar';
 import { useSavedRecipesContext } from '../context/SavedRecipesContext';
 import { ALL_RECIPES } from '../data/recipes';
 import type { Recipe } from '../types/recipe';
-import { Link } from 'react-router-dom';
+
 
 export function SavedPage() {
   const { isSaved } = useSavedRecipesContext();
@@ -18,6 +18,33 @@ export function SavedPage() {
     vegetarian: 'any',
     searchQuery: '',
   });
+  
+  // Scroll detection state
+  const [showFilter, setShowFilter] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Show filter when scrolling up, hide when scrolling down
+      if (currentScrollY < lastScrollY.current) {
+        setShowFilter(true);
+        // Collapse filters when scrolling up if they're expanded
+        if (showFilters) {
+          setShowFilters(false);
+        }
+      } else if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
+        setShowFilter(false);
+      }
+      
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [showFilters]);
 
   // Map sample recipes from data/recipes to types/recipe format
   const sampleRecipes: Recipe[] = ALL_RECIPES.map((r, i) => ({
@@ -72,10 +99,7 @@ export function SavedPage() {
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 p-4">
-          {/* Filter Bar - Always visible above grid */}
-          <FilterSidebar filters={filters} onChange={setFilters} recipes={recipesToShow} />
-
+        <main className="flex-1 p-4 pb-32">
           {/* Sample Indicator */}
           {savedRecipes.length === 0 && (
             <div className="mb-4 px-3 py-2 bg-orange-50 border border-orange-200 rounded-lg text-sm text-orange-700">
@@ -103,13 +127,28 @@ export function SavedPage() {
           )}
         </main>
 
-        {/* Floating Create Weekplan Button */}
-        <Link
-          to="/weekplans/new"
-          className="fixed bottom-20 right-4 w-14 h-14 bg-orange-500 hover:bg-orange-600 text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 z-30"
+        {/* Floating Filter Bar - Bottom, shows on scroll up */}
+        <div
+          className={`
+            fixed bottom-0 left-0 right-0 md:left-64 p-4 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent
+            transition-transform duration-300 ease-in-out z-20
+            ${showFilter ? 'translate-y-0' : 'translate-y-full'}
+          `}
         >
-          <Plus size={24} />
-        </Link>
+          <div className="flex items-end gap-3">
+            <div className="flex-1">
+              <FilterSidebar 
+                filters={filters} 
+                onChange={setFilters} 
+                recipes={recipesToShow}
+                showFilters={showFilters}
+                onToggleFilters={setShowFilters}
+              />
+            </div>
+            
+         
+          </div>
+        </div>
       </div>
     </div>
   );
