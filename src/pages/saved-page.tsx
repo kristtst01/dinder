@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Menu, Plus } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { RecipeCard } from '../components/recipe-card';
 import { FilterSidebar, type FilterState } from '../components/filter-sidebar';
 import { SavedPageNavbar } from '../components/saved-page-navbar';
@@ -127,12 +127,12 @@ export function SavedPage() {
           )}
         </main>
 
-        {/* Floating Filter Bar - Bottom, shows on scroll up */}
+        {/* Floating Filter Bar - Bottom, shows on scroll up (hidden when nav is open) */}
         <div
           className={`
             fixed bottom-0 left-0 right-0 md:left-64 p-4 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent
             transition-transform duration-300 ease-in-out z-20
-            ${showFilter ? 'translate-y-0' : 'translate-y-full'}
+            ${showFilter && !navOpen ? 'translate-y-0' : 'translate-y-full'}
           `}
         >
           <div className="flex items-end gap-3">
