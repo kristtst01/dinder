@@ -1,5 +1,5 @@
-import { X, SlidersHorizontal } from 'lucide-react';
-import { useState } from 'react';
+import { X, SlidersHorizontal, Search } from 'lucide-react';
+import { useState, useMemo } from 'react';
 
 export interface FilterOptions {
   cuisine: string[];
@@ -13,8 +13,19 @@ interface FilterPanelProps {
   onClearAll: () => void;
 }
 
-const cuisineOptions = ['Italian', 'Chinese', 'Japanese', 'Mexican', 'Indian', 'Thai', 'American', 'French'];
-const dietOptions = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Keto', 'Paleo'];
+// Expanded lists for realistic filtering
+const cuisineOptions = [
+  'American', 'British', 'Canadian', 'Chinese', 'Croatian', 'Dutch', 'Egyptian', 'Filipino', 'French',
+  'Greek', 'Indian', 'Irish', 'Italian', 'Jamaican', 'Japanese', 'Kenyan', 'Malaysian', 'Mexican',
+  'Moroccan', 'Polish', 'Portuguese', 'Russian', 'Spanish', 'Thai', 'Tunisian', 'Turkish', 'Ukrainian',
+  'Vietnamese'
+];
+
+const dietOptions = [
+  'Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Keto', 'Paleo', 'Pescatarian',
+  'Nut-Free', 'Egg-Free', 'Soy-Free', 'Low-Carb', 'Low-Fat', 'Sugar-Free', 'Halal', 'Kosher'
+];
+
 const timeOptions = [
   { label: 'Under 15 min', value: 15 },
   { label: 'Under 30 min', value: 30 },
@@ -24,19 +35,39 @@ const timeOptions = [
 
 export function FilterPanel({ filters, onChange, onClearAll }: FilterPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [cuisineSearch, setCuisineSearch] = useState('');
+  const [dietSearch, setDietSearch] = useState('');
 
-  const toggleCuisine = (cuisine: string) => {
-    const newCuisines = filters.cuisine.includes(cuisine)
-      ? filters.cuisine.filter((c) => c !== cuisine)
-      : [...filters.cuisine, cuisine];
-    onChange({ ...filters, cuisine: newCuisines });
+  const filteredCuisines = useMemo(() => {
+    if (!cuisineSearch) return cuisineOptions;
+    return cuisineOptions.filter((c) => c.toLowerCase().startsWith(cuisineSearch.toLowerCase()));
+  }, [cuisineSearch]);
+
+  const filteredDiets = useMemo(() => {
+    if (!dietSearch) return dietOptions;
+    return dietOptions.filter((d) => d.toLowerCase().startsWith(dietSearch.toLowerCase()));
+  }, [dietSearch]);
+
+  const addCuisine = (cuisine: string) => {
+    if (!filters.cuisine.includes(cuisine)) {
+      onChange({ ...filters, cuisine: [...filters.cuisine, cuisine] });
+    }
+    setCuisineSearch('');
   };
 
-  const toggleDiet = (diet: string) => {
-    const newDiets = filters.diet.includes(diet)
-      ? filters.diet.filter((d) => d !== diet)
-      : [...filters.diet, diet];
-    onChange({ ...filters, diet: newDiets });
+  const removeCuisine = (cuisine: string) => {
+    onChange({ ...filters, cuisine: filters.cuisine.filter((c) => c !== cuisine) });
+  };
+
+  const addDiet = (diet: string) => {
+    if (!filters.diet.includes(diet)) {
+      onChange({ ...filters, diet: [...filters.diet, diet] });
+    }
+    setDietSearch('');
+  };
+
+  const removeDiet = (diet: string) => {
+    onChange({ ...filters, diet: filters.diet.filter((d) => d !== diet) });
   };
 
   const setMaxTime = (time: number | null) => {
@@ -70,7 +101,7 @@ export function FilterPanel({ filters, onChange, onClearAll }: FilterPanelProps)
       {/* Filter Panel */}
       <div
         className={`
-          md:block md:relative md:bg-transparent md:p-0
+          md:block md:static md:bg-white md:rounded-2xl md:p-4 md:shadow-sm
           fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl p-6 z-50 max-h-[80vh] overflow-y-auto
           transition-transform duration-300 ease-out
           ${isOpen ? 'translate-y-0' : 'translate-y-full md:translate-y-0'}
@@ -100,47 +131,107 @@ export function FilterPanel({ filters, onChange, onClearAll }: FilterPanelProps)
         {/* Cuisine Type */}
         <div className="mb-6">
           <h4 className="text-sm font-bold text-gray-900 mb-3">Cuisine Type</h4>
-          <div className="flex flex-wrap gap-2">
-            {cuisineOptions.map((cuisine) => (
-              <button
-                key={cuisine}
-                onClick={() => toggleCuisine(cuisine)}
-                className={`
-                  px-4 py-2 rounded-full text-sm font-medium transition-colors
-                  ${
-                    filters.cuisine.includes(cuisine)
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }
-                `}
-              >
-                {cuisine}
-              </button>
-            ))}
+
+          {/* Selected Cuisines */}
+          {filters.cuisine.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-3">
+              {filters.cuisine.map((cuisine) => (
+                <button
+                  key={cuisine}
+                  onClick={() => removeCuisine(cuisine)}
+                  className="flex items-center gap-1 px-3 py-1.5 bg-orange-500 text-white rounded-full text-sm font-medium hover:bg-orange-600 transition-colors"
+                >
+                  {cuisine}
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Search Input */}
+          <div className="relative mb-2">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              value={cuisineSearch}
+              onChange={(e) => setCuisineSearch(e.target.value)}
+              placeholder="Search cuisines..."
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-100 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400"
+            />
           </div>
+
+          {/* Dropdown Results */}
+          {cuisineSearch && (
+            <div className="max-h-40 overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-sm">
+              {filteredCuisines.length > 0 ? (
+                filteredCuisines.map((cuisine) => (
+                  <button
+                    key={cuisine}
+                    onClick={() => addCuisine(cuisine)}
+                    disabled={filters.cuisine.includes(cuisine)}
+                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {cuisine}
+                  </button>
+                ))
+              ) : (
+                <div className="px-4 py-2.5 text-sm text-gray-500">No cuisines found</div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Dietary Restrictions */}
         <div className="mb-6">
           <h4 className="text-sm font-bold text-gray-900 mb-3">Dietary Restrictions</h4>
-          <div className="flex flex-wrap gap-2">
-            {dietOptions.map((diet) => (
-              <button
-                key={diet}
-                onClick={() => toggleDiet(diet)}
-                className={`
-                  px-4 py-2 rounded-full text-sm font-medium transition-colors
-                  ${
-                    filters.diet.includes(diet)
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }
-                `}
-              >
-                {diet}
-              </button>
-            ))}
+
+          {/* Selected Diets */}
+          {filters.diet.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-3">
+              {filters.diet.map((diet) => (
+                <button
+                  key={diet}
+                  onClick={() => removeDiet(diet)}
+                  className="flex items-center gap-1 px-3 py-1.5 bg-orange-500 text-white rounded-full text-sm font-medium hover:bg-orange-600 transition-colors"
+                >
+                  {diet}
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Search Input */}
+          <div className="relative mb-2">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              value={dietSearch}
+              onChange={(e) => setDietSearch(e.target.value)}
+              placeholder="Search dietary restrictions..."
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-100 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400"
+            />
           </div>
+
+          {/* Dropdown Results */}
+          {dietSearch && (
+            <div className="max-h-40 overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-sm">
+              {filteredDiets.length > 0 ? (
+                filteredDiets.map((diet) => (
+                  <button
+                    key={diet}
+                    onClick={() => addDiet(diet)}
+                    disabled={filters.diet.includes(diet)}
+                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {diet}
+                  </button>
+                ))
+              ) : (
+                <div className="px-4 py-2.5 text-sm text-gray-500">No dietary restrictions found</div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Prep Time */}

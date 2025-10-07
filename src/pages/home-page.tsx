@@ -162,7 +162,7 @@ export function HomePage() {
       </div>
 
       {/* Filter Panel */}
-      <div className="px-6 py-4 flex items-center gap-3">
+      <div className="px-6 py-4 md:px-6 md:max-w-7xl md:mx-auto">
         <FilterPanel filters={filters} onChange={updateFilters} onClearAll={clearAllFilters} />
       </div>
 
