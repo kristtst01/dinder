@@ -19,11 +19,11 @@ export function HomePage() {
   const dietParam = searchParams.get('diet') || '';
   const maxTimeParam = searchParams.get('maxTime');
 
-  const filters: FilterOptions = {
+  const filters: FilterOptions = useMemo(() => ({
     cuisine: cuisineParam ? cuisineParam.split(',') : [],
     diet: dietParam ? dietParam.split(',') : [],
     maxTime: maxTimeParam ? parseInt(maxTimeParam) : null,
-  };
+  }), [cuisineParam, dietParam, maxTimeParam]);
 
   // Update URL params
   const updateSearch = useCallback((value: string) => {
