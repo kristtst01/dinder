@@ -11,20 +11,9 @@ interface FilterPanelProps {
   filters: FilterOptions;
   onChange: (filters: FilterOptions) => void;
   onClearAll: () => void;
+  availableCuisines: string[];
+  availableDiets: string[];
 }
-
-// Expanded lists for realistic filtering
-const cuisineOptions = [
-  'American', 'British', 'Canadian', 'Chinese', 'Croatian', 'Dutch', 'Egyptian', 'Filipino', 'French',
-  'Greek', 'Indian', 'Irish', 'Italian', 'Jamaican', 'Japanese', 'Kenyan', 'Malaysian', 'Mexican',
-  'Moroccan', 'Polish', 'Portuguese', 'Russian', 'Spanish', 'Thai', 'Tunisian', 'Turkish', 'Ukrainian',
-  'Vietnamese'
-];
-
-const dietOptions = [
-  'Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Keto', 'Paleo', 'Pescatarian',
-  'Nut-Free', 'Egg-Free', 'Soy-Free', 'Low-Carb', 'Low-Fat', 'Sugar-Free', 'Halal', 'Kosher'
-];
 
 const timeOptions = [
   { label: 'Under 15 min', value: 15 },
@@ -33,20 +22,20 @@ const timeOptions = [
   { label: 'Under 60 min', value: 60 },
 ];
 
-export function FilterPanel({ filters, onChange, onClearAll }: FilterPanelProps) {
+export function FilterPanel({ filters, onChange, onClearAll, availableCuisines, availableDiets }: FilterPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [cuisineSearch, setCuisineSearch] = useState('');
   const [dietSearch, setDietSearch] = useState('');
 
   const filteredCuisines = useMemo(() => {
-    if (!cuisineSearch) return cuisineOptions;
-    return cuisineOptions.filter((c) => c.toLowerCase().startsWith(cuisineSearch.toLowerCase()));
-  }, [cuisineSearch]);
+    if (!cuisineSearch) return availableCuisines;
+    return availableCuisines.filter((c) => c.toLowerCase().startsWith(cuisineSearch.toLowerCase()));
+  }, [cuisineSearch, availableCuisines]);
 
   const filteredDiets = useMemo(() => {
-    if (!dietSearch) return dietOptions;
-    return dietOptions.filter((d) => d.toLowerCase().startsWith(dietSearch.toLowerCase()));
-  }, [dietSearch]);
+    if (!dietSearch) return availableDiets;
+    return availableDiets.filter((d) => d.toLowerCase().startsWith(dietSearch.toLowerCase()));
+  }, [dietSearch, availableDiets]);
 
   const addCuisine = (cuisine: string) => {
     if (!filters.cuisine.includes(cuisine)) {
@@ -149,8 +138,8 @@ export function FilterPanel({ filters, onChange, onClearAll }: FilterPanelProps)
           )}
 
           {/* Search Input */}
-          <div className="relative mb-2">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 z-10" />
             <input
               type="text"
               value={cuisineSearch}
@@ -158,27 +147,27 @@ export function FilterPanel({ filters, onChange, onClearAll }: FilterPanelProps)
               placeholder="Search cuisines..."
               className="w-full pl-10 pr-4 py-2.5 bg-gray-100 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400"
             />
-          </div>
 
-          {/* Dropdown Results */}
-          {cuisineSearch && (
-            <div className="max-h-40 overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-sm">
-              {filteredCuisines.length > 0 ? (
-                filteredCuisines.map((cuisine) => (
-                  <button
-                    key={cuisine}
-                    onClick={() => addCuisine(cuisine)}
-                    disabled={filters.cuisine.includes(cuisine)}
-                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {cuisine}
-                  </button>
-                ))
-              ) : (
-                <div className="px-4 py-2.5 text-sm text-gray-500">No cuisines found</div>
-              )}
-            </div>
-          )}
+            {/* Dropdown Results */}
+            {cuisineSearch && (
+              <div className="absolute top-full left-0 right-0 mt-1 max-h-40 overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-lg z-20">
+                {filteredCuisines.length > 0 ? (
+                  filteredCuisines.map((cuisine) => (
+                    <button
+                      key={cuisine}
+                      onClick={() => addCuisine(cuisine)}
+                      disabled={filters.cuisine.includes(cuisine)}
+                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {cuisine}
+                    </button>
+                  ))
+                ) : (
+                  <div className="px-4 py-2.5 text-sm text-gray-500">No cuisines found</div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Dietary Restrictions */}
@@ -202,8 +191,8 @@ export function FilterPanel({ filters, onChange, onClearAll }: FilterPanelProps)
           )}
 
           {/* Search Input */}
-          <div className="relative mb-2">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 z-10" />
             <input
               type="text"
               value={dietSearch}
@@ -211,27 +200,27 @@ export function FilterPanel({ filters, onChange, onClearAll }: FilterPanelProps)
               placeholder="Search dietary restrictions..."
               className="w-full pl-10 pr-4 py-2.5 bg-gray-100 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400"
             />
-          </div>
 
-          {/* Dropdown Results */}
-          {dietSearch && (
-            <div className="max-h-40 overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-sm">
-              {filteredDiets.length > 0 ? (
-                filteredDiets.map((diet) => (
-                  <button
-                    key={diet}
-                    onClick={() => addDiet(diet)}
-                    disabled={filters.diet.includes(diet)}
-                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {diet}
-                  </button>
-                ))
-              ) : (
-                <div className="px-4 py-2.5 text-sm text-gray-500">No dietary restrictions found</div>
-              )}
-            </div>
-          )}
+            {/* Dropdown Results */}
+            {dietSearch && (
+              <div className="absolute top-full left-0 right-0 mt-1 max-h-40 overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-lg z-20">
+                {filteredDiets.length > 0 ? (
+                  filteredDiets.map((diet) => (
+                    <button
+                      key={diet}
+                      onClick={() => addDiet(diet)}
+                      disabled={filters.diet.includes(diet)}
+                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {diet}
+                    </button>
+                  ))
+                ) : (
+                  <div className="px-4 py-2.5 text-sm text-gray-500">No dietary restrictions found</div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Prep Time */}

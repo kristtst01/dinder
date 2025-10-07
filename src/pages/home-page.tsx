@@ -95,6 +95,18 @@ export function HomePage() {
     return [...chicken, ...soup];
   }, []);
 
+  // Extract unique cuisines and diets from all recipes
+  const availableCuisines = useMemo(() => {
+    const cuisines = new Set(allRecipes.map((r) => r.area).filter(Boolean));
+    return Array.from(cuisines).sort();
+  }, [allRecipes]);
+
+  const availableDiets = useMemo(() => {
+    // TODO: When we have proper diet data from API, extract unique diet tags
+    // For now, return empty array since we don't have diet information in the data
+    return [];
+  }, []);
+
   // Filter recipes
   const filteredRecipes = useMemo(() => {
     return allRecipes.filter((recipe) => {
@@ -163,7 +175,13 @@ export function HomePage() {
 
       {/* Filter Panel */}
       <div className="px-6 py-4 md:px-6 md:max-w-7xl md:mx-auto">
-        <FilterPanel filters={filters} onChange={updateFilters} onClearAll={clearAllFilters} />
+        <FilterPanel
+          filters={filters}
+          onChange={updateFilters}
+          onClearAll={clearAllFilters}
+          availableCuisines={availableCuisines}
+          availableDiets={availableDiets}
+        />
       </div>
 
       {/* Categories - Hide when searching/filtering */}
