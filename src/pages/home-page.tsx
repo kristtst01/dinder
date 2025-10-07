@@ -127,7 +127,7 @@ export function HomePage() {
   const hasNoResults = searchQuery || hasActiveFilters ? filteredRecipes.length === 0 : false;
 
   return (
-    <div className="w-full bg-gray-50 min-h-screen pb-32">
+    <div className="w-full overflow-x-hidden bg-gray-50 min-h-screen pb-32">
       {/* Header */}
       <div className="bg-white px-6 pt-14 pb-6 rounded-b-3xl">
         <div className="flex items-center justify-between mb-8">
