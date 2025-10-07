@@ -19,44 +19,53 @@ export function HomePage() {
   const dietParam = searchParams.get('diet') || '';
   const maxTimeParam = searchParams.get('maxTime');
 
-  const filters: FilterOptions = useMemo(() => ({
-    cuisine: cuisineParam ? cuisineParam.split(',') : [],
-    diet: dietParam ? dietParam.split(',') : [],
-    maxTime: maxTimeParam ? parseInt(maxTimeParam) : null,
-  }), [cuisineParam, dietParam, maxTimeParam]);
+  const filters: FilterOptions = useMemo(
+    () => ({
+      cuisine: cuisineParam ? cuisineParam.split(',') : [],
+      diet: dietParam ? dietParam.split(',') : [],
+      maxTime: maxTimeParam ? parseInt(maxTimeParam) : null,
+    }),
+    [cuisineParam, dietParam, maxTimeParam]
+  );
 
   // Update URL params
-  const updateSearch = useCallback((value: string) => {
-    setSearchParams((prev) => {
-      if (value) {
-        prev.set('q', value);
-      } else {
-        prev.delete('q');
-      }
-      return prev;
-    });
-  }, [setSearchParams]);
+  const updateSearch = useCallback(
+    (value: string) => {
+      setSearchParams((prev) => {
+        if (value) {
+          prev.set('q', value);
+        } else {
+          prev.delete('q');
+        }
+        return prev;
+      });
+    },
+    [setSearchParams]
+  );
 
-  const updateFilters = useCallback((newFilters: FilterOptions) => {
-    setSearchParams((prev) => {
-      if (newFilters.cuisine.length > 0) {
-        prev.set('cuisine', newFilters.cuisine.join(','));
-      } else {
-        prev.delete('cuisine');
-      }
-      if (newFilters.diet.length > 0) {
-        prev.set('diet', newFilters.diet.join(','));
-      } else {
-        prev.delete('diet');
-      }
-      if (newFilters.maxTime) {
-        prev.set('maxTime', newFilters.maxTime.toString());
-      } else {
-        prev.delete('maxTime');
-      }
-      return prev;
-    });
-  }, [setSearchParams]);
+  const updateFilters = useCallback(
+    (newFilters: FilterOptions) => {
+      setSearchParams((prev) => {
+        if (newFilters.cuisine.length > 0) {
+          prev.set('cuisine', newFilters.cuisine.join(','));
+        } else {
+          prev.delete('cuisine');
+        }
+        if (newFilters.diet.length > 0) {
+          prev.set('diet', newFilters.diet.join(','));
+        } else {
+          prev.delete('diet');
+        }
+        if (newFilters.maxTime) {
+          prev.set('maxTime', newFilters.maxTime.toString());
+        } else {
+          prev.delete('maxTime');
+        }
+        return prev;
+      });
+    },
+    [setSearchParams]
+  );
 
   const clearAllFilters = useCallback(() => {
     setSearchParams({});
@@ -84,13 +93,11 @@ export function HomePage() {
       })
     );
 
-    const soup = convertMealDBArrayToRecipes(soupData.meals.slice(0, 6)).map(
-      (recipe, index) => ({
-        ...recipe,
-        cookingTime: [20, 35, 50][index % 3],
-        difficulty: (['Easy', 'Medium'] as const)[index % 2],
-      })
-    );
+    const soup = convertMealDBArrayToRecipes(soupData.meals.slice(0, 6)).map((recipe, index) => ({
+      ...recipe,
+      cookingTime: [20, 35, 50][index % 3],
+      difficulty: (['Easy', 'Medium'] as const)[index % 2],
+    }));
 
     return [...chicken, ...soup];
   }, []);
@@ -135,7 +142,8 @@ export function HomePage() {
   const chickenRecipes = filteredRecipes.filter((r) => r.category === 'Chicken');
   const soupRecipes = filteredRecipes.filter((r) => r.category !== 'Chicken');
 
-  const hasActiveFilters = filters.cuisine.length > 0 || filters.diet.length > 0 || filters.maxTime !== null;
+  const hasActiveFilters =
+    filters.cuisine.length > 0 || filters.diet.length > 0 || filters.maxTime !== null;
   const hasNoResults = searchQuery || hasActiveFilters ? filteredRecipes.length === 0 : false;
 
   return (
@@ -201,9 +209,7 @@ export function HomePage() {
       )}
 
       {/* Empty State */}
-      {hasNoResults && (
-        <EmptyState searchQuery={searchQuery} hasFilters={hasActiveFilters} />
-      )}
+      {hasNoResults && <EmptyState searchQuery={searchQuery} hasFilters={hasActiveFilters} />}
 
       {/* Chicken Recipes */}
       {!hasNoResults && chickenRecipes.length > 0 && (

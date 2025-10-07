@@ -16,8 +16,8 @@ export function EmptyState({ searchQuery, hasFilters }: EmptyStateProps) {
         {searchQuery
           ? `We couldn't find any recipes matching "${searchQuery}"`
           : hasFilters
-            ? "No recipes match your current filters"
-            : "Try adjusting your search or filters"}
+            ? 'No recipes match your current filters'
+            : 'Try adjusting your search or filters'}
       </p>
     </div>
   );

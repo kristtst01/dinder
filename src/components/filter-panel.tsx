@@ -22,7 +22,13 @@ const timeOptions = [
   { label: 'Under 60 min', value: 60 },
 ];
 
-export function FilterPanel({ filters, onChange, onClearAll, availableCuisines, availableDiets }: FilterPanelProps) {
+export function FilterPanel({
+  filters,
+  onChange,
+  onClearAll,
+  availableCuisines,
+  availableDiets,
+}: FilterPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [cuisineSearch, setCuisineSearch] = useState('');
   const [dietSearch, setDietSearch] = useState('');
@@ -63,8 +69,10 @@ export function FilterPanel({ filters, onChange, onClearAll, availableCuisines, 
     onChange({ ...filters, maxTime: time });
   };
 
-  const hasActiveFilters = filters.cuisine.length > 0 || filters.diet.length > 0 || filters.maxTime !== null;
-  const activeFilterCount = filters.cuisine.length + filters.diet.length + (filters.maxTime ? 1 : 0);
+  const hasActiveFilters =
+    filters.cuisine.length > 0 || filters.diet.length > 0 || filters.maxTime !== null;
+  const activeFilterCount =
+    filters.cuisine.length + filters.diet.length + (filters.maxTime ? 1 : 0);
 
   return (
     <>
@@ -84,7 +92,10 @@ export function FilterPanel({ filters, onChange, onClearAll, availableCuisines, 
 
       {/* Mobile Overlay */}
       {isOpen && (
-        <div className="md:hidden fixed inset-0 bg-black/50 z-40" onClick={() => setIsOpen(false)} />
+        <div
+          className="md:hidden fixed inset-0 bg-black/50 z-40"
+          onClick={() => setIsOpen(false)}
+        />
       )}
 
       {/* Filter Panel */}
@@ -216,7 +227,9 @@ export function FilterPanel({ filters, onChange, onClearAll, availableCuisines, 
                     </button>
                   ))
                 ) : (
-                  <div className="px-4 py-2.5 text-sm text-gray-500">No dietary restrictions found</div>
+                  <div className="px-4 py-2.5 text-sm text-gray-500">
+                    No dietary restrictions found
+                  </div>
                 )}
               </div>
             )}
