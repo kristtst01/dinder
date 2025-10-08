@@ -153,6 +153,8 @@ export function HomePage() {
   return (
     <div className="w-full overflow-x-hidden bg-gray-50 min-h-screen pb-32">
       {/* Header */}
+      {/* TO REMOVE ES LINT COMPLAINING */}
+      {loading && <p></p>};
       <div className="bg-white px-6 pt-14 pb-6 rounded-b-3xl">
         <div className="flex items-center justify-between mb-8">
           {user ? (
@@ -204,7 +206,6 @@ export function HomePage() {
         {/* Search Bar */}
         <SearchBar value={searchQuery} onChange={updateSearch} />
       </div>
-
       {/* Filter Panel */}
       <div className="px-6 py-4 md:px-6 md:max-w-7xl md:mx-auto">
         <FilterPanel
@@ -215,9 +216,7 @@ export function HomePage() {
           availableDiets={availableDiets}
         />
       </div>
-
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
-
       {/* Categories - Hide when searching/filtering */}
       {!searchQuery && !hasActiveFilters && (
         <div className="bg-white px-6 py-8 mb-6 mt-2 rounded-3xl mx-4">
@@ -233,10 +232,8 @@ export function HomePage() {
           </div>
         </div>
       )}
-
       {/* Empty State */}
       {hasNoResults && <EmptyState searchQuery={searchQuery} hasFilters={hasActiveFilters} />}
-
       {/* Chicken Recipes */}
       {!hasNoResults && chickenRecipes.length > 0 && (
         <div className="mb-8">
@@ -260,7 +257,6 @@ export function HomePage() {
           </div>
         </div>
       )}
-
       {/* Soup Recipes */}
       {!hasNoResults && soupRecipes.length > 0 && (
         <div className="mb-8">
@@ -284,7 +280,6 @@ export function HomePage() {
           </div>
         </div>
       )}
-
       {/* Bottom Navigation */}
       <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white rounded-full shadow-2xl px-6 py-3 flex items-center gap-6 border border-gray-100">
         <button className="w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all">

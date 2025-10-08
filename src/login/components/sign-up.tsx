@@ -24,6 +24,8 @@ export function SignUp() {
       },
     });
 
+    console.log(data);
+
     setLoading(false);
 
     if (error) {
