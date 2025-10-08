@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -10,6 +10,8 @@ import {
   Star,
   ChevronDown,
   ChevronUp,
+  Flame,
+  Check,
 } from 'lucide-react';
 import { ALL_RECIPES } from '../utils/recipe-loader';
 import { useSavedRecipesContext } from '../context/SavedRecipesContext';
@@ -24,6 +26,55 @@ export default function RecipeDetail() {
   const [checkedSteps, setCheckedSteps] = useState<Set<number>>(new Set());
   const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
   const [nutritionOpen, setNutritionOpen] = useState(false);
+  const [cookMode, setCookMode] = useState(false);
+  const [hasTriedRecipe, setHasTriedRecipe] = useState(false);
+
+  // Load "tried" status from localStorage
+  useEffect(() => {
+    if (id) {
+      const tried = localStorage.getItem(`recipe_tried_${id}`);
+      setHasTriedRecipe(tried === 'true');
+    }
+  }, [id]);
+
+  // Cook Mode - prevent screen from sleeping (mobile only)
+  useEffect(() => {
+    let wakeLock: WakeLockSentinel | null = null;
+
+    const requestWakeLock = async () => {
+      try {
+        if ('wakeLock' in navigator && cookMode) {
+          wakeLock = await navigator.wakeLock.request('screen');
+          console.log('Wake Lock activated');
+        }
+      } catch (err) {
+        console.error('Wake Lock error:', err);
+      }
+    };
+
+    const releaseWakeLock = async () => {
+      if (wakeLock) {
+        try {
+          await wakeLock.release();
+          wakeLock = null;
+          console.log('Wake Lock released');
+        } catch (err) {
+          console.error('Wake Lock release error:', err);
+        }
+      }
+    };
+
+    if (cookMode) {
+      requestWakeLock();
+    } else {
+      releaseWakeLock();
+    }
+
+    // Cleanup on unmount
+    return () => {
+      releaseWakeLock();
+    };
+  }, [cookMode]);
 
   // Find recipe by id from sample data
   const recipe = useMemo(() => ALL_RECIPES.find((r) => r.id === id), [id]);
@@ -123,6 +174,18 @@ export default function RecipeDetail() {
     }
   };
 
+  const toggleCookMode = () => {
+    setCookMode(!cookMode);
+  };
+
+  const toggleTriedRecipe = () => {
+    const newTriedStatus = !hasTriedRecipe;
+    setHasTriedRecipe(newTriedStatus);
+    if (id) {
+      localStorage.setItem(`recipe_tried_${id}`, String(newTriedStatus));
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 pb-8">
       {/* Header - sticky with actions */}
@@ -135,6 +198,20 @@ export default function RecipeDetail() {
           <ArrowLeft size={20} className="text-gray-700" />
         </button>
         <h1 className="text-lg font-semibold text-gray-900 flex-1 truncate">Recipe</h1>
+        
+        {/* Cook Mode Toggle - Mobile Only */}
+        <button
+          onClick={toggleCookMode}
+          className={`
+            md:hidden p-2 rounded-lg transition-colors
+            ${cookMode ? 'bg-orange-500 text-white' : 'hover:bg-gray-100 text-gray-700'}
+          `}
+          aria-label={cookMode ? 'Exit cook mode' : 'Enter cook mode'}
+          title={cookMode ? 'Cook mode active - screen stays on' : 'Enable cook mode'}
+        >
+          <Flame size={20} />
+        </button>
+        
         <button
           onClick={handleShare}
           className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -154,6 +231,13 @@ export default function RecipeDetail() {
           />
         </button>
       </header>
+
+      {/* Cook Mode Banner */}
+      {cookMode && (
+        <div className="bg-orange-500 text-white px-4 py-2 text-center text-sm font-medium">
+          🔥 Cook Mode Active - Screen will stay on
+        </div>
+      )}
 
       {/* Hero Image */}
       <div className="relative">
@@ -361,6 +445,29 @@ export default function RecipeDetail() {
               <p className="text-lg font-semibold text-gray-900">{nutrition.sugar}</p>
             </div>
           </div>
+        )}
+      </section>
+
+      {/* Action Buttons - "I Have Tried This" */}
+      <section className="px-4 py-5 bg-white mt-2">
+        <button
+          onClick={toggleTriedRecipe}
+          className={`
+            w-full py-4 rounded-xl font-semibold text-base transition-all flex items-center justify-center gap-2
+            ${
+              hasTriedRecipe
+                ? 'bg-green-500 text-white shadow-md'
+                : 'bg-orange-500 hover:bg-orange-600 text-white shadow-sm'
+            }
+          `}
+        >
+          <Check size={20} strokeWidth={2.5} />
+          {hasTriedRecipe ? "You've Tried This Recipe!" : "Mark as Tried"}
+        </button>
+        {hasTriedRecipe && (
+          <p className="text-center text-sm text-gray-500 mt-2">
+            Great job! You've cooked this recipe 🎉
+          </p>
         )}
       </section>
     </div>
