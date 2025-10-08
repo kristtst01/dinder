@@ -3,32 +3,66 @@ import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { RecipeCard } from '../components/recipe-card';
 import { SearchBar } from '../components/search-bar';
-import { FilterPanel } from '../components/filter-panel';
+import { FilterSidebar, type FilterState } from '../components/filter-sidebar';
 import { EmptyState } from '../components/empty-state';
-import { convertMealDBArrayToRecipes } from '../utils/meal-db-helpers';
-import type { FilterOptions } from '../components/filter-panel';
-import chickenData from '../assets/mealdb-chicken.json';
-import soupData from '../assets/mealdb-soup.json';
+import { ALL_RECIPES } from '../utils/recipe-loader';
 
 export function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Get search and filter values from URL
+  const kitchenParam = searchParams.get('kitchen') || 'all';
+  const difficultyParam = searchParams.get('difficulty') || 'all';
+  const maxPrepTimeParam = searchParams.get('maxPrepTime');
+  const vegetarianParam = searchParams.get('vegetarian') || 'any';
   const searchQuery = searchParams.get('q') || '';
-  const cuisineParam = searchParams.get('cuisine') || '';
-  const dietParam = searchParams.get('diet') || '';
-  const maxTimeParam = searchParams.get('maxTime');
 
-  const filters: FilterOptions = useMemo(
+const filters: FilterState = useMemo(
     () => ({
-      cuisine: cuisineParam ? cuisineParam.split(',') : [],
-      diet: dietParam ? dietParam.split(',') : [],
-      maxTime: maxTimeParam ? parseInt(maxTimeParam) : null,
+      kitchen: kitchenParam,
+      difficulty: difficultyParam as FilterState['difficulty'],
+      maxPrepTime: maxPrepTimeParam ? parseInt(maxPrepTimeParam) : undefined,
+      vegetarian: vegetarianParam as FilterState['vegetarian'],
+      searchQuery: searchQuery,
     }),
-    [cuisineParam, dietParam, maxTimeParam]
+    [kitchenParam, difficultyParam, maxPrepTimeParam, vegetarianParam, searchQuery]
   );
 
-  // Update URL params
+  // Update URL params when filters change
+  const updateFilters = useCallback(
+    (newFilters: FilterState) => {
+      setSearchParams((prev) => {
+        if (newFilters.kitchen !== 'all') {
+          prev.set('kitchen', newFilters.kitchen);
+        } else {
+          prev.delete('kitchen');
+        }
+        if (newFilters.difficulty !== 'all') {
+          prev.set('difficulty', newFilters.difficulty);
+        } else {
+          prev.delete('difficulty');
+        }
+        if (newFilters.maxPrepTime !== undefined) {
+          prev.set('maxPrepTime', newFilters.maxPrepTime.toString());
+        } else {
+          prev.delete('maxPrepTime');
+        }
+        if (newFilters.vegetarian !== 'any') {
+          prev.set('vegetarian', newFilters.vegetarian);
+        } else {
+          prev.delete('vegetarian');
+        }
+        if (newFilters.searchQuery) {
+          prev.set('q', newFilters.searchQuery);
+        } else {
+          prev.delete('q');
+        }
+        return prev;
+      });
+    },
+    [setSearchParams]
+  );
+
   const updateSearch = useCallback(
     (value: string) => {
       setSearchParams((prev) => {
@@ -43,34 +77,6 @@ export function HomePage() {
     [setSearchParams]
   );
 
-  const updateFilters = useCallback(
-    (newFilters: FilterOptions) => {
-      setSearchParams((prev) => {
-        if (newFilters.cuisine.length > 0) {
-          prev.set('cuisine', newFilters.cuisine.join(','));
-        } else {
-          prev.delete('cuisine');
-        }
-        if (newFilters.diet.length > 0) {
-          prev.set('diet', newFilters.diet.join(','));
-        } else {
-          prev.delete('diet');
-        }
-        if (newFilters.maxTime) {
-          prev.set('maxTime', newFilters.maxTime.toString());
-        } else {
-          prev.delete('maxTime');
-        }
-        return prev;
-      });
-    },
-    [setSearchParams]
-  );
-
-  const clearAllFilters = useCallback(() => {
-    setSearchParams({});
-  }, [setSearchParams]);
-
   const categories = [
     { icon: '🍔', label: 'Western' },
     { icon: '🍞', label: 'Bread' },
@@ -82,69 +88,49 @@ export function HomePage() {
     { icon: '☕', label: 'Coffee' },
   ];
 
-  // Prepare all recipes
-  const allRecipes = useMemo(() => {
-    const chicken = convertMealDBArrayToRecipes(chickenData.meals.slice(0, 6)).map(
-      (recipe, index) => ({
-        ...recipe,
-        cookingTime: [30, 45, 60][index % 3],
-        difficulty: (['Easy', 'Medium', 'Hard'] as const)[index % 3],
-        badge: index === 0 ? 'New' : undefined,
-      })
-    );
+  // Use recipes from recipe-loader
+  const allRecipes = ALL_RECIPES;
 
-    const soup = convertMealDBArrayToRecipes(soupData.meals.slice(0, 6)).map((recipe, index) => ({
-      ...recipe,
-      cookingTime: [20, 35, 50][index % 3],
-      difficulty: (['Easy', 'Medium'] as const)[index % 2],
-    }));
-
-    return [...chicken, ...soup];
-  }, []);
-
-  // Extract unique cuisines and diets from all recipes
-  const availableCuisines = useMemo(() => {
-    const cuisines = new Set(allRecipes.map((r) => r.area).filter(Boolean));
-    return Array.from(cuisines).sort();
-  }, [allRecipes]);
-
-  const availableDiets = useMemo(() => {
-    // TODO: When we have proper diet data from API, extract unique diet tags
-    // For now, return empty array since we don't have diet information in the data
-    return [];
-  }, []);
-
-  // Filter recipes
+  // Filter recipes based on FilterState
   const filteredRecipes = useMemo(() => {
     return allRecipes.filter((recipe) => {
       // Search filter
-      if (searchQuery && !recipe.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+      if (filters.searchQuery && !recipe.title.toLowerCase().includes(filters.searchQuery.toLowerCase())) {
         return false;
       }
 
-      // Cuisine filter
-      if (filters.cuisine.length > 0 && !filters.cuisine.includes(recipe.area)) {
+      // Kitchen/Area filter
+      if (filters.kitchen !== 'all' && recipe.area !== filters.kitchen) {
+        return false;
+      }
+
+      // Difficulty filter
+      if (filters.difficulty !== 'all' && recipe.difficulty !== filters.difficulty) {
         return false;
       }
 
       // Time filter
-      if (filters.maxTime && recipe.cookingTime && recipe.cookingTime > filters.maxTime) {
+      if (filters.maxPrepTime && recipe.cookingTime && recipe.cookingTime > filters.maxPrepTime) {
         return false;
       }
 
-      // Note: Diet filter would need additional data in Recipe type
-      // For now, we'll skip diet filtering as it's not in the current data
+      // Vegetarian filter (if you add this data to your recipes)
+      // if (filters.vegetarian === 'only' && !recipe.isVegetarian) return false;
+      // if (filters.vegetarian === 'exclude' && recipe.isVegetarian) return false;
 
       return true;
     });
-  }, [allRecipes, searchQuery, filters]);
+  }, [allRecipes, filters]);
 
   const chickenRecipes = filteredRecipes.filter((r) => r.category === 'Chicken');
   const soupRecipes = filteredRecipes.filter((r) => r.category !== 'Chicken');
 
   const hasActiveFilters =
-    filters.cuisine.length > 0 || filters.diet.length > 0 || filters.maxTime !== null;
-  const hasNoResults = searchQuery || hasActiveFilters ? filteredRecipes.length === 0 : false;
+    filters.kitchen !== 'all' ||
+    filters.difficulty !== 'all' ||
+    filters.maxPrepTime !== undefined ||
+    filters.vegetarian !== 'any';
+  const hasNoResults = filters.searchQuery || hasActiveFilters ? filteredRecipes.length === 0 : false;
 
   return (
     <div className="w-full overflow-x-hidden bg-gray-50 min-h-screen pb-32">
@@ -178,22 +164,16 @@ export function HomePage() {
         </div>
 
         {/* Search Bar */}
-        <SearchBar value={searchQuery} onChange={updateSearch} />
+        <SearchBar value={filters.searchQuery} onChange={updateSearch} />
       </div>
 
-      {/* Filter Panel */}
+      {/* Filter Sidebar */}
       <div className="px-6 py-4 md:px-6 md:max-w-7xl md:mx-auto">
-        <FilterPanel
-          filters={filters}
-          onChange={updateFilters}
-          onClearAll={clearAllFilters}
-          availableCuisines={availableCuisines}
-          availableDiets={availableDiets}
-        />
+        <FilterSidebar filters={filters} onChange={updateFilters} recipes={allRecipes} />
       </div>
 
       {/* Categories - Hide when searching/filtering */}
-      {!searchQuery && !hasActiveFilters && (
+      {!filters.searchQuery && !hasActiveFilters && (
         <div className="bg-white px-6 py-8 mb-6 mt-2 rounded-3xl mx-4">
           <div className="grid grid-cols-4 gap-6">
             {categories.map((category, index) => (
@@ -209,7 +189,7 @@ export function HomePage() {
       )}
 
       {/* Empty State */}
-      {hasNoResults && <EmptyState searchQuery={searchQuery} hasFilters={hasActiveFilters} />}
+      {hasNoResults && <EmptyState searchQuery={filters.searchQuery} hasFilters={hasActiveFilters} />}
 
       {/* Chicken Recipes */}
       {!hasNoResults && chickenRecipes.length > 0 && (
