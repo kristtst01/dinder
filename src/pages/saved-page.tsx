@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { Menu, Search, Plus } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { RecipeCard } from '../components/recipe-card';
 import { FilterPanel, type FilterState } from '../components/filter-panel';
 import { SavedPageNavbar } from '../components/saved-page-navbar';
+import { SavedPageHeader } from '../components/saved-page-header';
 import { useSavedRecipesContext } from '../context/SavedRecipesContext';
 import { ALL_RECIPES } from '../utils/recipe-loader';
-import { Link } from 'react-router-dom';
 import type { Recipe } from '../types/recipe';
 
 export function SavedPage() {
@@ -102,108 +102,12 @@ export function SavedPage() {
         </header>
 
         {/* Desktop Dashboard Header */}
-        <header className="hidden md:block bg-white border-b border-gray-200 px-6 py-6 sticky top-0 z-30">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Saved Recipes</h1>
-              <p className="text-sm text-gray-600 mt-1">
-                {filteredRecipes.length} recipe{filteredRecipes.length !== 1 ? 's' : ''} found
-              </p>
-            </div>
-            <Link
-              to="/weekplans/new"
-              className="flex items-center gap-2 px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl transition-colors font-medium shadow-sm"
-            >
-              <Plus size={18} />
-              <span>Create Weekplan</span>
-            </Link>
-          </div>
-
-          {/* Desktop Search and Filters Bar */}
-          <div className="flex items-center gap-3">
-            {/* Search Input */}
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search saved recipes..."
-                value={filters.searchQuery}
-                onChange={(e) => setFilters({ ...filters, searchQuery: e.target.value })}
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              />
-            </div>
-
-            {/* Kitchen Filter Dropdown */}
-            <select
-              value={filters.kitchen}
-              onChange={(e) => setFilters({ ...filters, kitchen: e.target.value })}
-              className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 min-w-[160px] font-medium"
-            >
-              <option value="all">All Kitchens</option>
-              {Array.from(new Set(recipesToShow.map((r) => r.area)))
-                .filter(Boolean)
-                .map((area) => (
-                  <option key={area} value={area}>
-                    {area}
-                  </option>
-                ))}
-            </select>
-
-            {/* Difficulty Filter Dropdown */}
-            <select
-              value={filters.difficulty}
-              onChange={(e) =>
-                setFilters({
-                  ...filters,
-                  difficulty: e.target.value as 'all' | 'Easy' | 'Medium' | 'Hard',
-                })
-              }
-              className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 min-w-[140px] font-medium"
-            >
-              <option value="all">All Levels</option>
-              <option value="Easy">Easy</option>
-              <option value="Medium">Medium</option>
-              <option value="Hard">Hard</option>
-            </select>
-
-            {/* Vegetarian Filter Dropdown */}
-            <select
-              value={filters.vegetarian}
-              onChange={(e) =>
-                setFilters({
-                  ...filters,
-                  vegetarian: e.target.value as 'any' | 'only' | 'exclude',
-                })
-              }
-              className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 min-w-[140px] font-medium"
-            >
-              <option value="any">All Types</option>
-              <option value="only">Vegetarian Only</option>
-              <option value="exclude">Non-Vegetarian</option>
-            </select>
-
-            {/* Clear Filters */}
-            {(filters.searchQuery ||
-              filters.kitchen !== 'all' ||
-              filters.difficulty !== 'all' ||
-              filters.vegetarian !== 'any') && (
-              <button
-                onClick={() =>
-                  setFilters({
-                    kitchen: 'all',
-                    difficulty: 'all',
-                    maxPrepTime: undefined,
-                    vegetarian: 'any',
-                    searchQuery: '',
-                  })
-                }
-                className="px-4 py-2.5 text-gray-600 hover:text-gray-900 font-medium whitespace-nowrap"
-              >
-                Clear All
-              </button>
-            )}
-          </div>
-        </header>
+        <SavedPageHeader
+          filteredCount={filteredRecipes.length}
+          filters={filters}
+          onFiltersChange={setFilters}
+          availableAreas={Array.from(new Set(recipesToShow.map((r) => r.area))).filter(Boolean)}
+        />
 
         {/* Main Content Area */}
         <main className="flex-1 p-4 pb-32 md:p-6 md:pb-6">
