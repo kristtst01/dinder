@@ -11,8 +11,13 @@ const allMeals = [
   ...(soupData.meals || []),
 ];
 
+// Deduplicate meals by idMeal (some recipes appear in multiple files)
+const uniqueMeals = Array.from(
+  new Map(allMeals.map((meal) => [meal.idMeal, meal])).values()
+);
+
 // Convert to Recipe format (from types/recipe.ts) and add random difficulty/cooking time for demo
-export const ALL_RECIPES: Recipe[] = convertMealDBArrayToRecipes(allMeals).map((recipe) => ({
+export const ALL_RECIPES: Recipe[] = convertMealDBArrayToRecipes(uniqueMeals).map((recipe) => ({
   ...recipe,
   difficulty: (['Easy', 'Medium', 'Hard'] as const)[Math.floor(Math.random() * 3)],
   cookingTime: Math.floor(Math.random() * 60) + 15, // Random 15-75 minutes
