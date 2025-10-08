@@ -31,57 +31,6 @@ export default function RecipeDetail() {
 
   // Recipe fetching - in production, fetch from API or database
   const recipe = useMemo(() => ALL_RECIPES.find((r) => r.id === id), [id]);
-  if (!recipe) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-        <div className="text-center">
-          <p className="text-gray-600 mb-4 text-lg">Recipe not found</p>
-          <button
-            onClick={() => navigate(-1)}
-            className="px-4 py-2 bg-orange-500 text-white rounded-lg"
-          >
-            Go Back
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const baseServings = recipe.servings ?? 4;
-  const rating = recipe.rating ?? 4.5;
-  const difficulty = recipe.difficulty || 'Medium';
-  const cookingTime = recipe.cookingTime || 30;
-  const chef = `${recipe.createdBy ?? 'Unknown'}`;
-  const scaleFactor = servings / baseServings;
-  const ingredients = (recipe.ingredients && recipe.ingredients.length)
-    ? recipe.ingredients
-    : [
-      '2 cups flour',
-      '1 cup sugar',
-      '3 eggs',
-      '1/2 cup butter',
-      '1 tsp vanilla extract',
-      '1/4 tsp salt',
-    ];
-
-  const steps = (recipe.steps && recipe.steps.length) ? recipe.steps : [
-    'Preheat oven to 350°F (175°C). Grease and flour a 9-inch round pan.',
-    'In a large bowl, cream together butter and sugar until light and fluffy.',
-    'Beat in eggs one at a time, then stir in vanilla extract.',
-    'Combine flour and salt; gradually blend into the creamed mixture.',
-    'Pour batter into prepared pan and smooth the top.',
-    'Bake for 30-35 minutes, or until a toothpick inserted into center comes out clean.',
-    'Cool in pan for 10 minutes, then turn out onto a wire rack to cool completely.',
-  ];
-
-  const nutrition = recipe.nutrition ?? {
-    calories: 320,
-    protein: '6g',
-    carbs: '45g',
-    fat: '14g',
-    fiber: '2g',
-    sugar: '22g',
-  };
 
   // Load "tried" status from localStorage
   useEffect(() => {
@@ -91,16 +40,17 @@ export default function RecipeDetail() {
     }
   }, [id]);
 
-  // Load base servings on recipe from localStorage
   useEffect(() => {
-    setServings(baseServings);
-  }, [baseServings]);
-
+    if (recipe) {
+      setServings(recipe.servings ?? 4);
+    }
+  }, [recipe]);
 
   // Cook Mode - prevent screen from sleeping (mobile only)
   useEffect(() => {
     let wakeLock: any = null;
-    const isTouchDevice = typeof window !== 'undefined' && (navigator.maxTouchPoints > 0 || 'ontouchstart' in window);
+    const isTouchDevice =
+      typeof window !== 'undefined' && (navigator.maxTouchPoints > 0 || 'ontouchstart' in window);
 
     const requestWakeLock = async () => {
       try {
@@ -148,8 +98,6 @@ export default function RecipeDetail() {
     };
   }, [cookMode]);
 
-  // Find recipe by id from sample data
-
   const toggleStep = (index: number) => {
     setCheckedSteps((prev) => {
       const next = new Set(prev);
@@ -175,6 +123,8 @@ export default function RecipeDetail() {
   };
 
   const handleShare = async () => {
+    if (!recipe) return;
+
     if (navigator.share) {
       try {
         await navigator.share({
@@ -202,6 +152,62 @@ export default function RecipeDetail() {
     if (id) {
       localStorage.setItem(`recipe_tried_${id}`, String(newTriedStatus));
     }
+  };
+
+  if (!recipe) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+        <div className="text-center">
+          <p className="text-gray-600 mb-4 text-lg">Recipe not found</p>
+          <button
+            onClick={() => navigate(-1)}
+            className="px-4 py-2 bg-orange-500 text-white rounded-lg"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const baseServings = recipe.servings ?? 4;
+  const rating = recipe.rating ?? 4.5;
+  const difficulty = recipe.difficulty || 'Medium';
+  const cookingTime = recipe.cookingTime || 30;
+  const chef = `${recipe.createdBy ?? 'Unknown'}`;
+  const scaleFactor = servings / baseServings;
+  const ingredients =
+    recipe.ingredients && recipe.ingredients.length
+      ? recipe.ingredients
+      : [
+        '2 cups flour',
+        '1 cup sugar',
+        '3 eggs',
+        '1/2 cup butter',
+        '1 tsp vanilla extract',
+        '1/4 tsp salt',
+      ];
+
+  const steps =
+    recipe.steps && recipe.steps.length
+      ? recipe.steps
+      : [
+        'Preheat oven to 350°F (175°C). Grease and flour a 9-inch round pan.',
+        'In a large bowl, cream together butter and sugar until light and fluffy.',
+        'Beat in eggs one at a time, then stir in vanilla extract.',
+        'Combine flour and salt; gradually blend into the creamed mixture.',
+        'Pour batter into prepared pan and smooth the top.',
+        'Bake for 30-35 minutes, or until a toothpick inserted into center comes out clean.',
+        'Cool in pan for 10 minutes, then turn out onto a wire rack to cool completely.',
+      ];
+
+  const nutrition = recipe.nutrition ?? {
+    calories: 320,
+    protein: '6g',
+    carbs: '45g',
+    fat: '14g',
+    fiber: '2g',
+    sugar: '22g',
   };
 
   return (
