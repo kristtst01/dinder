@@ -2,8 +2,7 @@ import { Bell, Bookmark, Home, Search, User } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { RecipeCard } from '../components/recipe-card';
-import { SearchBar } from '../components/search-bar';
-import { FilterSidebar, type FilterState } from '../components/filter-sidebar';
+import { FilterPanel, type FilterState } from '../components/filter-panel';
 import { EmptyState } from '../components/empty-state';
 import { ALL_RECIPES } from '../utils/recipe-loader';
 
@@ -54,20 +53,6 @@ const filters: FilterState = useMemo(
         }
         if (newFilters.searchQuery) {
           prev.set('q', newFilters.searchQuery);
-        } else {
-          prev.delete('q');
-        }
-        return prev;
-      });
-    },
-    [setSearchParams]
-  );
-
-  const updateSearch = useCallback(
-    (value: string) => {
-      setSearchParams((prev) => {
-        if (value) {
-          prev.set('q', value);
         } else {
           prev.delete('q');
         }
@@ -162,14 +147,11 @@ const filters: FilterState = useMemo(
             Cook Today?
           </h1>
         </div>
-
-        {/* Search Bar */}
-        <SearchBar value={filters.searchQuery} onChange={updateSearch} />
       </div>
 
-      {/* Filter Sidebar */}
+      {/* Filter Sidebar with Search */}
       <div className="px-6 py-4 md:px-6 md:max-w-7xl md:mx-auto">
-        <FilterSidebar filters={filters} onChange={updateFilters} recipes={allRecipes} />
+        <FilterPanel filters={filters} onChange={updateFilters} recipes={allRecipes} />
       </div>
 
       {/* Categories - Hide when searching/filtering */}

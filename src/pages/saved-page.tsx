@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Menu, Search, Plus } from 'lucide-react';
 import { RecipeCard } from '../components/recipe-card';
-import { FilterSidebar, type FilterState } from '../components/filter-sidebar';
+import { FilterPanel, type FilterState } from '../components/filter-panel';
 import { SavedPageNavbar } from '../components/saved-page-navbar';
 import { useSavedRecipesContext } from '../context/SavedRecipesContext';
 import { ALL_RECIPES } from '../utils/recipe-loader';
@@ -19,24 +19,25 @@ export function SavedPage() {
     searchQuery: '',
   });
 
-  // Scroll detection state
-  const [showFilter, setShowFilter] = useState(true);
-  const [showFilters, setShowFilters] = useState(false);
+  const [showMobileFilter, setShowMobileFilter] = useState(true);
+  const [mobileFiltersExpanded, setMobileFiltersExpanded] = useState(false);
   const lastScrollY = useRef(0);
 
+  // Auto-hide mobile filter bar on scroll down, show on scroll up
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Show filter when scrolling up, hide when scrolling down
       if (currentScrollY < lastScrollY.current) {
-        setShowFilter(true);
-        // Collapse filters when scrolling up if they're expanded
-        if (showFilters) {
-          setShowFilters(false);
+        // Scrolling up - show filter bar
+        setShowMobileFilter(true);
+        // Collapse expanded filters when scrolling
+        if (mobileFiltersExpanded) {
+          setMobileFiltersExpanded(false);
         }
       } else if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
-        setShowFilter(false);
+        // Scrolling down - hide filter bar
+        setShowMobileFilter(false);
       }
 
       lastScrollY.current = currentScrollY;
@@ -44,18 +45,19 @@ export function SavedPage() {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [showFilters]);
+  }, [mobileFiltersExpanded]);
 
-  // Recipes already match the Recipe type from types/recipe.ts
-  const sampleRecipes: Recipe[] = ALL_RECIPES;
+  // Get all recipes from loader
+  const allRecipes: Recipe[] = ALL_RECIPES;
 
-  // Get saved recipes or show samples
-  const savedRecipes = sampleRecipes.filter((r) => isSaved(r.id));
-  const recipesToShow = savedRecipes.length > 0 ? savedRecipes : sampleRecipes;
+  // Get saved recipes
+  const savedRecipes = allRecipes.filter((r) => isSaved(r.id));
+  const hasSavedRecipes = savedRecipes.length > 0;
+  const recipesToShow = hasSavedRecipes ? savedRecipes : allRecipes;
 
   // Apply filters and search
   const filteredRecipes = recipesToShow.filter((recipe) => {
-    // Search filter
+    // Search filter - matches title, category, or area
     if (filters.searchQuery) {
       const query = filters.searchQuery.toLowerCase();
       const matchesSearch =
@@ -64,15 +66,23 @@ export function SavedPage() {
         recipe.area.toLowerCase().includes(query);
       if (!matchesSearch) return false;
     }
-    // Other filters
+
+    // Kitchen/Area filter
     if (filters.kitchen !== 'all' && recipe.area !== filters.kitchen) return false;
+
+    // Difficulty filter
     if (filters.difficulty !== 'all' && recipe.difficulty !== filters.difficulty) return false;
+
+    // Max prep time filter
     if (filters.maxPrepTime && recipe.cookingTime && recipe.cookingTime > filters.maxPrepTime)
       return false;
+
+    // Vegetarian filter (TODO: Add isVegetarian property to Recipe type for better filtering)
     if (filters.vegetarian === 'only' && !recipe.category.toLowerCase().includes('veget'))
       return false;
     if (filters.vegetarian === 'exclude' && recipe.category.toLowerCase().includes('veget'))
       return false;
+
     return true;
   });
 
@@ -197,10 +207,10 @@ export function SavedPage() {
 
         {/* Main Content Area */}
         <main className="flex-1 p-4 pb-32 md:p-6 md:pb-6">
-          {/* Sample Indicator */}
-          {savedRecipes.length === 0 && (
+          {/* Show indicator when displaying sample recipes */}
+          {!hasSavedRecipes && (
             <div className="mb-4 px-3 py-2 bg-orange-50 border border-orange-200 rounded-lg text-sm text-orange-700">
-              Showing sample favorites
+              No saved recipes yet. Showing all available recipes.
             </div>
           )}
 
@@ -232,36 +242,30 @@ export function SavedPage() {
           )}
         </main>
 
-        {/* Mobile Filter Overlay - Closes filter when clicked outside */}
-        {showFilters && (
+        {/* Mobile Filter Overlay */}
+        {mobileFiltersExpanded && (
           <div
             className="md:hidden fixed inset-0 bg-black/20 z-10"
-            onClick={(e) => {
-              // Only close if clicking the overlay itself, not its children
-              if (e.target === e.currentTarget) {
-                setShowFilters(false);
-              }
-            }}
+            onClick={() => setMobileFiltersExpanded(false)}
           />
         )}
 
-        {/* Mobile Floating Filter Bar - Bottom, shows on scroll up (hidden when nav is open) */}
+        {/* Mobile Floating Filter Bar */}
         <div
           className={`
             md:hidden fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent
             transition-transform duration-300 ease-in-out z-20
-            ${showFilter && !navOpen ? 'translate-y-0' : 'translate-y-full'}
+            ${showMobileFilter && !navOpen ? 'translate-y-0' : 'translate-y-full'}
           `}
-          onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-end gap-3">
             <div className="flex-1">
-              <FilterSidebar
+              <FilterPanel
                 filters={filters}
                 onChange={setFilters}
                 recipes={recipesToShow}
-                showFilters={showFilters}
-                onToggleFilters={setShowFilters}
+                showFilters={mobileFiltersExpanded}
+                onToggleFilters={setMobileFiltersExpanded}
               />
             </div>
           </div>

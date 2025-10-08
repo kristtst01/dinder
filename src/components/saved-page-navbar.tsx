@@ -1,4 +1,4 @@
-import { Settings, BarChart3, Calendar, X, ChefHat, LogOut, User } from 'lucide-react';
+import { Settings, BarChart3, Calendar, X, ChefHat, LogOut, User, Home } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 interface SavedPageNavbarProps {
@@ -71,6 +71,29 @@ export function SavedPageNavbar({ isOpen, onClose }: SavedPageNavbarProps) {
           <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-2 mb-2">
             Menu
           </div>
+
+          <Link
+            to="/"
+            className={`
+              flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all group
+              ${
+                isActive('/')
+                  ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg shadow-orange-500/30'
+                  : 'text-gray-300 hover:bg-white/5 hover:text-white'
+              }
+            `}
+            onClick={onClose}
+          >
+            <div
+              className={`p-1.5 rounded-lg ${isActive('/') ? 'bg-white/20' : 'bg-white/5'}`}
+            >
+              <Home size={20} />
+            </div>
+            <span className="font-medium">Home</span>
+            {isActive('/') && (
+              <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+            )}
+          </Link>
 
           <Link
             to="/weekplans"
