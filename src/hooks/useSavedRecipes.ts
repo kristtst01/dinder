@@ -54,12 +54,16 @@ export function useSavedRecipes() {
   const toggle = useCallback((id: string) => {
     setSaved((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   }, []);
 
-  return useMemo(() => ({ saved, isSaved, save, unsave, toggle }), [saved, isSaved, save, unsave, toggle]);
+  return useMemo(
+    () => ({ saved, isSaved, save, unsave, toggle }),
+    [saved, isSaved, save, unsave, toggle]
+  );
 }
 
 export { STORAGE_KEY };

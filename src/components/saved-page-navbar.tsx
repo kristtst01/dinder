@@ -10,12 +10,7 @@ export function SavedPageNavbar({ isOpen, onClose }: SavedPageNavbarProps) {
   return (
     <>
       {/* Overlay */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
-          onClick={onClose}
-        />
-      )}
+      {isOpen && <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={onClose} />}
 
       {/* Sidebar */}
       <div

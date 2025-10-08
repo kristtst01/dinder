@@ -25,7 +25,7 @@ export function FilterSidebar({
 }) {
   const [internalShowFilters, setInternalShowFilters] = useState(false);
   const showFilters = controlledShowFilters ?? internalShowFilters;
-  
+
   const toggleFilters = (newValue: boolean) => {
     if (onToggleFilters) {
       onToggleFilters(newValue);
@@ -33,7 +33,7 @@ export function FilterSidebar({
       setInternalShowFilters(newValue);
     }
   };
-  
+
   const areas = Array.from(new Set(recipes.map((r) => r.area))).filter(Boolean);
 
   const activeFilterCount = [
@@ -69,13 +69,13 @@ export function FilterSidebar({
             </span>
           )}
         </button>
-           {/* Create Weekplan Button - Inline with filter */}
-            <Link
-              to="/weekplans/new"
-              className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl border border-orange-600 transition-colors flex items-center justify-center px-4 h-[42px] min-w-[42px]"
-            >
-              <Plus size={20} />
-            </Link>
+        {/* Create Weekplan Button - Inline with filter */}
+        <Link
+          to="/weekplans/new"
+          className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl border border-orange-600 transition-colors flex items-center justify-center px-4 h-[42px] min-w-[42px]"
+        >
+          <Plus size={20} />
+        </Link>
       </div>
 
       {/* Expandable Filters */}
@@ -103,7 +103,9 @@ export function FilterSidebar({
             <label className="block text-gray-600 text-xs font-medium mb-1.5">Difficulty</label>
             <select
               value={filters.difficulty}
-              onChange={(e) => onChange({ ...filters, difficulty: e.target.value as FilterState['difficulty'] })}
+              onChange={(e) =>
+                onChange({ ...filters, difficulty: e.target.value as FilterState['difficulty'] })
+              }
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               <option value="all">All Levels</option>
@@ -122,7 +124,10 @@ export function FilterSidebar({
               value={filters.maxPrepTime ?? ''}
               onChange={(e) => {
                 const v = e.target.value;
-                onChange({ ...filters, maxPrepTime: v === '' ? undefined : Math.max(0, Number(v)) });
+                onChange({
+                  ...filters,
+                  maxPrepTime: v === '' ? undefined : Math.max(0, Number(v)),
+                });
               }}
               placeholder="Any (minutes)"
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -134,7 +139,9 @@ export function FilterSidebar({
             <label className="block text-gray-600 text-xs font-medium mb-1.5">Vegetarian</label>
             <select
               value={filters.vegetarian}
-              onChange={(e) => onChange({ ...filters, vegetarian: e.target.value as FilterState['vegetarian'] })}
+              onChange={(e) =>
+                onChange({ ...filters, vegetarian: e.target.value as FilterState['vegetarian'] })
+              }
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               <option value="any">Any</option>
@@ -147,7 +154,15 @@ export function FilterSidebar({
           {activeFilterCount > 0 && (
             <div className="sm:col-span-2 lg:col-span-4 flex justify-end">
               <button
-                onClick={() => onChange({ kitchen: 'all', difficulty: 'all', maxPrepTime: undefined, vegetarian: 'any', searchQuery: '' })}
+                onClick={() =>
+                  onChange({
+                    kitchen: 'all',
+                    difficulty: 'all',
+                    maxPrepTime: undefined,
+                    vegetarian: 'any',
+                    searchQuery: '',
+                  })
+                }
                 className="flex items-center gap-2 px-4 py-2 text-sm text-orange-600 hover:text-orange-700 font-medium"
               >
                 <X className="w-4 h-4" />
