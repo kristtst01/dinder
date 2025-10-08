@@ -154,7 +154,7 @@ export function HomePage() {
     <div className="w-full overflow-x-hidden bg-gray-50 min-h-screen pb-32">
       {/* Header */}
       {/* TO REMOVE ES LINT COMPLAINING */}
-      {loading && <p></p>};
+      {loading && <p></p>}
       <div className="bg-white px-6 pt-14 pb-6 rounded-b-3xl">
         <div className="flex items-center justify-between mb-8">
           {user ? (
