@@ -267,7 +267,11 @@ export function HomePage() {
         <button className="w-14 h-14 flex items-center justify-center hover:bg-gray-50 rounded-full transition-all">
           <Search className="w-6 h-6 text-orange-500" strokeWidth={2} />
         </button>
-        <a href="/saved" className="w-14 h-14 flex items-center justify-center hover:bg-gray-50 rounded-full transition-all" aria-label="Saved recipes">
+        <a
+          href="/saved"
+          className="w-14 h-14 flex items-center justify-center hover:bg-gray-50 rounded-full transition-all"
+          aria-label="Saved recipes"
+        >
           <Bookmark className="w-6 h-6 text-orange-500" strokeWidth={2} />
         </a>
         <button className="w-14 h-14 flex items-center justify-center hover:bg-gray-50 rounded-full transition-all">

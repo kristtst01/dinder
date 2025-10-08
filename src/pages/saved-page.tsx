@@ -7,7 +7,6 @@ import { useSavedRecipesContext } from '../context/SavedRecipesContext';
 import { ALL_RECIPES } from '../data/recipes';
 import type { Recipe } from '../types/recipe';
 
-
 export function SavedPage() {
   const { isSaved } = useSavedRecipesContext();
   const [navOpen, setNavOpen] = useState(false);
@@ -18,7 +17,7 @@ export function SavedPage() {
     vegetarian: 'any',
     searchQuery: '',
   });
-  
+
   // Scroll detection state
   const [showFilter, setShowFilter] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
@@ -27,7 +26,7 @@ export function SavedPage() {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
+
       // Show filter when scrolling up, hide when scrolling down
       if (currentScrollY < lastScrollY.current) {
         setShowFilter(true);
@@ -38,7 +37,7 @@ export function SavedPage() {
       } else if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
         setShowFilter(false);
       }
-      
+
       lastScrollY.current = currentScrollY;
     };
 
@@ -66,17 +65,21 @@ export function SavedPage() {
     // Search filter
     if (filters.searchQuery) {
       const query = filters.searchQuery.toLowerCase();
-      const matchesSearch = recipe.title.toLowerCase().includes(query) || 
-                           recipe.category.toLowerCase().includes(query) ||
-                           recipe.area.toLowerCase().includes(query);
+      const matchesSearch =
+        recipe.title.toLowerCase().includes(query) ||
+        recipe.category.toLowerCase().includes(query) ||
+        recipe.area.toLowerCase().includes(query);
       if (!matchesSearch) return false;
     }
     // Other filters
     if (filters.kitchen !== 'all' && recipe.area !== filters.kitchen) return false;
     if (filters.difficulty !== 'all' && recipe.difficulty !== filters.difficulty) return false;
-    if (filters.maxPrepTime && recipe.cookingTime && recipe.cookingTime > filters.maxPrepTime) return false;
-    if (filters.vegetarian === 'only' && !recipe.category.toLowerCase().includes('veget')) return false;
-    if (filters.vegetarian === 'exclude' && recipe.category.toLowerCase().includes('veget')) return false;
+    if (filters.maxPrepTime && recipe.cookingTime && recipe.cookingTime > filters.maxPrepTime)
+      return false;
+    if (filters.vegetarian === 'only' && !recipe.category.toLowerCase().includes('veget'))
+      return false;
+    if (filters.vegetarian === 'exclude' && recipe.category.toLowerCase().includes('veget'))
+      return false;
     return true;
   });
 
@@ -112,7 +115,15 @@ export function SavedPage() {
             <div className="text-center py-12">
               <p className="text-gray-500 mb-4">No recipes match your filters</p>
               <button
-                onClick={() => setFilters({ kitchen: 'all', difficulty: 'all', maxPrepTime: undefined, vegetarian: 'any', searchQuery: '' })}
+                onClick={() =>
+                  setFilters({
+                    kitchen: 'all',
+                    difficulty: 'all',
+                    maxPrepTime: undefined,
+                    vegetarian: 'any',
+                    searchQuery: '',
+                  })
+                }
                 className="text-orange-500 hover:text-orange-600 font-medium"
               >
                 Clear filters
@@ -137,16 +148,14 @@ export function SavedPage() {
         >
           <div className="flex items-end gap-3">
             <div className="flex-1">
-              <FilterSidebar 
-                filters={filters} 
-                onChange={setFilters} 
+              <FilterSidebar
+                filters={filters}
+                onChange={setFilters}
                 recipes={recipesToShow}
                 showFilters={showFilters}
                 onToggleFilters={setShowFilters}
               />
             </div>
-            
-         
           </div>
         </div>
       </div>
