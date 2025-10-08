@@ -29,56 +29,8 @@ export default function RecipeDetail() {
   const [cookMode, setCookMode] = useState(false);
   const [hasTriedRecipe, setHasTriedRecipe] = useState(false);
 
-  // Load "tried" status from localStorage
-  useEffect(() => {
-    if (id) {
-      const tried = localStorage.getItem(`recipe_tried_${id}`);
-      setHasTriedRecipe(tried === 'true');
-    }
-  }, [id]);
-
-  // Cook Mode - prevent screen from sleeping (mobile only)
-  useEffect(() => {
-    let wakeLock: WakeLockSentinel | null = null;
-
-    const requestWakeLock = async () => {
-      try {
-        if ('wakeLock' in navigator && cookMode) {
-          wakeLock = await navigator.wakeLock.request('screen');
-          console.log('Wake Lock activated');
-        }
-      } catch (err) {
-        console.error('Wake Lock error:', err);
-      }
-    };
-
-    const releaseWakeLock = async () => {
-      if (wakeLock) {
-        try {
-          await wakeLock.release();
-          wakeLock = null;
-          console.log('Wake Lock released');
-        } catch (err) {
-          console.error('Wake Lock release error:', err);
-        }
-      }
-    };
-
-    if (cookMode) {
-      requestWakeLock();
-    } else {
-      releaseWakeLock();
-    }
-
-    // Cleanup on unmount
-    return () => {
-      releaseWakeLock();
-    };
-  }, [cookMode]);
-
-  // Find recipe by id from sample data
+  // Recipe fetching - in production, fetch from API or database
   const recipe = useMemo(() => ALL_RECIPES.find((r) => r.id === id), [id]);
-
   if (!recipe) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
@@ -95,14 +47,11 @@ export default function RecipeDetail() {
     );
   }
 
-  // Mock data for demo (would come from API/data in production)
   const baseServings = recipe.servings ?? 4;
   const rating = recipe.rating ?? 4.5;
   const difficulty = recipe.difficulty || 'Medium';
   const cookingTime = recipe.cookingTime || 30;
-  const chef = `Chef from ${recipe.area}`; // Use area as chef attribution
-
-  // Scale ingredients based on servings
+  const chef = `${recipe.createdBy ?? 'Unknown'}`;
   const scaleFactor = servings / baseServings;
   const ingredients = (recipe.ingredients && recipe.ingredients.length)
     ? recipe.ingredients
@@ -125,7 +74,7 @@ export default function RecipeDetail() {
     'Cool in pan for 10 minutes, then turn out onto a wire rack to cool completely.',
   ];
 
-const nutrition = recipe.nutrition ?? {
+  const nutrition = recipe.nutrition ?? {
     calories: 320,
     protein: '6g',
     carbs: '45g',
@@ -133,6 +82,73 @@ const nutrition = recipe.nutrition ?? {
     fiber: '2g',
     sugar: '22g',
   };
+
+  // Load "tried" status from localStorage
+  useEffect(() => {
+    if (id) {
+      const tried = localStorage.getItem(`recipe_tried_${id}`);
+      setHasTriedRecipe(tried === 'true');
+    }
+  }, [id]);
+
+  // Load base servings on recipe from localStorage
+  useEffect(() => {
+    setServings(baseServings);
+  }, [baseServings]);
+
+
+  // Cook Mode - prevent screen from sleeping (mobile only)
+  useEffect(() => {
+    let wakeLock: any = null;
+    const isTouchDevice = typeof window !== 'undefined' && (navigator.maxTouchPoints > 0 || 'ontouchstart' in window);
+
+    const requestWakeLock = async () => {
+      try {
+        if (isTouchDevice && 'wakeLock' in navigator && cookMode) {
+          wakeLock = await (navigator as any).wakeLock.request('screen');
+          console.log('Wake Lock activated');
+        }
+      } catch (err) {
+        console.error('Wake Lock error:', err);
+      }
+    };
+
+    const releaseWakeLock = async () => {
+      if (wakeLock) {
+        try {
+          await wakeLock.release();
+          wakeLock = null;
+          console.log('Wake Lock released');
+        } catch (err) {
+          console.error('Wake Lock release error:', err);
+        }
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && cookMode) {
+        requestWakeLock();
+      } else if (document.visibilityState === 'hidden') {
+        // release if page is hidden to be polite
+        releaseWakeLock();
+      }
+    };
+
+    if (cookMode) {
+      requestWakeLock();
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+    } else {
+      releaseWakeLock();
+    }
+
+    // Cleanup
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      releaseWakeLock();
+    };
+  }, [cookMode]);
+
+  // Find recipe by id from sample data
 
   const toggleStep = (index: number) => {
     setCheckedSteps((prev) => {
@@ -199,11 +215,12 @@ const nutrition = recipe.nutrition ?? {
         >
           <ArrowLeft size={20} className="text-gray-700" />
         </button>
-        <h1 className="text-lg font-semibold text-gray-900 flex-1 truncate">Recipe</h1>
+        <h1 className="text-lg font-semibold text-gray-900 flex-1 truncate">{recipe.title}</h1>
 
         {/* Cook Mode Toggle - Mobile Only */}
         <button
           onClick={toggleCookMode}
+          aria-pressed={cookMode}
           className={`
             md:hidden p-2 rounded-lg transition-colors
             ${cookMode ? 'bg-orange-500 text-white' : 'hover:bg-gray-100 text-gray-700'}
@@ -237,7 +254,7 @@ const nutrition = recipe.nutrition ?? {
       {/* Cook Mode Banner */}
       {cookMode && (
         <div className="bg-orange-500 text-white px-4 py-2 text-center text-sm font-medium">
-          🔥 Cook Mode Active - Screen will stay on
+          Cook Mode Active - Screen will stay on
         </div>
       )}
 
@@ -294,7 +311,7 @@ const nutrition = recipe.nutrition ?? {
               className="px-3 py-1 text-gray-700 hover:bg-white rounded transition-colors"
               aria-label="Decrease servings"
             >
-              −
+              -
             </button>
             <span className="px-2 text-sm font-medium text-gray-900">{servings} servings</span>
             <button
@@ -457,7 +474,7 @@ const nutrition = recipe.nutrition ?? {
         </button>
         {hasTriedRecipe && (
           <p className="text-center text-sm text-gray-500 mt-2">
-            Great job! You've cooked this recipe 🎉
+            You have tried this recipe before.
           </p>
         )}
       </section>

@@ -15,6 +15,7 @@ export interface Recipe {
   image: string;
   category: string;
   area: string;
+  createdBy?: string;
   difficulty?: 'Easy' | 'Medium' | 'Hard';
   cookingTime?: number;
   badge?: string;
