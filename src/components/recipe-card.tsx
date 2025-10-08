@@ -23,10 +23,10 @@ export function RecipeCard({ recipe, onClick, badge }: RecipeCardProps) {
   };
 
   return (
-    <Link to={`/recipe/${recipe.id}`} state={{ recipe }} className="block">
+    <Link to={`/recipe/${recipe.id}`} state={{ recipe }} className="block h-full">
       <div
         onClick={onClick}
-        className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all cursor-pointer min-h-[120px] flex flex-col"
+        className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all cursor-pointer min-h-[120px] flex flex-col h-full"
       >
         <div className="relative aspect-video w-full">
           <img

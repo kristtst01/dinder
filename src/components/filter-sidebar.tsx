@@ -78,8 +78,13 @@ export function FilterSidebar({
         </Link>
       </div>
 
-      {/* Expandable Filters */}
-      {showFilters && (
+      {/* Expandable Filters with smooth animation */}
+      <div
+        className={`
+          overflow-hidden transition-all duration-300 ease-in-out
+          ${showFilters ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}
+        `}
+      >
         <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Kitchen / Area */}
           <div>
@@ -150,9 +155,9 @@ export function FilterSidebar({
             </select>
           </div>
 
-          {/* Clear Filters Button */}
-          {activeFilterCount > 0 && (
-            <div className="sm:col-span-2 lg:col-span-4 flex justify-end">
+          {/* Clear Filters Button - Always reserve space */}
+          <div className="sm:col-span-2 lg:col-span-4 flex justify-end min-h-[40px]">
+            {activeFilterCount > 0 && (
               <button
                 onClick={() =>
                   onChange({
@@ -163,15 +168,15 @@ export function FilterSidebar({
                     searchQuery: '',
                   })
                 }
-                className="flex items-center gap-2 px-4 py-2 text-sm text-orange-600 hover:text-orange-700 font-medium"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-orange-600 hover:text-orange-700 font-medium transition-opacity duration-200"
               >
                 <X className="w-4 h-4" />
                 Clear all filters
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

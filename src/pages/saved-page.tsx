@@ -232,6 +232,19 @@ export function SavedPage() {
           )}
         </main>
 
+        {/* Mobile Filter Overlay - Closes filter when clicked outside */}
+        {showFilters && (
+          <div 
+            className="md:hidden fixed inset-0 bg-black/20 z-10"
+            onClick={(e) => {
+              // Only close if clicking the overlay itself, not its children
+              if (e.target === e.currentTarget) {
+                setShowFilters(false);
+              }
+            }}
+          />
+        )}
+
         {/* Mobile Floating Filter Bar - Bottom, shows on scroll up (hidden when nav is open) */}
         <div
           className={`
@@ -239,6 +252,7 @@ export function SavedPage() {
             transition-transform duration-300 ease-in-out z-20
             ${showFilter && !navOpen ? 'translate-y-0' : 'translate-y-full'}
           `}
+          onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-end gap-3">
             <div className="flex-1">
