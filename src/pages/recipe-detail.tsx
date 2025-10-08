@@ -96,24 +96,26 @@ export default function RecipeDetail() {
   }
 
   // Mock data for demo (would come from API/data in production)
-  const baseServings = 4;
-  const rating = 4.5;
+  const baseServings = recipe.servings ?? 4;
+  const rating = recipe.rating ?? 4.5;
   const difficulty = recipe.difficulty || 'Medium';
   const cookingTime = recipe.cookingTime || 30;
   const chef = `Chef from ${recipe.area}`; // Use area as chef attribution
 
   // Scale ingredients based on servings
   const scaleFactor = servings / baseServings;
-  const ingredients = [
-    '2 cups flour',
-    '1 cup sugar',
-    '3 eggs',
-    '1/2 cup butter',
-    '1 tsp vanilla extract',
-    '1/4 tsp salt',
-  ];
+  const ingredients = (recipe.ingredients && recipe.ingredients.length)
+    ? recipe.ingredients
+    : [
+      '2 cups flour',
+      '1 cup sugar',
+      '3 eggs',
+      '1/2 cup butter',
+      '1 tsp vanilla extract',
+      '1/4 tsp salt',
+    ];
 
-  const steps = [
+  const steps = (recipe.steps && recipe.steps.length) ? recipe.steps : [
     'Preheat oven to 350°F (175°C). Grease and flour a 9-inch round pan.',
     'In a large bowl, cream together butter and sugar until light and fluffy.',
     'Beat in eggs one at a time, then stir in vanilla extract.',
@@ -123,7 +125,7 @@ export default function RecipeDetail() {
     'Cool in pan for 10 minutes, then turn out onto a wire rack to cool completely.',
   ];
 
-  const nutrition = {
+const nutrition = recipe.nutrition ?? {
     calories: 320,
     protein: '6g',
     carbs: '45g',
@@ -317,10 +319,9 @@ export default function RecipeDetail() {
                   onClick={() => toggleIngredient(index)}
                   className={`
                     mt-0.5 w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors
-                    ${
-                      checkedIngredients.has(index)
-                        ? 'bg-orange-500 border-orange-500'
-                        : 'border-gray-300 hover:border-orange-400'
+                    ${checkedIngredients.has(index)
+                      ? 'bg-orange-500 border-orange-500'
+                      : 'border-gray-300 hover:border-orange-400'
                     }
                   `}
                   aria-label={`Mark ingredient ${index + 1} as ${checkedIngredients.has(index) ? 'unchecked' : 'checked'}`}
@@ -362,10 +363,9 @@ export default function RecipeDetail() {
                 onClick={() => toggleStep(index)}
                 className={`
                   mt-0.5 w-6 h-6 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors
-                  ${
-                    checkedSteps.has(index)
-                      ? 'bg-orange-500 border-orange-500'
-                      : 'border-gray-300 hover:border-orange-400'
+                  ${checkedSteps.has(index)
+                    ? 'bg-orange-500 border-orange-500'
+                    : 'border-gray-300 hover:border-orange-400'
                   }
                 `}
                 aria-label={`Mark step ${index + 1} as ${checkedSteps.has(index) ? 'incomplete' : 'complete'}`}
@@ -436,14 +436,6 @@ export default function RecipeDetail() {
               <p className="text-xs text-gray-600">Fat</p>
               <p className="text-lg font-semibold text-gray-900">{nutrition.fat}</p>
             </div>
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-600">Fiber</p>
-              <p className="text-lg font-semibold text-gray-900">{nutrition.fiber}</p>
-            </div>
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-600">Sugar</p>
-              <p className="text-lg font-semibold text-gray-900">{nutrition.sugar}</p>
-            </div>
           </div>
         )}
       </section>
@@ -454,10 +446,9 @@ export default function RecipeDetail() {
           onClick={toggleTriedRecipe}
           className={`
             w-full py-4 rounded-xl font-semibold text-base transition-all flex items-center justify-center gap-2
-            ${
-              hasTriedRecipe
-                ? 'bg-green-500 text-white shadow-md'
-                : 'bg-orange-500 hover:bg-orange-600 text-white shadow-sm'
+            ${hasTriedRecipe
+              ? 'bg-green-500 text-white shadow-md'
+              : 'bg-orange-500 hover:bg-orange-600 text-white shadow-sm'
             }
           `}
         >
