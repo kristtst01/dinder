@@ -234,7 +234,7 @@ export function SavedPage() {
 
         {/* Mobile Filter Overlay - Closes filter when clicked outside */}
         {showFilters && (
-          <div 
+          <div
             className="md:hidden fixed inset-0 bg-black/20 z-10"
             onClick={(e) => {
               // Only close if clicking the overlay itself, not its children

@@ -8,7 +8,7 @@ interface SavedPageNavbarProps {
 
 export function SavedPageNavbar({ isOpen, onClose }: SavedPageNavbarProps) {
   const location = useLocation();
-  
+
   const isActive = (path: string) => location.pathname === path;
 
   return (
@@ -58,7 +58,10 @@ export function SavedPageNavbar({ isOpen, onClose }: SavedPageNavbarProps) {
                 </h3>
                 <p className="text-sm text-gray-400 truncate">Housewife</p>
               </div>
-              <User size={16} className="text-gray-500 group-hover:text-orange-300 transition-colors" />
+              <User
+                size={16}
+                className="text-gray-500 group-hover:text-orange-300 transition-colors"
+              />
             </div>
           </div>
         </div>
@@ -68,19 +71,22 @@ export function SavedPageNavbar({ isOpen, onClose }: SavedPageNavbarProps) {
           <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-2 mb-2">
             Menu
           </div>
-          
+
           <Link
             to="/weekplans"
             className={`
               flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all group
-              ${isActive('/weekplans') 
-                ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg shadow-orange-500/30' 
-                : 'text-gray-300 hover:bg-white/5 hover:text-white'
+              ${
+                isActive('/weekplans')
+                  ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg shadow-orange-500/30'
+                  : 'text-gray-300 hover:bg-white/5 hover:text-white'
               }
             `}
             onClick={onClose}
           >
-            <div className={`p-1.5 rounded-lg ${isActive('/weekplans') ? 'bg-white/20' : 'bg-white/5'}`}>
+            <div
+              className={`p-1.5 rounded-lg ${isActive('/weekplans') ? 'bg-white/20' : 'bg-white/5'}`}
+            >
               <Calendar size={20} />
             </div>
             <span className="font-medium">Week Plans</span>
@@ -93,14 +99,17 @@ export function SavedPageNavbar({ isOpen, onClose }: SavedPageNavbarProps) {
             to="/statistics"
             className={`
               flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all group
-              ${isActive('/statistics') 
-                ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg shadow-orange-500/30' 
-                : 'text-gray-300 hover:bg-white/5 hover:text-white'
+              ${
+                isActive('/statistics')
+                  ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg shadow-orange-500/30'
+                  : 'text-gray-300 hover:bg-white/5 hover:text-white'
               }
             `}
             onClick={onClose}
           >
-            <div className={`p-1.5 rounded-lg ${isActive('/statistics') ? 'bg-white/20' : 'bg-white/5'}`}>
+            <div
+              className={`p-1.5 rounded-lg ${isActive('/statistics') ? 'bg-white/20' : 'bg-white/5'}`}
+            >
               <BarChart3 size={20} />
             </div>
             <span className="font-medium">Statistics</span>
@@ -113,14 +122,17 @@ export function SavedPageNavbar({ isOpen, onClose }: SavedPageNavbarProps) {
             to="/settings"
             className={`
               flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all group
-              ${isActive('/settings') 
-                ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg shadow-orange-500/30' 
-                : 'text-gray-300 hover:bg-white/5 hover:text-white'
+              ${
+                isActive('/settings')
+                  ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg shadow-orange-500/30'
+                  : 'text-gray-300 hover:bg-white/5 hover:text-white'
               }
             `}
             onClick={onClose}
           >
-            <div className={`p-1.5 rounded-lg ${isActive('/settings') ? 'bg-white/20' : 'bg-white/5'}`}>
+            <div
+              className={`p-1.5 rounded-lg ${isActive('/settings') ? 'bg-white/20' : 'bg-white/5'}`}
+            >
               <Settings size={20} />
             </div>
             <span className="font-medium">Settings</span>
@@ -138,7 +150,7 @@ export function SavedPageNavbar({ isOpen, onClose }: SavedPageNavbarProps) {
             </div>
             <span className="font-medium">Logout</span>
           </button>
-          
+
           <div className="text-center py-2">
             <p className="text-xs text-gray-600">Dinder v1.0.0</p>
           </div>

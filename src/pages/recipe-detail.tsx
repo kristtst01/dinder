@@ -198,7 +198,7 @@ export default function RecipeDetail() {
           <ArrowLeft size={20} className="text-gray-700" />
         </button>
         <h1 className="text-lg font-semibold text-gray-900 flex-1 truncate">Recipe</h1>
-        
+
         {/* Cook Mode Toggle - Mobile Only */}
         <button
           onClick={toggleCookMode}
@@ -211,7 +211,7 @@ export default function RecipeDetail() {
         >
           <Flame size={20} />
         </button>
-        
+
         <button
           onClick={handleShare}
           className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -462,7 +462,7 @@ export default function RecipeDetail() {
           `}
         >
           <Check size={20} strokeWidth={2.5} />
-          {hasTriedRecipe ? "You've Tried This Recipe!" : "Mark as Tried"}
+          {hasTriedRecipe ? "You've Tried This Recipe!" : 'Mark as Tried'}
         </button>
         {hasTriedRecipe && (
           <p className="text-center text-sm text-gray-500 mt-2">
