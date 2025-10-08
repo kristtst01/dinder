@@ -1,5 +1,6 @@
 import { Clock, ChefHat } from 'lucide-react';
 import type { Recipe } from '../types/recipe';
+import { Link } from 'react-router-dom';
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -22,6 +23,7 @@ export function RecipeCard({ recipe, onClick, badge }: RecipeCardProps) {
   };
 
   return (
+    <Link to={`/recipe/${recipe.id}`} state={{ recipe }} className="block">
     <div
       onClick={onClick}
       className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all cursor-pointer min-h-[120px] flex flex-col"
@@ -76,6 +78,7 @@ export function RecipeCard({ recipe, onClick, badge }: RecipeCardProps) {
         )}
       </div>
     </div>
+    </Link>
   );
 }
 
