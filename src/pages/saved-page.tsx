@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { Menu, Search, SlidersHorizontal, Plus } from 'lucide-react';
+import { Menu, Search, Plus } from 'lucide-react';
 import { RecipeCard } from '../components/recipe-card';
 import { FilterSidebar, type FilterState } from '../components/filter-sidebar';
 import { SavedPageNavbar } from '../components/saved-page-navbar';
 import { useSavedRecipesContext } from '../context/SavedRecipesContext';
-import { ALL_RECIPES } from '../data/recipes';
+import { ALL_RECIPES } from '../utils/recipe-loader';
 import { Link } from 'react-router-dom';
 import type { Recipe } from '../types/recipe';
 
@@ -46,16 +46,8 @@ export function SavedPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [showFilters]);
 
-  // Map sample recipes from data/recipes to types/recipe format
-  const sampleRecipes: Recipe[] = ALL_RECIPES.map((r, i) => ({
-    id: r.id,
-    title: r.title,
-    image: r.image,
-    category: r.vegetarian ? 'Vegetarian' : 'Main Course',
-    area: r.kitchen || 'Other',
-    difficulty: (['Easy', 'Medium', 'Hard'] as const)[i % 3],
-    cookingTime: r.prepMinutes || 30,
-  }));
+  // Recipes already match the Recipe type from types/recipe.ts
+  const sampleRecipes: Recipe[] = ALL_RECIPES;
 
   // Get saved recipes or show samples
   const savedRecipes = sampleRecipes.filter((r) => isSaved(r.id));
@@ -150,7 +142,12 @@ export function SavedPage() {
             {/* Difficulty Filter Dropdown */}
             <select
               value={filters.difficulty}
-              onChange={(e) => setFilters({ ...filters, difficulty: e.target.value as any })}
+              onChange={(e) =>
+                setFilters({
+                  ...filters,
+                  difficulty: e.target.value as 'all' | 'Easy' | 'Medium' | 'Hard',
+                })
+              }
               className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 min-w-[140px] font-medium"
             >
               <option value="all">All Levels</option>
@@ -162,7 +159,12 @@ export function SavedPage() {
             {/* Vegetarian Filter Dropdown */}
             <select
               value={filters.vegetarian}
-              onChange={(e) => setFilters({ ...filters, vegetarian: e.target.value as any })}
+              onChange={(e) =>
+                setFilters({
+                  ...filters,
+                  vegetarian: e.target.value as 'any' | 'only' | 'exclude',
+                })
+              }
               className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 min-w-[140px] font-medium"
             >
               <option value="any">All Types</option>

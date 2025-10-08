@@ -11,7 +11,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
-import { ALL_RECIPES } from '../data/recipes';
+import { ALL_RECIPES } from '../utils/recipe-loader';
 import { useSavedRecipesContext } from '../context/SavedRecipesContext';
 
 export default function RecipeDetail() {
@@ -47,7 +47,9 @@ export default function RecipeDetail() {
   // Mock data for demo (would come from API/data in production)
   const baseServings = 4;
   const rating = 4.5;
-  const difficulty = 'Medium';
+  const difficulty = recipe.difficulty || 'Medium';
+  const cookingTime = recipe.cookingTime || 30;
+  const chef = `Chef from ${recipe.area}`; // Use area as chef attribution
 
   // Scale ingredients based on servings
   const scaleFactor = servings / baseServings;
@@ -111,8 +113,8 @@ export default function RecipeDetail() {
           text: `Check out this recipe: ${recipe.title}`,
           url: window.location.href,
         });
-      } catch (err) {
-        console.log('Share cancelled or failed');
+      } catch {
+        // Share cancelled or failed - silently handle
       }
     } else {
       // Fallback: copy to clipboard
@@ -164,11 +166,11 @@ export default function RecipeDetail() {
         <h2 className="text-2xl font-bold text-gray-900 mb-2">{recipe.title}</h2>
         <div className="flex items-center gap-2 mb-3">
           <img
-            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(recipe.chef)}&background=f97316&color=fff&size=32`}
-            alt={recipe.chef}
+            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(chef)}&background=f97316&color=fff&size=32`}
+            alt={chef}
             className="w-8 h-8 rounded-full"
           />
-          <p className="text-sm text-gray-600">By {recipe.chef}</p>
+          <p className="text-sm text-gray-600">By {chef}</p>
         </div>
 
         {/* Quick Stats - Large, readable */}
@@ -176,7 +178,7 @@ export default function RecipeDetail() {
           <div className="flex flex-col items-center p-3 bg-orange-50 rounded-lg">
             <Clock size={20} className="text-orange-600 mb-1" />
             <span className="text-xs text-gray-600">Time</span>
-            <span className="text-sm font-semibold text-gray-900">{recipe.prepMinutes}m</span>
+            <span className="text-sm font-semibold text-gray-900">{cookingTime}m</span>
           </div>
           <div className="flex flex-col items-center p-3 bg-orange-50 rounded-lg">
             <Users size={20} className="text-orange-600 mb-1" />
