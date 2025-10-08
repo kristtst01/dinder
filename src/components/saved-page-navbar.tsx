@@ -84,9 +84,7 @@ export function SavedPageNavbar({ isOpen, onClose }: SavedPageNavbarProps) {
             `}
             onClick={onClose}
           >
-            <div
-              className={`p-1.5 rounded-lg ${isActive('/') ? 'bg-white/20' : 'bg-white/5'}`}
-            >
+            <div className={`p-1.5 rounded-lg ${isActive('/') ? 'bg-white/20' : 'bg-white/5'}`}>
               <Home size={20} />
             </div>
             <span className="font-medium">Home</span>

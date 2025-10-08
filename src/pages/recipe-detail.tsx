@@ -180,26 +180,26 @@ export default function RecipeDetail() {
     recipe.ingredients && recipe.ingredients.length
       ? recipe.ingredients
       : [
-        '2 cups flour',
-        '1 cup sugar',
-        '3 eggs',
-        '1/2 cup butter',
-        '1 tsp vanilla extract',
-        '1/4 tsp salt',
-      ];
+          '2 cups flour',
+          '1 cup sugar',
+          '3 eggs',
+          '1/2 cup butter',
+          '1 tsp vanilla extract',
+          '1/4 tsp salt',
+        ];
 
   const steps =
     recipe.steps && recipe.steps.length
       ? recipe.steps
       : [
-        'Preheat oven to 350°F (175°C). Grease and flour a 9-inch round pan.',
-        'In a large bowl, cream together butter and sugar until light and fluffy.',
-        'Beat in eggs one at a time, then stir in vanilla extract.',
-        'Combine flour and salt; gradually blend into the creamed mixture.',
-        'Pour batter into prepared pan and smooth the top.',
-        'Bake for 30-35 minutes, or until a toothpick inserted into center comes out clean.',
-        'Cool in pan for 10 minutes, then turn out onto a wire rack to cool completely.',
-      ];
+          'Preheat oven to 350°F (175°C). Grease and flour a 9-inch round pan.',
+          'In a large bowl, cream together butter and sugar until light and fluffy.',
+          'Beat in eggs one at a time, then stir in vanilla extract.',
+          'Combine flour and salt; gradually blend into the creamed mixture.',
+          'Pour batter into prepared pan and smooth the top.',
+          'Bake for 30-35 minutes, or until a toothpick inserted into center comes out clean.',
+          'Cool in pan for 10 minutes, then turn out onto a wire rack to cool completely.',
+        ];
 
   const nutrition = recipe.nutrition ?? {
     calories: 320,
@@ -342,9 +342,10 @@ export default function RecipeDetail() {
                   onClick={() => toggleIngredient(index)}
                   className={`
                     mt-0.5 w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors
-                    ${checkedIngredients.has(index)
-                      ? 'bg-orange-500 border-orange-500'
-                      : 'border-gray-300 hover:border-orange-400'
+                    ${
+                      checkedIngredients.has(index)
+                        ? 'bg-orange-500 border-orange-500'
+                        : 'border-gray-300 hover:border-orange-400'
                     }
                   `}
                   aria-label={`Mark ingredient ${index + 1} as ${checkedIngredients.has(index) ? 'unchecked' : 'checked'}`}
@@ -386,9 +387,10 @@ export default function RecipeDetail() {
                 onClick={() => toggleStep(index)}
                 className={`
                   mt-0.5 w-6 h-6 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors
-                  ${checkedSteps.has(index)
-                    ? 'bg-orange-500 border-orange-500'
-                    : 'border-gray-300 hover:border-orange-400'
+                  ${
+                    checkedSteps.has(index)
+                      ? 'bg-orange-500 border-orange-500'
+                      : 'border-gray-300 hover:border-orange-400'
                   }
                 `}
                 aria-label={`Mark step ${index + 1} as ${checkedSteps.has(index) ? 'incomplete' : 'complete'}`}
@@ -469,9 +471,10 @@ export default function RecipeDetail() {
           onClick={toggleTriedRecipe}
           className={`
             w-full py-4 rounded-xl font-semibold text-base transition-all flex items-center justify-center gap-2
-            ${hasTriedRecipe
-              ? 'bg-green-500 text-white shadow-md'
-              : 'bg-orange-500 hover:bg-orange-600 text-white shadow-sm'
+            ${
+              hasTriedRecipe
+                ? 'bg-green-500 text-white shadow-md'
+                : 'bg-orange-500 hover:bg-orange-600 text-white shadow-sm'
             }
           `}
         >

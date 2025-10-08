@@ -12,9 +12,7 @@ const allMeals = [
 ];
 
 // Deduplicate meals by idMeal (some recipes appear in multiple files)
-const uniqueMeals = Array.from(
-  new Map(allMeals.map((meal) => [meal.idMeal, meal])).values()
-);
+const uniqueMeals = Array.from(new Map(allMeals.map((meal) => [meal.idMeal, meal])).values());
 
 // Convert to Recipe format (from types/recipe.ts) and add random difficulty/cooking time for demo
 export const ALL_RECIPES: Recipe[] = convertMealDBArrayToRecipes(uniqueMeals).map((recipe) => ({

@@ -16,7 +16,7 @@ export function HomePage() {
   const vegetarianParam = searchParams.get('vegetarian') || 'any';
   const searchQuery = searchParams.get('q') || '';
 
-const filters: FilterState = useMemo(
+  const filters: FilterState = useMemo(
     () => ({
       kitchen: kitchenParam,
       difficulty: difficultyParam as FilterState['difficulty'],
@@ -80,7 +80,10 @@ const filters: FilterState = useMemo(
   const filteredRecipes = useMemo(() => {
     return allRecipes.filter((recipe) => {
       // Search filter
-      if (filters.searchQuery && !recipe.title.toLowerCase().includes(filters.searchQuery.toLowerCase())) {
+      if (
+        filters.searchQuery &&
+        !recipe.title.toLowerCase().includes(filters.searchQuery.toLowerCase())
+      ) {
         return false;
       }
 
@@ -115,7 +118,8 @@ const filters: FilterState = useMemo(
     filters.difficulty !== 'all' ||
     filters.maxPrepTime !== undefined ||
     filters.vegetarian !== 'any';
-  const hasNoResults = filters.searchQuery || hasActiveFilters ? filteredRecipes.length === 0 : false;
+  const hasNoResults =
+    filters.searchQuery || hasActiveFilters ? filteredRecipes.length === 0 : false;
 
   return (
     <div className="w-full overflow-x-hidden bg-gray-50 min-h-screen pb-32">
@@ -171,7 +175,9 @@ const filters: FilterState = useMemo(
       )}
 
       {/* Empty State */}
-      {hasNoResults && <EmptyState searchQuery={filters.searchQuery} hasFilters={hasActiveFilters} />}
+      {hasNoResults && (
+        <EmptyState searchQuery={filters.searchQuery} hasFilters={hasActiveFilters} />
+      )}
 
       {/* Chicken Recipes */}
       {!hasNoResults && chickenRecipes.length > 0 && (
