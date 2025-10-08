@@ -1,6 +1,6 @@
 import { Bookmark, Home, LogIn, LogOut, Search, User } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import chickenData from '../assets/mealdb-chicken.json';
 import soupData from '../assets/mealdb-soup.json';
 import { EmptyState } from '../components/empty-state';
@@ -13,6 +13,7 @@ import { useAuth } from '../login/hooks/use-auth';
 import { convertMealDBArrayToRecipes } from '../utils/meal-db-helpers';
 
 export function HomePage() {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user, loading, signOut } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -299,7 +300,10 @@ export function HomePage() {
         >
           <Bookmark className="w-6 h-6 text-orange-500" strokeWidth={2} />
         </a>
-        <button className="w-14 h-14 flex items-center justify-center hover:bg-gray-50 rounded-full transition-all">
+        <button
+          className="w-14 h-14 flex items-center justify-center hover:bg-gray-50 rounded-full transition-all"
+          onClick={() => navigate('/profile')}
+        >
           <User className="w-6 h-6 text-orange-500" strokeWidth={2} />
         </button>
       </div>
