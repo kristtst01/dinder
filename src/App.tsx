@@ -1,15 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { HomePage } from './pages/home-page';
-<<<<<<< Updated upstream
-
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-      </Routes>
-    </BrowserRouter>
-=======
 import { SavedRecipesProvider } from './context/SavedRecipesContext';
 import { SavedPage } from './pages/saved-page';
 import RecipeDetail from './pages/recipe-detail';
@@ -25,7 +15,6 @@ function App() {
         </Routes>
       </BrowserRouter>
     </SavedRecipesProvider>
->>>>>>> Stashed changes
   );
 }
 
