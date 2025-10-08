@@ -11,7 +11,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/saved" element={<SavedPage />} />
-          <Route path="/recipe/:id" element={<RecipeDetail/>} />
+          <Route path="/recipe/:id" element={<RecipeDetail />} />
         </Routes>
       </BrowserRouter>
     </SavedRecipesProvider>

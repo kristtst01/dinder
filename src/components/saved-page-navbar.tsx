@@ -18,7 +18,7 @@ export function SavedPageNavbar({ isOpen, onClose }: SavedPageNavbarProps) {
           fixed top-0 left-0 h-screen w-64 bg-white z-50
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-          md:translate-x-0 md:static md:h-screen md:z-auto
+          md:translate-x-0 md:sticky md:top-0 md:h-screen md:z-auto
           flex flex-col shadow-lg
         `}
       >

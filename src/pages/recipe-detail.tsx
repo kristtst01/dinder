@@ -1,8 +1,18 @@
-import { useMemo, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Heart, Share2, Clock, Users, ChefHat, Star, ChevronDown, ChevronUp } from "lucide-react";
-import { ALL_RECIPES } from "../data/recipes";
-import { useSavedRecipesContext } from "../context/SavedRecipesContext";
+import { useMemo, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import {
+  ArrowLeft,
+  Heart,
+  Share2,
+  Clock,
+  Users,
+  ChefHat,
+  Star,
+  ChevronDown,
+  ChevronUp,
+} from 'lucide-react';
+import { ALL_RECIPES } from '../data/recipes';
+import { useSavedRecipesContext } from '../context/SavedRecipesContext';
 
 export default function RecipeDetail() {
   const { id } = useParams<{ id: string }>();
@@ -37,36 +47,36 @@ export default function RecipeDetail() {
   // Mock data for demo (would come from API/data in production)
   const baseServings = 4;
   const rating = 4.5;
-  const difficulty = "Medium";
-  
+  const difficulty = 'Medium';
+
   // Scale ingredients based on servings
   const scaleFactor = servings / baseServings;
   const ingredients = [
-    "2 cups flour",
-    "1 cup sugar",
-    "3 eggs",
-    "1/2 cup butter",
-    "1 tsp vanilla extract",
-    "1/4 tsp salt",
+    '2 cups flour',
+    '1 cup sugar',
+    '3 eggs',
+    '1/2 cup butter',
+    '1 tsp vanilla extract',
+    '1/4 tsp salt',
   ];
 
   const steps = [
-    "Preheat oven to 350°F (175°C). Grease and flour a 9-inch round pan.",
-    "In a large bowl, cream together butter and sugar until light and fluffy.",
-    "Beat in eggs one at a time, then stir in vanilla extract.",
-    "Combine flour and salt; gradually blend into the creamed mixture.",
-    "Pour batter into prepared pan and smooth the top.",
-    "Bake for 30-35 minutes, or until a toothpick inserted into center comes out clean.",
-    "Cool in pan for 10 minutes, then turn out onto a wire rack to cool completely.",
+    'Preheat oven to 350°F (175°C). Grease and flour a 9-inch round pan.',
+    'In a large bowl, cream together butter and sugar until light and fluffy.',
+    'Beat in eggs one at a time, then stir in vanilla extract.',
+    'Combine flour and salt; gradually blend into the creamed mixture.',
+    'Pour batter into prepared pan and smooth the top.',
+    'Bake for 30-35 minutes, or until a toothpick inserted into center comes out clean.',
+    'Cool in pan for 10 minutes, then turn out onto a wire rack to cool completely.',
   ];
 
   const nutrition = {
     calories: 320,
-    protein: "6g",
-    carbs: "45g",
-    fat: "14g",
-    fiber: "2g",
-    sugar: "22g",
+    protein: '6g',
+    carbs: '45g',
+    fat: '14g',
+    fiber: '2g',
+    sugar: '22g',
   };
 
   const toggleStep = (index: number) => {
@@ -102,12 +112,12 @@ export default function RecipeDetail() {
           url: window.location.href,
         });
       } catch (err) {
-        console.log("Share cancelled or failed");
+        console.log('Share cancelled or failed');
       }
     } else {
       // Fallback: copy to clipboard
       navigator.clipboard.writeText(window.location.href);
-      alert("Link copied to clipboard!");
+      alert('Link copied to clipboard!');
     }
   };
 
@@ -133,23 +143,19 @@ export default function RecipeDetail() {
         <button
           onClick={() => toggle(recipe.id)}
           className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          aria-label={isSaved(recipe.id) ? "Unsave recipe" : "Save recipe"}
+          aria-label={isSaved(recipe.id) ? 'Unsave recipe' : 'Save recipe'}
         >
           <Heart
             size={20}
-            className={isSaved(recipe.id) ? "text-red-500" : "text-gray-700"}
-            fill={isSaved(recipe.id) ? "currentColor" : "none"}
+            className={isSaved(recipe.id) ? 'text-red-500' : 'text-gray-700'}
+            fill={isSaved(recipe.id) ? 'currentColor' : 'none'}
           />
         </button>
       </header>
 
       {/* Hero Image */}
       <div className="relative">
-        <img
-          src={recipe.image}
-          alt={recipe.title}
-          className="w-full h-64 object-cover"
-        />
+        <img src={recipe.image} alt={recipe.title} className="w-full h-64 object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
       </div>
 
@@ -212,34 +218,46 @@ export default function RecipeDetail() {
             </button>
           </div>
         </div>
-        
+
         <ul className="space-y-3">
           {ingredients.map((ingredient, index) => {
             // Simple scaling display (in production, parse and scale quantities properly)
-            const displayIngredient = scaleFactor !== 1 
-              ? `${ingredient} (×${scaleFactor.toFixed(1)})`
-              : ingredient;
-            
+            const displayIngredient =
+              scaleFactor !== 1 ? `${ingredient} (×${scaleFactor.toFixed(1)})` : ingredient;
+
             return (
               <li key={index} className="flex items-start gap-3">
                 <button
                   onClick={() => toggleIngredient(index)}
                   className={`
                     mt-0.5 w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors
-                    ${checkedIngredients.has(index)
-                      ? 'bg-orange-500 border-orange-500'
-                      : 'border-gray-300 hover:border-orange-400'
+                    ${
+                      checkedIngredients.has(index)
+                        ? 'bg-orange-500 border-orange-500'
+                        : 'border-gray-300 hover:border-orange-400'
                     }
                   `}
                   aria-label={`Mark ingredient ${index + 1} as ${checkedIngredients.has(index) ? 'unchecked' : 'checked'}`}
                 >
                   {checkedIngredients.has(index) && (
-                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-3 h-3 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={3}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                   )}
                 </button>
-                <span className={`text-base text-gray-700 ${checkedIngredients.has(index) ? 'line-through text-gray-400' : ''}`}>
+                <span
+                  className={`text-base text-gray-700 ${checkedIngredients.has(index) ? 'line-through text-gray-400' : ''}`}
+                >
                   {displayIngredient}
                 </span>
               </li>
@@ -253,24 +271,32 @@ export default function RecipeDetail() {
         <h3 className="text-lg font-bold text-gray-900 mb-4">Instructions</h3>
         <div className="space-y-4">
           {steps.map((step, index) => (
-            <div
-              key={index}
-              className="flex gap-3 items-start"
-            >
+            <div key={index} className="flex gap-3 items-start">
               <button
                 onClick={() => toggleStep(index)}
                 className={`
                   mt-0.5 w-6 h-6 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors
-                  ${checkedSteps.has(index)
-                    ? 'bg-orange-500 border-orange-500'
-                    : 'border-gray-300 hover:border-orange-400'
+                  ${
+                    checkedSteps.has(index)
+                      ? 'bg-orange-500 border-orange-500'
+                      : 'border-gray-300 hover:border-orange-400'
                   }
                 `}
                 aria-label={`Mark step ${index + 1} as ${checkedSteps.has(index) ? 'incomplete' : 'complete'}`}
               >
                 {checkedSteps.has(index) && (
-                  <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  <svg
+                    className="w-4 h-4 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={3}
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                 )}
               </button>
@@ -279,7 +305,9 @@ export default function RecipeDetail() {
                   <span className="flex-shrink-0 w-7 h-7 bg-orange-100 text-orange-700 rounded-full text-sm font-semibold flex items-center justify-center">
                     {index + 1}
                   </span>
-                  <p className={`flex-1 text-base leading-relaxed ${checkedSteps.has(index) ? 'text-gray-400 line-through' : 'text-gray-700'}`}>
+                  <p
+                    className={`flex-1 text-base leading-relaxed ${checkedSteps.has(index) ? 'text-gray-400 line-through' : 'text-gray-700'}`}
+                  >
                     {step}
                   </p>
                 </div>

@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { Menu } from 'lucide-react';
+import { Menu, Search, SlidersHorizontal, Plus } from 'lucide-react';
 import { RecipeCard } from '../components/recipe-card';
 import { FilterSidebar, type FilterState } from '../components/filter-sidebar';
 import { SavedPageNavbar } from '../components/saved-page-navbar';
 import { useSavedRecipesContext } from '../context/SavedRecipesContext';
 import { ALL_RECIPES } from '../data/recipes';
+import { Link } from 'react-router-dom';
 import type { Recipe } from '../types/recipe';
 
 export function SavedPage() {
@@ -90,19 +91,110 @@ export function SavedPage() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-4 sticky top-0 z-30">
-          <button
-            onClick={() => setNavOpen(true)}
-            className="p-2 hover:bg-gray-100 rounded-lg md:hidden"
-          >
+        {/* Mobile Header */}
+        <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-4 sticky top-0 z-30 md:hidden">
+          <button onClick={() => setNavOpen(true)} className="p-2 hover:bg-gray-100 rounded-lg">
             <Menu size={24} className="text-gray-700" />
           </button>
           <h1 className="text-xl font-bold text-gray-900">Saved Recipes</h1>
         </header>
 
+        {/* Desktop Dashboard Header */}
+        <header className="hidden md:block bg-white border-b border-gray-200 px-6 py-6 sticky top-0 z-30">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Saved Recipes</h1>
+              <p className="text-sm text-gray-600 mt-1">
+                {filteredRecipes.length} recipe{filteredRecipes.length !== 1 ? 's' : ''} found
+              </p>
+            </div>
+            <Link
+              to="/weekplans/new"
+              className="flex items-center gap-2 px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl transition-colors font-medium shadow-sm"
+            >
+              <Plus size={18} />
+              <span>Create Weekplan</span>
+            </Link>
+          </div>
+
+          {/* Desktop Search and Filters Bar */}
+          <div className="flex items-center gap-3">
+            {/* Search Input */}
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search saved recipes..."
+                value={filters.searchQuery}
+                onChange={(e) => setFilters({ ...filters, searchQuery: e.target.value })}
+                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Kitchen Filter Dropdown */}
+            <select
+              value={filters.kitchen}
+              onChange={(e) => setFilters({ ...filters, kitchen: e.target.value })}
+              className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 min-w-[160px] font-medium"
+            >
+              <option value="all">All Kitchens</option>
+              {Array.from(new Set(recipesToShow.map((r) => r.area)))
+                .filter(Boolean)
+                .map((area) => (
+                  <option key={area} value={area}>
+                    {area}
+                  </option>
+                ))}
+            </select>
+
+            {/* Difficulty Filter Dropdown */}
+            <select
+              value={filters.difficulty}
+              onChange={(e) => setFilters({ ...filters, difficulty: e.target.value as any })}
+              className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 min-w-[140px] font-medium"
+            >
+              <option value="all">All Levels</option>
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
+
+            {/* Vegetarian Filter Dropdown */}
+            <select
+              value={filters.vegetarian}
+              onChange={(e) => setFilters({ ...filters, vegetarian: e.target.value as any })}
+              className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 min-w-[140px] font-medium"
+            >
+              <option value="any">All Types</option>
+              <option value="only">Vegetarian Only</option>
+              <option value="exclude">Non-Vegetarian</option>
+            </select>
+
+            {/* Clear Filters */}
+            {(filters.searchQuery ||
+              filters.kitchen !== 'all' ||
+              filters.difficulty !== 'all' ||
+              filters.vegetarian !== 'any') && (
+              <button
+                onClick={() =>
+                  setFilters({
+                    kitchen: 'all',
+                    difficulty: 'all',
+                    maxPrepTime: undefined,
+                    vegetarian: 'any',
+                    searchQuery: '',
+                  })
+                }
+                className="px-4 py-2.5 text-gray-600 hover:text-gray-900 font-medium whitespace-nowrap"
+              >
+                Clear All
+              </button>
+            )}
+          </div>
+        </header>
+
         {/* Main Content Area */}
-        <main className="flex-1 p-4 pb-32">
+        <main className="flex-1 p-4 pb-32 md:p-6 md:pb-6">
           {/* Sample Indicator */}
           {savedRecipes.length === 0 && (
             <div className="mb-4 px-3 py-2 bg-orange-50 border border-orange-200 rounded-lg text-sm text-orange-700">
@@ -130,7 +222,7 @@ export function SavedPage() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {filteredRecipes.map((recipe) => (
                 <RecipeCard key={recipe.id} recipe={recipe} />
               ))}
@@ -138,10 +230,10 @@ export function SavedPage() {
           )}
         </main>
 
-        {/* Floating Filter Bar - Bottom, shows on scroll up (hidden when nav is open) */}
+        {/* Mobile Floating Filter Bar - Bottom, shows on scroll up (hidden when nav is open) */}
         <div
           className={`
-            fixed bottom-0 left-0 right-0 md:left-64 p-4 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent
+            md:hidden fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent
             transition-transform duration-300 ease-in-out z-20
             ${showFilter && !navOpen ? 'translate-y-0' : 'translate-y-full'}
           `}
