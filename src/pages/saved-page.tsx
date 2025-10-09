@@ -106,7 +106,7 @@ export function SavedPage() {
           filteredCount={filteredRecipes.length}
           filters={filters}
           onFiltersChange={setFilters}
-          availableAreas={Array.from(new Set(recipesToShow.map((r) => r.area))).filter(Boolean)}
+          recipes={recipesToShow}
         />
 
         {/* Main Content Area */}

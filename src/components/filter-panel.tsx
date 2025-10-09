@@ -38,7 +38,7 @@ export function FilterPanel({
 
   const areas = Array.from(new Set(recipes.map((r) => r.area))).filter(Boolean);
   const filteredAreas = areas.filter((a) =>
-    a.toLowerCase().startsWith(kitchenSearch.toLowerCase()),
+    a.toLowerCase().startsWith(kitchenSearch.toLowerCase())
   );
 
   const activeFilterCount = [

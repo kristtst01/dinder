@@ -1,18 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {
-  ArrowLeft,
-  Heart,
-  Share2,
-  Clock,
-  Users,
-  ChefHat,
-  Star,
-  ChevronDown,
-  ChevronUp,
-  Flame,
-  Check,
-} from 'lucide-react';
+import { ArrowLeft, Heart, Share2, Clock, Users, ChefHat, Flame, Check } from 'lucide-react';
 import { ALL_RECIPES } from '../utils/recipe-loader';
 import { useSavedRecipesContext } from '../context/SavedRecipesContext';
 
@@ -25,7 +13,6 @@ export default function RecipeDetail() {
   const [servings, setServings] = useState(4);
   const [checkedSteps, setCheckedSteps] = useState<Set<number>>(new Set());
   const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
-  const [nutritionOpen, setNutritionOpen] = useState(false);
   const [cookMode, setCookMode] = useState(false);
   const [hasTriedRecipe, setHasTriedRecipe] = useState(false);
 
@@ -171,44 +158,11 @@ export default function RecipeDetail() {
   }
 
   const baseServings = recipe.servings ?? 4;
-  const rating = recipe.rating ?? 4.5;
   const difficulty = recipe.difficulty || 'Medium';
   const cookingTime = recipe.cookingTime || 30;
-  const chef = `${recipe.createdBy ?? 'Unknown'}`;
   const scaleFactor = servings / baseServings;
-  const ingredients =
-    recipe.ingredients && recipe.ingredients.length
-      ? recipe.ingredients
-      : [
-          '2 cups flour',
-          '1 cup sugar',
-          '3 eggs',
-          '1/2 cup butter',
-          '1 tsp vanilla extract',
-          '1/4 tsp salt',
-        ];
-
-  const steps =
-    recipe.steps && recipe.steps.length
-      ? recipe.steps
-      : [
-          'Preheat oven to 350°F (175°C). Grease and flour a 9-inch round pan.',
-          'In a large bowl, cream together butter and sugar until light and fluffy.',
-          'Beat in eggs one at a time, then stir in vanilla extract.',
-          'Combine flour and salt; gradually blend into the creamed mixture.',
-          'Pour batter into prepared pan and smooth the top.',
-          'Bake for 30-35 minutes, or until a toothpick inserted into center comes out clean.',
-          'Cool in pan for 10 minutes, then turn out onto a wire rack to cool completely.',
-        ];
-
-  const nutrition = recipe.nutrition ?? {
-    calories: 320,
-    protein: '6g',
-    carbs: '45g',
-    fat: '14g',
-    fiber: '2g',
-    sugar: '22g',
-  };
+  const ingredients = recipe.ingredients ?? [];
+  const steps = recipe.steps ?? [];
 
   return (
     <div className="min-h-screen bg-gray-50 pb-8">
@@ -273,17 +227,9 @@ export default function RecipeDetail() {
       {/* Title & Meta */}
       <div className="px-4 py-4 bg-white">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">{recipe.title}</h2>
-        <div className="flex items-center gap-2 mb-3">
-          <img
-            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(chef)}&background=f97316&color=fff&size=32`}
-            alt={chef}
-            className="w-8 h-8 rounded-full"
-          />
-          <p className="text-sm text-gray-600">By {chef}</p>
-        </div>
 
         {/* Quick Stats - Large, readable */}
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-3 gap-2 mt-4">
           <div className="flex flex-col items-center p-3 bg-orange-50 rounded-lg">
             <Clock size={20} className="text-orange-600 mb-1" />
             <span className="text-xs text-gray-600">Time</span>
@@ -298,11 +244,6 @@ export default function RecipeDetail() {
             <ChefHat size={20} className="text-orange-600 mb-1" />
             <span className="text-xs text-gray-600">Level</span>
             <span className="text-sm font-semibold text-gray-900">{difficulty}</span>
-          </div>
-          <div className="flex flex-col items-center p-3 bg-orange-50 rounded-lg">
-            <Star size={20} className="text-orange-600 mb-1" />
-            <span className="text-xs text-gray-600">Rating</span>
-            <span className="text-sm font-semibold text-gray-900">{rating}</span>
           </div>
         </div>
       </div>
@@ -426,43 +367,6 @@ export default function RecipeDetail() {
             </div>
           ))}
         </div>
-      </section>
-
-      {/* Nutrition Info - collapsible */}
-      <section className="px-4 py-4 bg-white mt-2">
-        <button
-          onClick={() => setNutritionOpen(!nutritionOpen)}
-          className="w-full flex items-center justify-between"
-          aria-expanded={nutritionOpen}
-        >
-          <h3 className="text-lg font-bold text-gray-900">Nutrition Information</h3>
-          {nutritionOpen ? (
-            <ChevronUp size={20} className="text-gray-600" />
-          ) : (
-            <ChevronDown size={20} className="text-gray-600" />
-          )}
-        </button>
-
-        {nutritionOpen && (
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-600">Calories</p>
-              <p className="text-lg font-semibold text-gray-900">{nutrition.calories}</p>
-            </div>
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-600">Protein</p>
-              <p className="text-lg font-semibold text-gray-900">{nutrition.protein}</p>
-            </div>
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-600">Carbs</p>
-              <p className="text-lg font-semibold text-gray-900">{nutrition.carbs}</p>
-            </div>
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-600">Fat</p>
-              <p className="text-lg font-semibold text-gray-900">{nutrition.fat}</p>
-            </div>
-          </div>
-        )}
       </section>
 
       {/* Action Buttons - "I Have Tried This" */}
