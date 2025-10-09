@@ -1,12 +1,12 @@
 import { Settings, BarChart3, Calendar, X, ChefHat, LogOut, User, Home } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
-interface SavedPageNavbarProps {
+interface NavbarProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function SavedPageNavbar({ isOpen, onClose }: SavedPageNavbarProps) {
+export function SavedPageNavbar({ isOpen, onClose }: NavbarProps) {
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;

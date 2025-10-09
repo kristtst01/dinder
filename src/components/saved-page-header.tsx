@@ -1,125 +1,52 @@
-import { Plus, Search } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { FilterState } from './filter-panel';
+import { FilterPanel } from './filter-panel';
+import type { Recipe } from '../types/recipe';
 
 interface SavedPageHeaderProps {
   filteredCount: number;
   filters: FilterState;
   onFiltersChange: (filters: FilterState) => void;
-  availableAreas: string[];
+  recipes: Recipe[];
 }
 
 export function SavedPageHeader({
   filteredCount,
   filters,
   onFiltersChange,
-  availableAreas,
+  recipes,
 }: SavedPageHeaderProps) {
-  const hasActiveFilters =
-    filters.searchQuery ||
-    filters.kitchen !== 'all' ||
-    filters.difficulty !== 'all' ||
-    filters.vegetarian !== 'any';
-
-  const clearFilters = () => {
-    onFiltersChange({
-      kitchen: 'all',
-      difficulty: 'all',
-      maxPrepTime: undefined,
-      vegetarian: 'any',
-      searchQuery: '',
-    });
-  };
-
   return (
     <header className="hidden md:block bg-white border-b border-gray-200 px-6 py-6 sticky top-0 z-30">
-      {/* Title and Create Weekplan button */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Saved Recipes</h1>
+      {/* Title row */}
+      <div className="flex items-center justify-between gap-4 mb-4 min-w-0">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold text-gray-900 truncate">Saved Recipes</h1>
           <p className="text-sm text-gray-600 mt-1">
             {filteredCount} recipe{filteredCount !== 1 ? 's' : ''} found
           </p>
         </div>
         <Link
           to="/weekplans/new"
-          className="flex items-center gap-2 px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl transition-colors font-medium shadow-sm"
+          className="flex items-center gap-2 px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl transition-colors font-medium shadow-sm shrink-0"
         >
           <Plus size={18} />
           <span>Create Weekplan</span>
         </Link>
       </div>
 
-      {/* Desktop Search and Filters Bar */}
-      <div className="flex items-center gap-3">
-        {/* Search Input */}
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search saved recipes..."
-            value={filters.searchQuery}
-            onChange={(e) => onFiltersChange({ ...filters, searchQuery: e.target.value })}
-            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-          />
-        </div>
+      {/* --- visual separation line --- */}
+      <hr className="border-gray-200 mb-4" />
 
-        {/* Kitchen Filter Dropdown */}
-        <select
-          value={filters.kitchen}
-          onChange={(e) => onFiltersChange({ ...filters, kitchen: e.target.value })}
-          className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 min-w-[160px] font-medium"
-        >
-          <option value="all">All Kitchens</option>
-          {availableAreas.map((area) => (
-            <option key={area} value={area}>
-              {area}
-            </option>
-          ))}
-        </select>
-
-        {/* Difficulty Filter Dropdown */}
-        <select
-          value={filters.difficulty}
-          onChange={(e) =>
-            onFiltersChange({
-              ...filters,
-              difficulty: e.target.value as FilterState['difficulty'],
-            })
-          }
-          className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 min-w-[140px] font-medium"
-        >
-          <option value="all">All Levels</option>
-          <option value="Easy">Easy</option>
-          <option value="Medium">Medium</option>
-          <option value="Hard">Hard</option>
-        </select>
-
-        {/* Vegetarian Filter Dropdown */}
-        <select
-          value={filters.vegetarian}
-          onChange={(e) =>
-            onFiltersChange({
-              ...filters,
-              vegetarian: e.target.value as FilterState['vegetarian'],
-            })
-          }
-          className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 min-w-[140px] font-medium"
-        >
-          <option value="any">All Types</option>
-          <option value="only">Vegetarian Only</option>
-          <option value="exclude">Non-Vegetarian</option>
-        </select>
-
-        {/* Clear Filters */}
-        {hasActiveFilters && (
-          <button
-            onClick={clearFilters}
-            className="px-4 py-2.5 text-gray-600 hover:text-gray-900 font-medium whitespace-nowrap"
-          >
-            Clear All
-          </button>
-        )}
+      {/* Filter panel (contains search + dropdowns) */}
+      <div className="space-y-4">
+        {/* First, the FilterPanel search bar */}
+        <FilterPanel
+          filters={filters}
+          onChange={onFiltersChange}
+          recipes={recipes}
+        />
       </div>
     </header>
   );

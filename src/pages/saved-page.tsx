@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Menu } from 'lucide-react';
 import { RecipeCard } from '../components/recipe-card';
 import { FilterPanel, type FilterState } from '../components/filter-panel';
-import { SavedPageNavbar } from '../components/saved-page-navbar';
+import { SavedPageNavbar } from '../components/navbar';
 import { SavedPageHeader } from '../components/saved-page-header';
 import { useSavedRecipesContext } from '../context/SavedRecipesContext';
 import { ALL_RECIPES } from '../utils/recipe-loader';
@@ -87,12 +87,12 @@ export function SavedPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50 flex overflow-x-clip">
       {/* Left Navbar */}
       <SavedPageNavbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile Header */}
         <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-4 sticky top-0 z-30 md:hidden">
           <button onClick={() => setNavOpen(true)} className="p-2 hover:bg-gray-100 rounded-lg">
