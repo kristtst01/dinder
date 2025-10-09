@@ -85,7 +85,7 @@ export function FilterPanel({
           ${showFilters ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}
         `}
       >
-        <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-0.5">
           {/* Kitchen / Area */}
           <div>
             <label className="block text-gray-600 text-xs font-medium mb-1.5">Kitchen</label>
