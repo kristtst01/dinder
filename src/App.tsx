@@ -3,6 +3,7 @@ import { SavedRecipesProvider } from './context/SavedRecipesContext';
 import { HomePage } from './pages/home-page';
 import ProfilePage from './pages/profile-page';
 import { SavedPage } from './pages/saved-page';
+import RecipeDetail from './pages/recipe-detail';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/saved" element={<SavedPage />} />
+          <Route path="/recipe/:id" element={<RecipeDetail />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </BrowserRouter>

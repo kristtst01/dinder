@@ -15,7 +15,18 @@ export interface Recipe {
   image: string;
   category: string;
   area: string;
+  createdBy?: string;
   difficulty?: 'Easy' | 'Medium' | 'Hard';
   cookingTime?: number;
   badge?: string;
+  ingredients?: string[];
+  steps?: string[];
+  nutrition?: {
+    calories: number;
+    protein: string;
+    carbs: string;
+    fat: string;
+  };
+  servings?: number;
+  rating?: number;
 }
