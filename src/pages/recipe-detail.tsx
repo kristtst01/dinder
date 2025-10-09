@@ -3,6 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart, Share2, Clock, Users, ChefHat, Flame, Check } from 'lucide-react';
 import { ALL_RECIPES } from '../utils/recipe-loader';
 import { useSavedRecipesContext } from '../context/SavedRecipesContext';
+import { useCookMode } from '../hooks/useCookMode';
+import { useTriedRecipe } from '../hooks/useTriedRecipe';
+import { useRecipeShare } from '../hooks/useRecipeShare';
 
 export default function RecipeDetail() {
   const { id } = useParams<{ id: string }>();
@@ -13,19 +16,14 @@ export default function RecipeDetail() {
   const [servings, setServings] = useState(4);
   const [checkedSteps, setCheckedSteps] = useState<Set<number>>(new Set());
   const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
-  const [cookMode, setCookMode] = useState(false);
-  const [hasTriedRecipe, setHasTriedRecipe] = useState(false);
+
+  // Custom hooks for feature logic
+  const { cookMode, toggleCookMode } = useCookMode();
+  const { hasTriedRecipe, toggleTriedRecipe } = useTriedRecipe(id);
+  const { handleShare } = useRecipeShare();
 
   // Recipe fetching - in production, fetch from API or database
   const recipe = useMemo(() => ALL_RECIPES.find((r) => r.id === id), [id]);
-
-  // Load "tried" status from localStorage
-  useEffect(() => {
-    if (id) {
-      const tried = localStorage.getItem(`recipe_tried_${id}`);
-      setHasTriedRecipe(tried === 'true');
-    }
-  }, [id]);
 
   useEffect(() => {
     if (recipe) {
@@ -33,60 +31,9 @@ export default function RecipeDetail() {
     }
   }, [recipe]);
 
-  // Cook Mode - prevent screen from sleeping (mobile only)
-  useEffect(() => {
-    let wakeLock: any = null;
-    const isTouchDevice =
-      typeof window !== 'undefined' && (navigator.maxTouchPoints > 0 || 'ontouchstart' in window);
-
-    const requestWakeLock = async () => {
-      try {
-        if (isTouchDevice && 'wakeLock' in navigator && cookMode) {
-          wakeLock = await (navigator as any).wakeLock.request('screen');
-          console.log('Wake Lock activated');
-        }
-      } catch (err) {
-        console.error('Wake Lock error:', err);
-      }
-    };
-
-    const releaseWakeLock = async () => {
-      if (wakeLock) {
-        try {
-          await wakeLock.release();
-          wakeLock = null;
-          console.log('Wake Lock released');
-        } catch (err) {
-          console.error('Wake Lock release error:', err);
-        }
-      }
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && cookMode) {
-        requestWakeLock();
-      } else if (document.visibilityState === 'hidden') {
-        // release if page is hidden to be polite
-        releaseWakeLock();
-      }
-    };
-
-    if (cookMode) {
-      requestWakeLock();
-      document.addEventListener('visibilitychange', handleVisibilityChange);
-    } else {
-      releaseWakeLock();
-    }
-
-    // Cleanup
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      releaseWakeLock();
-    };
-  }, [cookMode]);
-
-  const toggleStep = (index: number) => {
-    setCheckedSteps((prev) => {
+  // Generic toggle function for Set state
+  const toggleInSet = (setter: React.Dispatch<React.SetStateAction<Set<number>>>, index: number) => {
+    setter((prev) => {
       const next = new Set(prev);
       if (next.has(index)) {
         next.delete(index);
@@ -97,49 +44,8 @@ export default function RecipeDetail() {
     });
   };
 
-  const toggleIngredient = (index: number) => {
-    setCheckedIngredients((prev) => {
-      const next = new Set(prev);
-      if (next.has(index)) {
-        next.delete(index);
-      } else {
-        next.add(index);
-      }
-      return next;
-    });
-  };
-
-  const handleShare = async () => {
-    if (!recipe) return;
-
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: recipe.title,
-          text: `Check out this recipe: ${recipe.title}`,
-          url: window.location.href,
-        });
-      } catch {
-        // Share cancelled or failed - silently handle
-      }
-    } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard.writeText(window.location.href);
-      alert('Link copied to clipboard!');
-    }
-  };
-
-  const toggleCookMode = () => {
-    setCookMode(!cookMode);
-  };
-
-  const toggleTriedRecipe = () => {
-    const newTriedStatus = !hasTriedRecipe;
-    setHasTriedRecipe(newTriedStatus);
-    if (id) {
-      localStorage.setItem(`recipe_tried_${id}`, String(newTriedStatus));
-    }
-  };
+  const toggleStep = (index: number) => toggleInSet(setCheckedSteps, index);
+  const toggleIngredient = (index: number) => toggleInSet(setCheckedIngredients, index);
 
   if (!recipe) {
     return (
@@ -192,7 +98,7 @@ export default function RecipeDetail() {
         </button>
 
         <button
-          onClick={handleShare}
+          onClick={() => recipe && handleShare(recipe.title, window.location.href)}
           className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           aria-label="Share recipe"
         >
