@@ -175,6 +175,21 @@ export function FilterPanel({
               placeholder="Any (minutes)"
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
+            <div className="flex flex-wrap gap-2 mt-2">
+              {[15, 30, 60].map((time) => (
+                <button
+                  key={time}
+                  onClick={() => onChange({ ...filters, maxPrepTime: time })}
+                  className={`px-3 py-1.5 text-xs rounded-lg border transition-colors ${
+                    filters.maxPrepTime === time
+                      ? 'bg-orange-500 text-white border-orange-500'
+                      : 'bg-white text-gray-700 border-gray-200 hover:border-orange-300'
+                  }`}
+                >
+                  {time}m
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Vegetarian */}
