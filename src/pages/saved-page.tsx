@@ -6,7 +6,6 @@ import { SavedPageNavbar } from '../components/navbar';
 import { SavedPageHeader } from '../components/saved-page-header';
 import { useSavedRecipesContext } from '../context/SavedRecipesContext';
 import { ALL_RECIPES } from '../utils/recipe-loader';
-import type { Recipe } from '../types/recipe';
 
 export function SavedPage() {
   const { isSaved } = useSavedRecipesContext();
@@ -47,13 +46,9 @@ export function SavedPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [mobileFiltersExpanded]);
 
-  // Get all recipes from loader
-  const allRecipes: Recipe[] = ALL_RECIPES;
-
-  // Get saved recipes
-  const savedRecipes = allRecipes.filter((r) => isSaved(r.id));
-  const hasSavedRecipes = savedRecipes.length > 0;
-  const recipesToShow = hasSavedRecipes ? savedRecipes : allRecipes;
+  // Get saved recipes only
+  const savedRecipes = ALL_RECIPES.filter((r) => isSaved(r.id));
+  const recipesToShow = savedRecipes;
 
   // Apply filters and search
   const filteredRecipes = recipesToShow.filter((recipe) => {
@@ -111,15 +106,15 @@ export function SavedPage() {
 
         {/* Main Content Area */}
         <main className="flex-1 p-4 pb-32 md:p-6 md:pb-6">
-          {/* Show indicator when displaying sample recipes */}
-          {!hasSavedRecipes && (
-            <div className="mb-4 px-3 py-2 bg-orange-50 border border-orange-200 rounded-lg text-sm text-orange-700">
-              No saved recipes yet. Showing all available recipes.
-            </div>
-          )}
-
           {/* Recipe Grid or Empty State */}
-          {filteredRecipes.length === 0 ? (
+          {savedRecipes.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg mb-2">No saved recipes yet</p>
+              <p className="text-sm text-gray-400">
+                Start adding recipes by clicking the heart icon on any recipe from the home page
+              </p>
+            </div>
+          ) : filteredRecipes.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-500">No recipes match your filters</p>
               <p className="text-sm text-gray-400 mt-2">
