@@ -20,6 +20,7 @@ export function SavedPage() {
 
   const [showMobileFilter, setShowMobileFilter] = useState(true);
   const [mobileFiltersExpanded, setMobileFiltersExpanded] = useState(false);
+  const [desktopFiltersExpanded, setDesktopFiltersExpanded] = useState(false);
   const lastScrollY = useRef(0);
 
   // Auto-hide mobile filter bar on scroll down, show on scroll up
@@ -102,6 +103,8 @@ export function SavedPage() {
           filters={filters}
           onFiltersChange={setFilters}
           recipes={recipesToShow}
+          desktopFiltersExpanded={desktopFiltersExpanded}
+          onDesktopFiltersToggle={setDesktopFiltersExpanded}
         />
 
         {/* Main Content Area */}
@@ -122,10 +125,21 @@ export function SavedPage() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {filteredRecipes.map((recipe) => (
-                <RecipeCard key={recipe.id} recipe={recipe} />
-              ))}
+            <div className="relative">
+              {/* Overlay to intercept clicks when desktop filters are expanded */}
+              {desktopFiltersExpanded && (
+                <div 
+                  className="hidden md:block absolute inset-0 z-10 cursor-pointer"
+                  onClick={() => setDesktopFiltersExpanded(false)}
+                />
+              )}
+              <div 
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+              >
+                {filteredRecipes.map((recipe) => (
+                  <RecipeCard key={recipe.id} recipe={recipe} />
+                ))}
+              </div>
             </div>
           )}
         </main>

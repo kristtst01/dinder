@@ -74,9 +74,9 @@ export function FilterPanel({
             </span>
           )}
         </button>
-        {/* Create Weekplan Button - Inline with filter */}
+        {/* Create Recipe Button - Inline with filter */}
         <Link
-          to="/weekplans/new"
+          to="/create-recipe"
           className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl border border-orange-600 transition-colors flex items-center justify-center px-4 h-[42px] min-w-[42px]"
         >
           <Plus size={20} />
@@ -87,7 +87,7 @@ export function FilterPanel({
       <div
         className={`
           overflow-hidden transition-all duration-300 ease-in-out
-          ${showFilters ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}
+          ${showFilters ? 'max-h-[600px] sm:max-h-96 opacity-100' : 'max-h-0 opacity-0'}
         `}
       >
         <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-0.5">
@@ -209,7 +209,7 @@ export function FilterPanel({
           </div>
 
           {/* Clear Filters Button - Always reserve space */}
-          <div className="sm:col-span-2 lg:col-span-4 flex justify-end min-h-[40px]">
+          <div className="col-span-1 sm:col-span-2 lg:col-span-4 flex justify-end min-h-[40px]">
             {activeFilterCount > 0 && (
               <button
                 onClick={() =>

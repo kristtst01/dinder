@@ -9,6 +9,8 @@ interface SavedPageHeaderProps {
   filters: FilterState;
   onFiltersChange: (filters: FilterState) => void;
   recipes: Recipe[];
+  desktopFiltersExpanded: boolean;
+  onDesktopFiltersToggle: (expanded: boolean) => void;
 }
 
 export function SavedPageHeader({
@@ -16,6 +18,8 @@ export function SavedPageHeader({
   filters,
   onFiltersChange,
   recipes,
+  desktopFiltersExpanded,
+  onDesktopFiltersToggle,
 }: SavedPageHeaderProps) {
   return (
     <header className="hidden md:block bg-white border-b border-gray-200 px-6 py-6 sticky top-0 z-30">
@@ -42,7 +46,13 @@ export function SavedPageHeader({
       {/* Filter panel (contains search + dropdowns) */}
       <div className="space-y-4">
         {/* First, the FilterPanel search bar */}
-        <FilterPanel filters={filters} onChange={onFiltersChange} recipes={recipes} />
+        <FilterPanel 
+          filters={filters} 
+          onChange={onFiltersChange} 
+          recipes={recipes}
+          showFilters={desktopFiltersExpanded}
+          onToggleFilters={onDesktopFiltersToggle}
+        />
       </div>
     </header>
   );
