@@ -46,9 +46,9 @@ export function SavedPageHeader({
       {/* Filter panel (contains search + dropdowns) */}
       <div className="space-y-4">
         {/* First, the FilterPanel search bar */}
-        <FilterPanel 
-          filters={filters} 
-          onChange={onFiltersChange} 
+        <FilterPanel
+          filters={filters}
+          onChange={onFiltersChange}
           recipes={recipes}
           showFilters={desktopFiltersExpanded}
           onToggleFilters={onDesktopFiltersToggle}

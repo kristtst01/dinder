@@ -128,14 +128,12 @@ export function SavedPage() {
             <div className="relative">
               {/* Overlay to intercept clicks when desktop filters are expanded */}
               {desktopFiltersExpanded && (
-                <div 
+                <div
                   className="hidden md:block absolute inset-0 z-10 cursor-pointer"
                   onClick={() => setDesktopFiltersExpanded(false)}
                 />
               )}
-              <div 
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-              >
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {filteredRecipes.map((recipe) => (
                   <RecipeCard key={recipe.id} recipe={recipe} />
                 ))}
