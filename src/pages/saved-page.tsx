@@ -121,21 +121,10 @@ export function SavedPage() {
           {/* Recipe Grid or Empty State */}
           {filteredRecipes.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-500 mb-4">No recipes match your filters</p>
-              <button
-                onClick={() =>
-                  setFilters({
-                    kitchen: 'all',
-                    difficulty: 'all',
-                    maxPrepTime: undefined,
-                    vegetarian: 'any',
-                    searchQuery: '',
-                  })
-                }
-                className="text-orange-500 hover:text-orange-600 font-medium"
-              >
-                Clear filters
-              </button>
+              <p className="text-gray-500">No recipes match your filters</p>
+              <p className="text-sm text-gray-400 mt-2">
+                Try adjusting your filters or clearing them
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

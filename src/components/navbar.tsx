@@ -1,10 +1,24 @@
 import { Settings, BarChart3, Calendar, X, ChefHat, LogOut, User, Home } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import type { LucideIcon } from 'lucide-react';
 
 interface NavbarProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+interface NavLinkItem {
+  path: string;
+  label: string;
+  icon: LucideIcon;
+}
+
+const navLinks: NavLinkItem[] = [
+  { path: '/', label: 'Home', icon: Home },
+  { path: '/weekplans', label: 'Week Plans', icon: Calendar },
+  { path: '/statistics', label: 'Statistics', icon: BarChart3 },
+  { path: '/settings', label: 'Settings', icon: Settings },
+];
 
 export function SavedPageNavbar({ isOpen, onClose }: NavbarProps) {
   const location = useLocation();
@@ -72,95 +86,29 @@ export function SavedPageNavbar({ isOpen, onClose }: NavbarProps) {
             Menu
           </div>
 
-          <Link
-            to="/"
-            className={`
-              flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all group
-              ${
-                isActive('/')
-                  ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg shadow-orange-500/30'
-                  : 'text-gray-300 hover:bg-white/5 hover:text-white'
-              }
-            `}
-            onClick={onClose}
-          >
-            <div className={`p-1.5 rounded-lg ${isActive('/') ? 'bg-white/20' : 'bg-white/5'}`}>
-              <Home size={20} />
-            </div>
-            <span className="font-medium">Home</span>
-            {isActive('/') && (
-              <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-            )}
-          </Link>
-
-          <Link
-            to="/weekplans"
-            className={`
-              flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all group
-              ${
-                isActive('/weekplans')
-                  ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg shadow-orange-500/30'
-                  : 'text-gray-300 hover:bg-white/5 hover:text-white'
-              }
-            `}
-            onClick={onClose}
-          >
-            <div
-              className={`p-1.5 rounded-lg ${isActive('/weekplans') ? 'bg-white/20' : 'bg-white/5'}`}
+          {navLinks.map(({ path, label, icon: Icon }) => (
+            <Link
+              key={path}
+              to={path}
+              className={`
+                flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all group
+                ${
+                  isActive(path)
+                    ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg shadow-orange-500/30'
+                    : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                }
+              `}
+              onClick={onClose}
             >
-              <Calendar size={20} />
-            </div>
-            <span className="font-medium">Week Plans</span>
-            {isActive('/weekplans') && (
-              <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-            )}
-          </Link>
-
-          <Link
-            to="/statistics"
-            className={`
-              flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all group
-              ${
-                isActive('/statistics')
-                  ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg shadow-orange-500/30'
-                  : 'text-gray-300 hover:bg-white/5 hover:text-white'
-              }
-            `}
-            onClick={onClose}
-          >
-            <div
-              className={`p-1.5 rounded-lg ${isActive('/statistics') ? 'bg-white/20' : 'bg-white/5'}`}
-            >
-              <BarChart3 size={20} />
-            </div>
-            <span className="font-medium">Statistics</span>
-            {isActive('/statistics') && (
-              <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-            )}
-          </Link>
-
-          <Link
-            to="/settings"
-            className={`
-              flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all group
-              ${
-                isActive('/settings')
-                  ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg shadow-orange-500/30'
-                  : 'text-gray-300 hover:bg-white/5 hover:text-white'
-              }
-            `}
-            onClick={onClose}
-          >
-            <div
-              className={`p-1.5 rounded-lg ${isActive('/settings') ? 'bg-white/20' : 'bg-white/5'}`}
-            >
-              <Settings size={20} />
-            </div>
-            <span className="font-medium">Settings</span>
-            {isActive('/settings') && (
-              <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-            )}
-          </Link>
+              <div className={`p-1.5 rounded-lg ${isActive(path) ? 'bg-white/20' : 'bg-white/5'}`}>
+                <Icon size={20} />
+              </div>
+              <span className="font-medium">{label}</span>
+              {isActive(path) && (
+                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              )}
+            </Link>
+          ))}
         </nav>
 
         {/* Bottom Section */}
