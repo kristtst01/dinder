@@ -1,14 +1,18 @@
-import { Bell, Bookmark, Home, Search, User } from 'lucide-react';
-import { useCallback, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { RecipeCard } from '../components/recipe-card';
-import { FilterPanel, type FilterState } from '../components/filter-panel';
+import { Bookmark, Home, LogIn, LogOut, Search, User } from 'lucide-react';
+import { useCallback, useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { EmptyState } from '../components/empty-state';
+import { FilterPanel, type FilterState } from '../components/filter-panel';
+import { RecipeCard } from '../components/recipe-card';
+import { AuthModal } from '../login/components/auth-modal';
+import { useAuth } from '../login/hooks/use-auth';
 import { ALL_RECIPES } from '../utils/recipe-loader';
 
 export function HomePage() {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-
+  const { user, loading, signOut } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
   // Get search and filter values from URL
   const kitchenParam = searchParams.get('kitchen') || 'all';
   const difficultyParam = searchParams.get('difficulty') || 'all';
@@ -124,23 +128,45 @@ export function HomePage() {
   return (
     <div className="w-full overflow-x-hidden bg-gray-50 min-h-screen pb-32">
       {/* Header */}
+      {/* TO REMOVE ES LINT COMPLAINING */}
+      {loading && <p></p>}
       <div className="bg-white px-6 pt-14 pb-6 rounded-b-3xl">
         <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <img
-              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop"
-              alt="Profile"
-              className="w-14 h-14 rounded-full object-cover"
-            />
-            <div>
-              <h2 className="text-lg font-bold text-gray-900">Abigail Raychielle</h2>
-              <p className="text-sm text-gray-400">Housewife</p>
-            </div>
-          </div>
-          <button className="relative">
-            <Bell className="w-7 h-7 text-gray-700" />
-            <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></span>
-          </button>
+          {user ? (
+            <>
+              <div className="flex items-center gap-3">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-xl">
+                  {user.user_metadata?.full_name?.[0] || user.email?.[0].toUpperCase()}
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">
+                    {user.user_metadata?.full_name || 'User'}
+                  </h2>
+                  <p className="text-sm text-gray-400">{user.email}</p>
+                </div>
+              </div>
+              <button
+                onClick={signOut}
+                className="relative hover:bg-gray-50 p-2 rounded-full transition-colors"
+              >
+                <LogOut className="w-6 h-6 text-gray-700" />
+              </button>
+            </>
+          ) : (
+            <>
+              <div>
+                <h2 className="text-lg font-bold text-gray-900">Welcome!</h2>
+                <p className="text-sm text-gray-400">Sign in to save recipes</p>
+              </div>
+              <button
+                onClick={() => setShowAuthModal(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full font-medium hover:shadow-lg transition-all"
+              >
+                <LogIn className="w-5 h-5" />
+                Sign In
+              </button>
+            </>
+          )}
         </div>
 
         <div className="mb-6">
@@ -153,11 +179,11 @@ export function HomePage() {
         </div>
       </div>
 
-      {/* Filter Sidebar with Search */}
+      {/* Filter Panel */}
       <div className="px-6 py-4 md:px-6 md:max-w-7xl md:mx-auto">
         <FilterPanel filters={filters} onChange={updateFilters} recipes={allRecipes} />
       </div>
-
+      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
       {/* Categories - Hide when searching/filtering */}
       {!filters.searchQuery && !hasActiveFilters && (
         <div className="bg-white px-6 py-8 mb-6 mt-2 rounded-3xl mx-4">
@@ -173,7 +199,6 @@ export function HomePage() {
           </div>
         </div>
       )}
-
       {/* Empty State */}
       {hasNoResults && (
         <EmptyState searchQuery={filters.searchQuery} hasFilters={hasActiveFilters} />
@@ -202,7 +227,6 @@ export function HomePage() {
           </div>
         </div>
       )}
-
       {/* Soup Recipes */}
       {!hasNoResults && soupRecipes.length > 0 && (
         <div className="mb-8">
@@ -226,7 +250,6 @@ export function HomePage() {
           </div>
         </div>
       )}
-
       {/* Bottom Navigation */}
       <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white rounded-full shadow-2xl px-6 py-3 flex items-center gap-6 border border-gray-100">
         <button className="w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all">
@@ -242,7 +265,10 @@ export function HomePage() {
         >
           <Bookmark className="w-6 h-6 text-orange-500" strokeWidth={2} />
         </a>
-        <button className="w-14 h-14 flex items-center justify-center hover:bg-gray-50 rounded-full transition-all">
+        <button
+          className="w-14 h-14 flex items-center justify-center hover:bg-gray-50 rounded-full transition-all"
+          onClick={() => navigate('/profile')}
+        >
           <User className="w-6 h-6 text-orange-500" strokeWidth={2} />
         </button>
       </div>

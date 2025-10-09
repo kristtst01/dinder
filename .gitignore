@@ -25,3 +25,7 @@ dist-ssr
 
 # Claude
 CLAUDE.md
+
+.env
+.env.local
+.env*.local

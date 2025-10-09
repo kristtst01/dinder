@@ -15,6 +15,7 @@
     "ci": "npm run type-check && npm run lint && npm run format:check && npm run build"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.74.0",
     "lucide": "^0.544.0",
     "lucide-react": "^0.544.0",
     "react": "^19.1.1",

@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { HomePage } from './pages/home-page';
 import { SavedRecipesProvider } from './context/SavedRecipesContext';
+import { HomePage } from './pages/home-page';
+import ProfilePage from './pages/profile-page';
 import { SavedPage } from './pages/saved-page';
 import RecipeDetail from './pages/recipe-detail';
 
@@ -12,6 +13,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/saved" element={<SavedPage />} />
           <Route path="/recipe/:id" element={<RecipeDetail />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </BrowserRouter>
     </SavedRecipesProvider>
