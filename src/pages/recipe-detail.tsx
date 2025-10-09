@@ -32,7 +32,10 @@ export default function RecipeDetail() {
   }, [recipe]);
 
   // Generic toggle function for Set state
-  const toggleInSet = (setter: React.Dispatch<React.SetStateAction<Set<number>>>, index: number) => {
+  const toggleInSet = (
+    setter: React.Dispatch<React.SetStateAction<Set<number>>>,
+    index: number
+  ) => {
     setter((prev) => {
       const next = new Set(prev);
       if (next.has(index)) {

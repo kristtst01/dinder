@@ -1,5 +1,11 @@
 @import 'tailwindcss';
 
+/* Prevent overscroll bounce effect on mobile */
+html,
+body {
+  overscroll-behavior-y: none;
+}
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
