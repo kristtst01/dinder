@@ -24,6 +24,8 @@ export function FilterPanel({
   onToggleFilters?: (show: boolean) => void;
 }) {
   const [internalShowFilters, setInternalShowFilters] = useState(false);
+  const [kitchenSearch, setKitchenSearch] = useState('');
+  const [showKitchenDropdown, setShowKitchenDropdown] = useState(false);
   const showFilters = controlledShowFilters ?? internalShowFilters;
 
   const toggleFilters = (newValue: boolean) => {
@@ -35,6 +37,9 @@ export function FilterPanel({
   };
 
   const areas = Array.from(new Set(recipes.map((r) => r.area))).filter(Boolean);
+  const filteredAreas = areas.filter((a) =>
+    a.toLowerCase().startsWith(kitchenSearch.toLowerCase()),
+  );
 
   const activeFilterCount = [
     filters.kitchen !== 'all',
@@ -87,20 +92,53 @@ export function FilterPanel({
       >
         <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-0.5">
           {/* Kitchen / Area */}
-          <div>
+          <div className="relative">
             <label className="block text-gray-600 text-xs font-medium mb-1.5">Kitchen</label>
-            <select
-              value={filters.kitchen}
-              onChange={(e) => onChange({ ...filters, kitchen: e.target.value })}
+            <input
+              type="text"
+              value={filters.kitchen === 'all' ? kitchenSearch : filters.kitchen}
+              onChange={(e) => {
+                setKitchenSearch(e.target.value);
+                setShowKitchenDropdown(true);
+                if (e.target.value === '') {
+                  onChange({ ...filters, kitchen: 'all' });
+                }
+              }}
+              onFocus={() => setShowKitchenDropdown(true)}
+              onBlur={() => setTimeout(() => setShowKitchenDropdown(false), 200)}
+              placeholder="Search kitchens..."
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-            >
-              <option value="all">All Kitchens</option>
-              {areas.map((a) => (
-                <option key={a} value={a}>
-                  {a}
-                </option>
-              ))}
-            </select>
+            />
+            {showKitchenDropdown && kitchenSearch.length >= 2 && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                <button
+                  onClick={() => {
+                    onChange({ ...filters, kitchen: 'all' });
+                    setKitchenSearch('');
+                    setShowKitchenDropdown(false);
+                  }}
+                  className="w-full text-left px-3 py-2 text-sm text-gray-800 hover:bg-orange-50 transition-colors"
+                >
+                  All Kitchens
+                </button>
+                {filteredAreas.map((a) => (
+                  <button
+                    key={a}
+                    onClick={() => {
+                      onChange({ ...filters, kitchen: a });
+                      setKitchenSearch('');
+                      setShowKitchenDropdown(false);
+                    }}
+                    className="w-full text-left px-3 py-2 text-sm text-gray-800 hover:bg-orange-50 transition-colors"
+                  >
+                    {a}
+                  </button>
+                ))}
+                {filteredAreas.length === 0 && (
+                  <div className="px-3 py-2 text-sm text-gray-400">No kitchens found</div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Difficulty */}
