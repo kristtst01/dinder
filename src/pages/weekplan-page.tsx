@@ -41,7 +41,7 @@ export function WeekplanPage() {
         {/* Tom tilstand */}
         {weekplans.length === 0 && (
           <div className="text-center text-gray-500 py-20">
-            Du har ingen ukeplaner ennå. Opprett din første nå!
+            You don't have any saved week plans yet.
           </div>
         )}
       </main>

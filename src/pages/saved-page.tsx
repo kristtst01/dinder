@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Menu } from 'lucide-react';
+import { Menu, ChefHat, Calendar } from 'lucide-react';
 import { RecipeCard } from '../components/recipe-card';
 import { FilterPanel, type FilterState } from '../components/filter-panel';
 import { SavedPageNavbar } from '../components/navbar';
@@ -100,14 +100,38 @@ export function SavedPage() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Mobile Header */}
-        <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-4 sticky top-0 z-30 md:hidden">
-          <button onClick={() => setNavOpen(true)} className="p-2 hover:bg-gray-100 rounded-lg">
-            <Menu size={24} className="text-gray-700" />
-          </button>
-          <h1 className="text-xl font-bold text-gray-900">
-            {viewMode === 'recipes' ? 'Saved Recipes' : 'Week Plans'}
-          </h1>
+        {/* Mobile Saved Page Header */}
+        <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between gap-4 sticky top-0 z-30 md:hidden">
+          <div className="flex items-center gap-4">
+            <button onClick={() => setNavOpen(true)} className="p-2 hover:bg-gray-100 rounded-lg">
+              <Menu size={24} className="text-gray-700" />
+            </button>
+            <h1 className="text-xl font-bold text-gray-900">
+              {viewMode === 'recipes' ? 'Saved Recipes' : 'Week Plans'}
+            </h1>
+          </div>
+
+          {/* Mobile view toggle - compact icon buttons */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setViewMode('recipes')}
+              aria-label="Show recipes"
+              className={`p-2 rounded-md transition ${
+                viewMode === 'recipes' ? 'bg-gray-100 text-gray-900' : 'text-gray-500'
+              }`}
+            >
+              <ChefHat size={18} />
+            </button>
+            <button
+              onClick={() => setViewMode('weekplans')}
+              aria-label="Show weekplans"
+              className={`p-2 rounded-md transition ${
+                viewMode === 'weekplans' ? 'bg-gray-100 text-gray-900' : 'text-gray-500'
+              }`}
+            >
+              <Calendar size={18} />
+            </button>
+          </div>
         </header>
 
         {/* Desktop Dashboard Header */}
