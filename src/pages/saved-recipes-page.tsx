@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Menu, ChefHat, Calendar } from 'lucide-react';
 import { RecipeCard } from '../components/recipe-card';
 import { FilterPanel, type FilterState } from '../components/filter-panel';
-import { SavedPageNavbar } from '../components/navbar';
+import { Navbar } from '../components/navbar';
 import { SavedPageHeader } from '../components/saved-page-header';
 import { WeekplanCard } from '../components/weekplan-card';
 import { useSavedRecipesContext } from '../context/SavedRecipesContext';
@@ -96,7 +96,7 @@ export function SavedPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex overflow-x-clip">
       {/* Left Navbar */}
-      <SavedPageNavbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
+      <Navbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">

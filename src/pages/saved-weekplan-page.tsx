@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SavedPageNavbar } from '../components/navbar';
+import { Navbar } from '../components/navbar';
 import { WeekplanCard } from '../components/weekplan-card';
 
 export function WeekplanPage() {
@@ -14,7 +14,7 @@ export function WeekplanPage() {
   return (
     <div className="min-h-screen bg-gray-100 flex overflow-x-clip">
       {/* Left Navbar */}
-      <SavedPageNavbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
+      <Navbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
 
       {/* Main Content */}
       <main className="flex-1 p-6 space-y-6">
