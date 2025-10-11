@@ -1,4 +1,4 @@
-import { MealBlockSkeleton } from "./meal-block";
+import { MealBlockSkeleton } from './meal-block';
 
 export function WeekplanColumnSkeleton() {
   return (

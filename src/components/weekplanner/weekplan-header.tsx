@@ -1,15 +1,15 @@
-import { Calendar, Share2, ShoppingBag, Pencil } from "lucide-react";
+import { Calendar, Share2, ShoppingBag, Pencil } from 'lucide-react';
 
 export function WeekplanHeader() {
   // --- mock data ---
   const user = {
-    name: "Lina Berg",
-    avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+    name: 'Lina Berg',
+    avatar: 'https://randomuser.me/api/portraits/women/68.jpg',
   };
 
   const plan = {
-    title: "Week 42 – Dinners",
-    createdAt: "Created Oct 8, 2025",
+    title: 'Week 42 – Dinners',
+    createdAt: 'Created Oct 8, 2025',
     nutrition: {
       kcal: 11250,
       protein: 480,
