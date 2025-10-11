@@ -20,7 +20,7 @@ const navLinks: NavLinkItem[] = [
   { path: '/settings', label: 'Settings', icon: Settings },
 ];
 
-export function SavedPageNavbar({ isOpen, onClose }: NavbarProps) {
+export function Navbar({ isOpen, onClose }: NavbarProps) {
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;

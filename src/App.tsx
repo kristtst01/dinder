@@ -2,10 +2,10 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { SavedRecipesProvider } from './context/SavedRecipesContext';
 import { HomePage } from './pages/home-page';
 import ProfilePage from './pages/profile-page';
-import { SavedPage } from './pages/saved-page';
+import { SavedPage } from './pages/saved-recipes-page';
 import RecipeDetail from './pages/recipe-detail';
-import { WeekplanPage } from './pages/weekplan-page';
-import WeekPlanner from './pages/weekplanner';
+import { WeekplanPage } from './pages/saved-weekplan-page';
+import WeekPlanner from './pages/weekplan';
 
 function App() {
   return (
