@@ -20,8 +20,11 @@ export function WeekplanTableSkeleton() {
         <div className="max-w-5xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-4">
           {['Calories', 'Protein', 'Carbs', 'Fat'].map((label, i) => (
             <div key={i} className="text-center">
-              <div className="h-4 w-16 mx-auto bg-gray-200 rounded animate-pulse mb-2" />
-              <div className="h-5 w-20 mx-auto bg-gray-100 rounded animate-pulse mb-1" />
+              {/* Static label */}
+              <p className="text-sm font-medium text-gray-600 mb-2">{label}</p>
+              {/* Skeleton value */}
+              <div className="h-5 w-20 mx-auto bg-gray-200 rounded animate-pulse mb-1" />
+              {/* Placeholder progress bar */}
               <div className="h-1 w-12 mx-auto rounded-full bg-gradient-to-r from-orange-500 to-orange-600 opacity-40" />
             </div>
           ))}
