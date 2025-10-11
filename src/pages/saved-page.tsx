@@ -1,15 +1,19 @@
 import { useState, useEffect, useRef } from 'react';
-import { Menu } from 'lucide-react';
+import { Menu, ChefHat, Calendar } from 'lucide-react';
 import { RecipeCard } from '../components/recipe-card';
 import { FilterPanel, type FilterState } from '../components/filter-panel';
 import { SavedPageNavbar } from '../components/navbar';
 import { SavedPageHeader } from '../components/saved-page-header';
+import { WeekplanCard } from '../components/weekplan-card';
 import { useSavedRecipesContext } from '../context/SavedRecipesContext';
 import { ALL_RECIPES } from '../utils/recipe-loader';
+
+export type ViewMode = 'recipes' | 'weekplans';
 
 export function SavedPage() {
   const { isSaved } = useSavedRecipesContext();
   const [navOpen, setNavOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>('recipes');
   const [filters, setFilters] = useState<FilterState>({
     kitchen: 'all',
     difficulty: 'all',
@@ -22,6 +26,13 @@ export function SavedPage() {
   const [mobileFiltersExpanded, setMobileFiltersExpanded] = useState(false);
   const [desktopFiltersExpanded, setDesktopFiltersExpanded] = useState(false);
   const lastScrollY = useRef(0);
+
+  // Mock weekplans data - replace with actual data source later
+  const weekplans = [
+    { title: 'Uke 42 – Middager', author: 'Lina' },
+    { title: 'Uke 43 – Kjappe retter', author: 'Lina' },
+    { title: 'Uke 44 – Vegetar', author: 'Lina' },
+  ];
 
   // Auto-hide mobile filter bar on scroll down, show on scroll up
   useEffect(() => {
@@ -89,12 +100,38 @@ export function SavedPage() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Mobile Header */}
-        <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-4 sticky top-0 z-30 md:hidden">
-          <button onClick={() => setNavOpen(true)} className="p-2 hover:bg-gray-100 rounded-lg">
-            <Menu size={24} className="text-gray-700" />
-          </button>
-          <h1 className="text-xl font-bold text-gray-900">Saved Recipes</h1>
+        {/* Mobile Saved Page Header */}
+        <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between gap-4 sticky top-0 z-30 md:hidden">
+          <div className="flex items-center gap-4">
+            <button onClick={() => setNavOpen(true)} className="p-2 hover:bg-gray-100 rounded-lg">
+              <Menu size={24} className="text-gray-700" />
+            </button>
+            <h1 className="text-xl font-bold text-gray-900">
+              {viewMode === 'recipes' ? 'Saved Recipes' : 'Week Plans'}
+            </h1>
+          </div>
+
+          {/* Mobile view toggle - compact icon buttons */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setViewMode('recipes')}
+              aria-label="Show recipes"
+              className={`p-2 rounded-md transition ${
+                viewMode === 'recipes' ? 'bg-gray-100 text-gray-900' : 'text-gray-500'
+              }`}
+            >
+              <ChefHat size={18} />
+            </button>
+            <button
+              onClick={() => setViewMode('weekplans')}
+              aria-label="Show weekplans"
+              className={`p-2 rounded-md transition ${
+                viewMode === 'weekplans' ? 'bg-gray-100 text-gray-900' : 'text-gray-500'
+              }`}
+            >
+              <Calendar size={18} />
+            </button>
+          </div>
         </header>
 
         {/* Desktop Dashboard Header */}
@@ -105,71 +142,100 @@ export function SavedPage() {
           recipes={recipesToShow}
           desktopFiltersExpanded={desktopFiltersExpanded}
           onDesktopFiltersToggle={setDesktopFiltersExpanded}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
         />
 
         {/* Main Content Area */}
         <main className="flex-1 p-4 pb-32 md:p-6 md:pb-6">
-          {/* Recipe Grid or Empty State */}
-          {savedRecipes.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg mb-2">No saved recipes yet</p>
-              <p className="text-sm text-gray-400">
-                Start adding recipes by clicking the heart icon on any recipe from the home page
-              </p>
-            </div>
-          ) : filteredRecipes.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500">No recipes match your filters</p>
-              <p className="text-sm text-gray-400 mt-2">
-                Try adjusting your filters or clearing them
-              </p>
-            </div>
-          ) : (
-            <div className="relative">
-              {/* Overlay to intercept clicks when desktop filters are expanded */}
-              {desktopFiltersExpanded && (
-                <div
-                  className="hidden md:block absolute inset-0 z-10 cursor-pointer"
-                  onClick={() => setDesktopFiltersExpanded(false)}
-                />
+          {viewMode === 'recipes' ? (
+            /* Recipe Grid or Empty State */
+            <>
+              {savedRecipes.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-gray-500 text-lg mb-2">No saved recipes yet</p>
+                  <p className="text-sm text-gray-400">
+                    Start adding recipes by clicking the heart icon on any recipe from the home page
+                  </p>
+                </div>
+              ) : filteredRecipes.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-gray-500">No recipes match your filters</p>
+                  <p className="text-sm text-gray-400 mt-2">
+                    Try adjusting your filters or clearing them
+                  </p>
+                </div>
+              ) : (
+                <div className="relative">
+                  {/* Overlay to intercept clicks when desktop filters are expanded */}
+                  {desktopFiltersExpanded && (
+                    <div
+                      className="hidden md:block absolute inset-0 z-10 cursor-pointer"
+                      onClick={() => setDesktopFiltersExpanded(false)}
+                    />
+                  )}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {filteredRecipes.map((recipe) => (
+                      <RecipeCard key={recipe.id} recipe={recipe} />
+                    ))}
+                  </div>
+                </div>
               )}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {filteredRecipes.map((recipe) => (
-                  <RecipeCard key={recipe.id} recipe={recipe} />
-                ))}
-              </div>
-            </div>
+            </>
+          ) : (
+            /* Weekplans Grid or Empty State */
+            <>
+              {weekplans.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-gray-500 text-lg mb-2">Du har ingen ukeplaner ennå</p>
+                  <p className="text-sm text-gray-400">Opprett din første ukeplan nå!</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {weekplans.map((plan, i) => (
+                    <WeekplanCard
+                      key={i}
+                      title={plan.title}
+                      author={plan.author}
+                      onClick={() => console.log('Åpne', plan.title)}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </main>
 
         {/* Mobile Filter Overlay */}
-        {mobileFiltersExpanded && (
+        {mobileFiltersExpanded && viewMode === 'recipes' && (
           <div
             className="md:hidden fixed inset-0 bg-black/20 z-10"
             onClick={() => setMobileFiltersExpanded(false)}
           />
         )}
 
-        {/* Mobile Floating Filter Bar */}
-        <div
-          className={`
-            md:hidden fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent
-            transition-transform duration-300 ease-in-out z-20
-            ${showMobileFilter && !navOpen ? 'translate-y-0' : 'translate-y-full'}
-          `}
-        >
-          <div className="flex items-end gap-3">
-            <div className="flex-1">
-              <FilterPanel
-                filters={filters}
-                onChange={setFilters}
-                recipes={recipesToShow}
-                showFilters={mobileFiltersExpanded}
-                onToggleFilters={setMobileFiltersExpanded}
-              />
+        {/* Mobile Floating Filter Bar - Only show for recipes view */}
+        {viewMode === 'recipes' && (
+          <div
+            className={`
+              md:hidden fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent
+              transition-transform duration-300 ease-in-out z-20
+              ${showMobileFilter && !navOpen ? 'translate-y-0' : 'translate-y-full'}
+            `}
+          >
+            <div className="flex items-end gap-3">
+              <div className="flex-1">
+                <FilterPanel
+                  filters={filters}
+                  onChange={setFilters}
+                  recipes={recipesToShow}
+                  showFilters={mobileFiltersExpanded}
+                  onToggleFilters={setMobileFiltersExpanded}
+                />
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
