@@ -18,11 +18,14 @@ export function WeekplanColumnSkeleton() {
 
       {/* Nutrition summary placeholder */}
       <div className="mt-2 border-t border-gray-100 pt-3 grid grid-cols-2 gap-3">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i}>
-            <div className="h-3 w-16 bg-gray-200 rounded animate-pulse" />
-            <div className="mt-2 h-4 w-20 bg-gray-100 rounded animate-pulse" />
-            <div className="mt-2 h-1 w-10 rounded-full bg-gradient-to-r from-orange-400 to-orange-600 opacity-40" />
+        {['Calories', 'Protein', 'Carbs', 'Fat'].map((label, i) => (
+          <div key={i} className="text-center">
+            {/* Static label */}
+            <p className="text-xs font-medium text-gray-600 mb-1">{label}</p>
+            {/* Skeleton value */}
+            <div className="h-4 w-20 mx-auto bg-gray-200 rounded animate-pulse mb-1" />
+            {/* Placeholder progress bar */}
+            <div className="h-1 w-10 mx-auto rounded-full bg-gradient-to-r from-orange-400 to-orange-600 opacity-40" />
           </div>
         ))}
       </div>
