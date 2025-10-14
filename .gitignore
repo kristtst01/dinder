@@ -29,3 +29,4 @@ CLAUDE.md
 .env
 .env.local
 .env*.local
+.vercel
