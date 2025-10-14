@@ -1,14 +1,12 @@
 import { Calendar, Share2, ShoppingBag, Pencil } from 'lucide-react';
+import { useAuth } from '../../login/hooks/use-auth';
 
 export function WeekplanHeader() {
-  // --- mock data ---
-  const user = {
-    name: 'Lina Berg',
-    avatar: 'https://randomuser.me/api/portraits/women/68.jpg',
-  };
+  const { user, loading } = useAuth();
 
+  // --- mock data ---
   const plan = {
-    title: 'Week 42 – Dinners',
+    title: 'Week 42 - Dinners',
     createdAt: 'Created Oct 8, 2025',
     nutrition: {
       kcal: 11250,
@@ -18,21 +16,37 @@ export function WeekplanHeader() {
     },
   };
 
+  // Get user display name and avatar
+  const userName = user?.user_metadata?.full_name || user?.email || 'User';
+  const userInitial = userName[0]?.toUpperCase() || 'U';
+
+  if (loading) {
+    return (
+      <header className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="flex items-start gap-4">
+          <div className="h-12 w-12 rounded-full bg-gray-200 animate-pulse" />
+          <div className="flex flex-col gap-2">
+            <div className="h-8 w-48 bg-gray-200 animate-pulse rounded" />
+            <div className="h-4 w-32 bg-gray-200 animate-pulse rounded" />
+          </div>
+        </div>
+      </header>
+    );
+  }
+
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       {/* Top row: title + meta + actions */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         {/* Left: profile + title + meta */}
         <div className="flex items-start gap-4">
-          <img
-            src={user.avatar}
-            alt={`${user.name} avatar`}
-            className="h-12 w-12 rounded-full object-cover"
-          />
+          <div className="h-12 w-12 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-xl">
+            {userInitial}
+          </div>
           <div className="flex flex-col gap-1">
             <h1 className="text-2xl font-bold text-gray-900">{plan.title}</h1>
             <div className="flex items-center gap-2 text-sm text-gray-500">
-              <span>{user.name}</span>
+              <span>{userName}</span>
               <span className="h-1 w-1 rounded-full bg-gray-300" />
               <div className="flex items-center gap-1">
                 <Calendar className="h-4 w-4 text-gray-400" aria-hidden />
