@@ -7,7 +7,6 @@ import {
   DollarSign,
   Download,
   Globe,
-  MapPin,
   Moon,
   Save,
   Scale,
@@ -128,7 +127,7 @@ export default function ProfilePage() {
       const { data: profileData } = await supabase
         .from('profiles')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('id', user.id)
         .single();
 
       if (profileData) {
@@ -206,19 +205,32 @@ export default function ProfilePage() {
 
   const uploadImage = async (file: File, userId: string): Promise<string | null> => {
     try {
+      const allowedTypes = ['image/jpeg', 'image/png'];
+      if (!allowedTypes.includes(file.type)) {
+        console.error('Invalid file type. Only JPG and PNG are allowed.');
+        return null;
+      }
+
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        console.error('File too large. Maximum size is 5MB.');
+        return null;
+      }
+
       const fileExt = file.name.split('.').pop();
-      const fileName = `${userId}-${Date.now()}.${fileExt}`;
-      const filePath = `avatars/${fileName}`;
+      const filePath = `${userId}/profile.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('profile-images')
-        .upload(filePath, file);
+        .from('profile-pic')
+        .upload(filePath, file, {
+          upsert: true,
+        });
 
       if (uploadError) throw uploadError;
 
-      const { data } = supabase.storage.from('profile-images').getPublicUrl(filePath);
+      const { data } = supabase.storage.from('profile-pic').getPublicUrl(filePath);
 
-      return data.publicUrl;
+      return `${data.publicUrl}?t=${Date.now()}`;
     } catch (error) {
       console.error('Error uploading image:', error);
       return null;
@@ -424,7 +436,7 @@ export default function ProfilePage() {
                       }))
                     }
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    placeholder="0150"
+                    placeholder={profile.address.postalCode.toString()}
                   />
                 </div>
               </div>
@@ -584,11 +596,8 @@ export default function ProfilePage() {
                 onChange={(e) => updateSetting('language', e.target.value)}
                 className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
-                <option value="NB">Norsk (NB)</option>
-                <option value="EN">English (EN)</option>
-                <option value="US">English (US)</option>
-                <option value="ES">Español</option>
-                <option value="FR">Français</option>
+                <option value="NB">Norsk</option>
+                <option value="EN">English</option>
               </select>
             }
           />
@@ -604,8 +613,8 @@ export default function ProfilePage() {
                 onChange={(e) => updateSetting('measurements', e.target.value)}
                 className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
-                <option value="metric">Metric (g, ml, °C)</option>
-                <option value="imperial">Imperial (cups, oz, °F)</option>
+                <option value="metric">Metric</option>
+                <option value="imperial">Imperial</option>
               </select>
             }
           />
@@ -629,39 +638,6 @@ export default function ProfilePage() {
             }
           />
         </section>
-
-        {/* Expandable Sections */}
-
-        {/* Delivery Address */}
-        <ExpandableSection
-          title="Delivery Address"
-          icon={<MapPin className="w-5 h-5" />}
-          expanded={expandedSections.delivery}
-          onToggle={() => toggleSection('delivery')}
-        >
-          <div className="space-y-3">
-            <input
-              type="text"
-              placeholder="Street Address"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-            />
-            <div className="grid grid-cols-2 gap-3">
-              <input
-                type="text"
-                placeholder="City"
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-              />
-              <input
-                type="text"
-                placeholder="Postal Code"
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-              />
-            </div>
-            <button className="w-full bg-orange-500 text-white py-2 rounded-lg font-medium hover:bg-orange-600">
-              Save Address
-            </button>
-          </div>
-        </ExpandableSection>
 
         {/* Dietary Preferences */}
         <ExpandableSection
