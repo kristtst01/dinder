@@ -2,7 +2,7 @@ import chickenData from '../assets/mealdb-chicken.json';
 import pastaData from '../assets/mealdb-pasta.json';
 import soupData from '../assets/mealdb-soup.json';
 import { convertMealDBArrayToRecipes } from './meal-db-helpers';
-import type { Recipe } from '../types/recipe';
+import type { Recipe } from '../features/saved-hub/types/recipe';
 
 // Combine all meal data from MealDB JSON files
 const allMeals = [

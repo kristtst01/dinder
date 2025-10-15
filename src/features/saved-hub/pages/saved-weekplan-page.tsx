@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Navbar } from '../components/navbar';
-import { WeekplanCard } from '../components/weekplan-card';
+import { Navbar } from '@shared/navbar';
+import { WeekplanCard } from '@shared/weekplan-card';
 
 export function WeekplanPage() {
   const [navOpen, setNavOpen] = useState(false);

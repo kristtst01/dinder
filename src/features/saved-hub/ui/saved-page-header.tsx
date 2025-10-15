@@ -1,6 +1,6 @@
 import { Calendar, ChefHat } from 'lucide-react';
-import type { FilterState } from './filter-panel';
-import { FilterPanel } from './filter-panel';
+import type { FilterState } from '@shared/filter-panel';
+import { FilterPanel } from '../../../shared/filter-panel';
 import type { Recipe } from '../types/recipe';
 import type { ViewMode } from '../pages/saved-recipes-page';
 

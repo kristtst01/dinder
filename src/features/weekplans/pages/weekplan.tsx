@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Menu } from 'lucide-react';
-import { WeekplanHeader } from '../components/weekplanner/weekplan-header';
-import { WeekplanTableSkeleton } from '../components/weekplanner/weekplan-table';
-import { Navbar } from '../components/navbar';
+import { WeekplanHeader } from '../ui/weekplan-header';
+import { WeekplanTableSkeleton } from '../ui/weekplan-table';
+import { Navbar } from '../../../shared/navbar';
 
 export default function WeekPlanner() {
   const [navOpen, setNavOpen] = useState(false);

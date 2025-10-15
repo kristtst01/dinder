@@ -1,11 +1,11 @@
 import { useMemo, useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart, Share2, Clock, Users, ChefHat, Flame, Check } from 'lucide-react';
-import { ALL_RECIPES } from '../utils/recipe-loader';
+import { ALL_RECIPES } from '@utils/recipe-loader';
 import { useSavedRecipesContext } from '../context/SavedRecipesContext';
 import { useCookMode } from '../hooks/useCookMode';
 import { useTriedRecipe } from '../hooks/useTriedRecipe';
-import { useRecipeShare } from '../hooks/useRecipeShare';
+import { useRecipeShare } from '../hooks/use-recipe-share';
 
 export default function RecipeDetail() {
   const { id } = useParams<{ id: string }>();

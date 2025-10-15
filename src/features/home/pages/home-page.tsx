@@ -1,12 +1,12 @@
 import { Bookmark, Home, LogIn, LogOut, Search, User } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { EmptyState } from '../components/empty-state';
-import { FilterPanel, type FilterState } from '../components/filter-panel';
-import { RecipeCard } from '../components/recipe-card';
-import { AuthModal } from '../login/components/auth-modal';
-import { useAuth } from '../login/hooks/use-auth';
-import { ALL_RECIPES } from '../utils/recipe-loader';
+import { EmptyState } from '../../../components/empty-state';
+import { FilterPanel, type FilterState } from '../../../shared/filter-panel';
+import { RecipeCard } from '../../../shared/recipe-card';
+import { AuthModal } from '../../login/ui/auth-modal';
+import { useAuth } from '@common/hooks/use-auth';
+import { ALL_RECIPES } from '../../../utils/recipe-loader';
 
 export function HomePage() {
   const navigate = useNavigate();
