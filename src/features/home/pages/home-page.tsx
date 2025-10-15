@@ -66,17 +66,6 @@ export function HomePage() {
     [setSearchParams]
   );
 
-  const categories = [
-    { icon: '🍔', label: 'Western' },
-    { icon: '🍞', label: 'Bread' },
-    { icon: '🥘', label: 'Western' },
-    { icon: '🍲', label: 'Soup' },
-    { icon: '🍨', label: 'Dessert' },
-    { icon: '🍸', label: 'Coctail' },
-    { icon: '🍝', label: 'Noodles' },
-    { icon: '☕', label: 'Coffee' },
-  ];
-
   // Use recipes from recipe-loader
   const allRecipes = ALL_RECIPES;
 
@@ -158,21 +147,7 @@ export function HomePage() {
           <div className="mb-6">
             <FilterPanel filters={filters} onChange={updateFilters} recipes={allRecipes} />
           </div>
-      {/* Categories - Hide when searching/filtering */}
-      {!filters.searchQuery && !hasActiveFilters && (
-        <div className="px-6 py-4 md:px-6 md:mx-auto">
-          <div className="grid grid-cols-4 gap-6">
-            {categories.map((category, index) => (
-              <button key={index} className="flex flex-col items-center gap-3">
-                <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center text-3xl hover:bg-orange-50 transition-colors shadow-sm">
-                  {category.icon}
-                </div>
-                <span className="text-xs text-gray-700 font-medium">{category.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+
           {/* Empty State */}
           {hasNoResults && (
             <EmptyState searchQuery={filters.searchQuery} hasFilters={hasActiveFilters} />
