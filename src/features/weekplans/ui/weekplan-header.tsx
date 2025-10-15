@@ -1,5 +1,5 @@
 import { Calendar, Share2, ShoppingBag, Pencil } from 'lucide-react';
-import { useAuth } from '../../login/hooks/use-auth';
+import { useAuth } from '@common/hooks/use-auth';
 
 export function WeekplanHeader() {
   const { user, loading } = useAuth();

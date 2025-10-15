@@ -1,16 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { Menu, ChefHat, Calendar } from 'lucide-react';
-import { RecipeCard } from '../components/recipe-card';
-import { FilterPanel, type FilterState } from '../components/filter-panel';
-import { Navbar } from '../components/navbar';
-import { SavedPageHeader } from '../components/saved-page-header';
-import { WeekplanCard } from '../components/weekplan-card';
-import { useSavedRecipesContext } from '../context/SavedRecipesContext';
-import { ALL_RECIPES } from '../utils/recipe-loader';
+import { RecipeCard } from '../../../shared/recipe-card';
+import { FilterPanel, type FilterState } from '../../../shared/filter-panel';
+import { Navbar } from '../../../shared/navbar';
+import { SavedPageHeader } from '../ui/saved-page-header';
+import { WeekplanCard } from '../../../shared/weekplan-card';
+import { useSavedRecipesContext } from '../../recipes/context/SavedRecipesContext';
+import { ALL_RECIPES } from '../../../utils/recipe-loader';
 
 export type ViewMode = 'recipes' | 'weekplans';
 
-export function SavedPage() {
+export default function SavedPage() {
   const { isSaved } = useSavedRecipesContext();
   const [navOpen, setNavOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('recipes');

@@ -1,11 +1,11 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { SavedRecipesProvider } from './context/SavedRecipesContext';
-import { HomePage } from './pages/home-page';
-import ProfilePage from './pages/profile-page';
-import { SavedPage } from './pages/saved-recipes-page';
-import RecipeDetail from './pages/recipe-detail';
-import { WeekplanPage } from './pages/saved-weekplan-page';
-import WeekPlanner from './pages/weekplan';
+import { SavedRecipesProvider } from './features/recipes/context/SavedRecipesContext';
+import { HomePage } from './features/home/pages/home-page';
+import ProfilePage from './features/profile/pages/profile-page';
+import SavedPage from '@features/saved-hub/pages/saved-recipes-page';
+import RecipeDetail from '@features/recipes/pages/recipe-detail';
+import WeekplanPage from '@features/weekplans/pages/weekplan';
+import WeekPlanner from '@features/weekplans/pages/weekplan';
 
 function App() {
   return (
