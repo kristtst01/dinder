@@ -126,27 +126,32 @@ export function HomePage() {
     filters.searchQuery || hasActiveFilters ? filteredRecipes.length === 0 : false;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex overflow-x-clip">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex overflow-x-clip">
       {/* Left Navbar */}
       <Navbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile Header */}
-        <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between gap-4 sticky top-0 z-30 md:hidden">
+        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-4 flex items-center justify-between gap-4 sticky top-0 z-30 md:hidden">
           <div className="flex items-center gap-4">
-            <button onClick={() => setNavOpen(true)} className="p-2 hover:bg-gray-100 rounded-lg">
-              <Menu size={24} className="text-gray-700" />
+            <button
+              onClick={() => setNavOpen(true)}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+            >
+              <Menu size={24} className="text-gray-700 dark:text-gray-200" />
             </button>
-            <h1 className="text-xl font-bold text-gray-900">Home</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Home</h1>
           </div>
         </header>
 
         {/* Desktop Header */}
-        <div className="hidden md:block bg-white border-b border-gray-200 px-6 py-6">
+        <div className="hidden md:block bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-6">
           <div className="mb-4">
-            <p className="text-xs text-gray-400 mb-2 font-medium">New Update 1.4</p>
-            <h1 className="text-3xl font-bold text-gray-900 leading-tight">
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-2 font-medium">
+              New Update 1.4
+            </p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white leading-tight">
               What Do You Want To Cook Today?
             </h1>
           </div>
@@ -174,7 +179,9 @@ export function HomePage() {
           {!filters.searchQuery && !hasActiveFilters && popularRecipes.length > 0 && (
             <div className="mb-8">
               <div className="flex items-center justify-between mb-5">
-                <h3 className="text-2xl font-bold text-gray-900">Popular This Week</h3>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  Popular This Week
+                </h3>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {popularRecipes.map((recipe) => (
@@ -190,13 +197,15 @@ export function HomePage() {
           )}
 
           {/* All Recipes Grid - Show when filtering/searching */}
-          {(filters.searchQuery || hasActiveFilters) && !hasNoResults && filteredRecipes.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {filteredRecipes.map((recipe) => (
-                <RecipeCard key={recipe.id} recipe={recipe} />
-              ))}
-            </div>
-          )}
+          {(filters.searchQuery || hasActiveFilters) &&
+            !hasNoResults &&
+            filteredRecipes.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {filteredRecipes.map((recipe) => (
+                  <RecipeCard key={recipe.id} recipe={recipe} />
+                ))}
+              </div>
+            )}
         </main>
       </div>
     </div>
