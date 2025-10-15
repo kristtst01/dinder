@@ -1,5 +1,5 @@
 import { createContext, useContext, type ReactNode } from 'react';
-import { useSavedRecipes } from '../hooks/useSavedRecipes';
+import { useSavedRecipes } from '../hooks/use-saved-recipe';
 
 type Ctx = ReturnType<typeof useSavedRecipes>;
 

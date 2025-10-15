@@ -1,4 +1,4 @@
-import type { Recipe } from '../types/recipe';
+import type { Recipe } from '../features/saved-hub/types/recipe';
 
 export function convertMealDBToRecipe(meal: any): Recipe {
   // Parse ingredients from strIngredient1-20 and strMeasure1-20
