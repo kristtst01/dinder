@@ -8,6 +8,7 @@ import { FilterPanel, type FilterState } from '../../../shared/filter-panel';
 import { RecipeCard } from '../../../shared/recipe-card';
 import { Navbar } from '../../../shared/navbar';
 import { ALL_RECIPES } from '../../../utils/recipe-loader';
+import { FeaturedRecipe } from '../ui/featured-recipe';
 
 export function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -68,6 +69,11 @@ export function HomePage() {
 
   // Use recipes from recipe-loader
   const allRecipes = ALL_RECIPES;
+
+  // Random recipe for hero section
+  const randomRecipe = useMemo(() => {
+    return allRecipes[Math.floor(Math.random() * allRecipes.length)];
+  }, [allRecipes]);
 
   // Filter recipes based on FilterState
   const filteredRecipes = useMemo(() => {
@@ -143,6 +149,11 @@ export function HomePage() {
 
         {/* Main Content Area */}
         <main className="flex-1 p-4 pb-6 md:p-6">
+          {/* Featured Recipe */}
+          {!filters.searchQuery && !hasActiveFilters && randomRecipe && (
+            <FeaturedRecipe recipe={randomRecipe} />
+          )}
+
           {/* Filter Panel */}
           <div className="mb-6">
             <FilterPanel filters={filters} onChange={updateFilters} recipes={allRecipes} />
