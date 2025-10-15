@@ -1,8 +1,8 @@
 import LoadingSpinner from '@/components/loading-spinner';
 import { useAuth } from '@common/hooks/use-auth';
-import { Bookmark, Home, LogIn, LogOut, Search, User } from 'lucide-react';
+import { LogIn, LogOut } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { EmptyState } from '../../../components/empty-state';
 import { FilterPanel, type FilterState } from '../../../shared/filter-panel';
 import { RecipeCard } from '../../../shared/recipe-card';
@@ -10,7 +10,6 @@ import { ALL_RECIPES } from '../../../utils/recipe-loader';
 import { AuthModal } from '../../login/ui/auth-modal';
 
 export function HomePage() {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user, loading, signOut } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -251,27 +250,6 @@ export function HomePage() {
           </div>
         </div>
       )}
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white rounded-full shadow-2xl px-6 py-3 flex items-center gap-6 border border-gray-100">
-        <button className="w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all">
-          <Home className="w-6 h-6 text-white" strokeWidth={2.5} />
-        </button>
-        <button className="w-14 h-14 flex items-center justify-center hover:bg-gray-50 rounded-full transition-all">
-          <Search className="w-6 h-6 text-orange-500" strokeWidth={2} />
-        </button>
-        <button
-          className="w-14 h-14 flex items-center justify-center hover:bg-gray-50 rounded-full transition-all"
-          onClick={() => navigate('/saved')}
-        >
-          <Bookmark className="w-6 h-6 text-orange-500" strokeWidth={2} />
-        </button>
-        <button
-          className="w-14 h-14 flex items-center justify-center hover:bg-gray-50 rounded-full transition-all"
-          onClick={() => navigate('/profile')}
-        >
-          <User className="w-6 h-6 text-orange-500" strokeWidth={2} />
-        </button>
-      </div>
     </div>
   );
 }
