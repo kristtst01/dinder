@@ -75,6 +75,13 @@ export function HomePage() {
     return allRecipes[Math.floor(Math.random() * allRecipes.length)];
   }, [allRecipes]);
 
+  // Popular recipes (mock data - will be replaced with Supabase data later)
+  const popularRecipes = useMemo(() => {
+    // For now, just get a random selection of recipes
+    const shuffled = [...allRecipes].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 8);
+  }, [allRecipes]);
+
   // Filter recipes based on FilterState
   const filteredRecipes = useMemo(() => {
     return allRecipes.filter((recipe) => {
@@ -159,13 +166,27 @@ export function HomePage() {
             <FilterPanel filters={filters} onChange={updateFilters} recipes={allRecipes} />
           </div>
 
+          {/* Popular Recipes Section - Only show when no filters/search active */}
+          {!filters.searchQuery && !hasActiveFilters && popularRecipes.length > 0 && (
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-2xl font-bold text-gray-900">Popular This Week</h3>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {popularRecipes.map((recipe) => (
+                  <RecipeCard key={recipe.id} recipe={recipe} />
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Empty State */}
           {hasNoResults && (
             <EmptyState searchQuery={filters.searchQuery} hasFilters={hasActiveFilters} />
           )}
 
-          {/* All Recipes Grid */}
-          {!hasNoResults && filteredRecipes.length > 0 && (
+          {/* All Recipes Grid - Show when filtering/searching */}
+          {(filters.searchQuery || hasActiveFilters) && !hasNoResults && filteredRecipes.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {filteredRecipes.map((recipe) => (
                 <RecipeCard key={recipe.id} recipe={recipe} />

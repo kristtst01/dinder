@@ -1,4 +1,4 @@
-import { Settings, BarChart3, Calendar, X, ChefHat, LogOut, User, Home } from 'lucide-react';
+import { Settings, BarChart3, Calendar, X, ChefHat, LogOut, User, Home, Bookmark } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import type { LucideIcon } from 'lucide-react';
 
@@ -15,6 +15,7 @@ interface NavLinkItem {
 
 const navLinks: NavLinkItem[] = [
   { path: '/', label: 'Home', icon: Home },
+  { path: '/saved', label: 'Saved Recipes', icon: Bookmark },
   { path: '/weekplans', label: 'Week Plans', icon: Calendar },
   { path: '/statistics', label: 'Statistics', icon: BarChart3 },
   { path: '/settings', label: 'Settings', icon: Settings },
