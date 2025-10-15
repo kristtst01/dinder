@@ -1,12 +1,13 @@
+import LoadingSpinner from '@/components/loading-spinner';
+import { useAuth } from '@common/hooks/use-auth';
 import { Bookmark, Home, LogIn, LogOut, Search, User } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { EmptyState } from '../../../components/empty-state';
 import { FilterPanel, type FilterState } from '../../../shared/filter-panel';
 import { RecipeCard } from '../../../shared/recipe-card';
-import { AuthModal } from '../../login/ui/auth-modal';
-import { useAuth } from '@common/hooks/use-auth';
 import { ALL_RECIPES } from '../../../utils/recipe-loader';
+import { AuthModal } from '../../login/ui/auth-modal';
 
 export function HomePage() {
   const navigate = useNavigate();
@@ -126,11 +127,11 @@ export function HomePage() {
     filters.searchQuery || hasActiveFilters ? filteredRecipes.length === 0 : false;
 
   return (
-    <div className="w-full overflow-x-hidden bg-gray-50 min-h-screen pb-32">
+    <div className="w-full md:w-4/5 md:max-w-7xl mx-auto px-6 py-4 min-h-screen pb-32 overflow-x-hidden">
       {/* Header */}
-      {/* TO REMOVE ES LINT COMPLAINING */}
-      {loading && <p></p>}
-      <div className="bg-white px-6 pt-14 pb-6 rounded-b-3xl">
+      {/* Example loading spinner, we have no data fetching so... */}
+      {loading && <LoadingSpinner />}
+      <div>
         <div className="flex items-center justify-between mb-8">
           {user ? (
             <>
@@ -180,13 +181,13 @@ export function HomePage() {
       </div>
 
       {/* Filter Panel */}
-      <div className="px-6 py-4 md:px-6 md:max-w-7xl md:mx-auto">
+      <div className="">
         <FilterPanel filters={filters} onChange={updateFilters} recipes={allRecipes} />
       </div>
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
       {/* Categories - Hide when searching/filtering */}
       {!filters.searchQuery && !hasActiveFilters && (
-        <div className="bg-white px-6 py-8 mb-6 mt-2 rounded-3xl mx-4">
+        <div className="px-6 py-4 md:px-6 md:mx-auto">
           <div className="grid grid-cols-4 gap-6">
             {categories.map((category, index) => (
               <button key={index} className="flex flex-col items-center gap-3">
@@ -207,7 +208,7 @@ export function HomePage() {
       {/* Chicken Recipes */}
       {!hasNoResults && chickenRecipes.length > 0 && (
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-5 px-6 max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-5 px-6 mx-auto">
             <h3 className="text-2xl font-bold text-gray-900">Chicken Recipes</h3>
             <button className="text-sm text-gray-500 flex items-center gap-1 font-medium">
               See More <span className="text-lg">›</span>
@@ -220,7 +221,7 @@ export function HomePage() {
               </div>
             ))}
           </div>
-          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 max-w-7xl mx-auto">
+          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 mx-auto">
             {chickenRecipes.map((recipe) => (
               <RecipeCard key={recipe.id} recipe={recipe} />
             ))}
@@ -230,7 +231,7 @@ export function HomePage() {
       {/* Soup Recipes */}
       {!hasNoResults && soupRecipes.length > 0 && (
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-5 px-6 max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-5 px-6 mx-auto">
             <h3 className="text-2xl font-bold text-gray-900">Soup Recipes</h3>
             <button className="text-sm text-gray-500 flex items-center gap-1 font-medium">
               See More <span className="text-lg">›</span>
@@ -243,7 +244,7 @@ export function HomePage() {
               </div>
             ))}
           </div>
-          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 max-w-7xl mx-auto">
+          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 mx-auto">
             {soupRecipes.map((recipe) => (
               <RecipeCard key={recipe.id} recipe={recipe} />
             ))}
@@ -258,13 +259,12 @@ export function HomePage() {
         <button className="w-14 h-14 flex items-center justify-center hover:bg-gray-50 rounded-full transition-all">
           <Search className="w-6 h-6 text-orange-500" strokeWidth={2} />
         </button>
-        <a
-          href="/saved"
+        <button
           className="w-14 h-14 flex items-center justify-center hover:bg-gray-50 rounded-full transition-all"
-          aria-label="Saved recipes"
+          onClick={() => navigate('/saved')}
         >
           <Bookmark className="w-6 h-6 text-orange-500" strokeWidth={2} />
-        </a>
+        </button>
         <button
           className="w-14 h-14 flex items-center justify-center hover:bg-gray-50 rounded-full transition-all"
           onClick={() => navigate('/profile')}
