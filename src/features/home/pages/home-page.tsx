@@ -9,6 +9,7 @@ import { RecipeCard } from '../../../shared/recipe-card';
 import { Navbar } from '../../../shared/navbar';
 import { ALL_RECIPES } from '../../../utils/recipe-loader';
 import { FeaturedRecipe } from '../ui/featured-recipe';
+import { WeekplanCTA } from '../ui/weekplan-cta';
 
 export function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -165,6 +166,9 @@ export function HomePage() {
           <div className="mb-6">
             <FilterPanel filters={filters} onChange={updateFilters} recipes={allRecipes} />
           </div>
+
+          {/* Week Plan CTA - Only show when no filters/search active */}
+          {!filters.searchQuery && !hasActiveFilters && <WeekplanCTA />}
 
           {/* Popular Recipes Section - Only show when no filters/search active */}
           {!filters.searchQuery && !hasActiveFilters && popularRecipes.length > 0 && (
