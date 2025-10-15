@@ -11,10 +11,12 @@ export function FeaturedRecipe({ recipe }: FeaturedRecipeProps) {
   return (
     <div
       onClick={() => navigate(`/recipe/${recipe.id}`)}
-      className="mb-8 relative rounded-2xl overflow-hidden bg-gradient-to-br from-orange-400/40 to-orange-500/40 text-white shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
+      className="mb-8 relative rounded-2xl overflow-hidden text-white shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
     >
-      <div className="absolute inset-0 opacity-50">
+      <div className="absolute inset-0">
         <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" />
+        {/* Dark gradient overlay at bottom for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
       </div>
       <div className="relative p-6 md:p-8">
         <p className="text-sm font-medium text-orange-50 mb-2">RECIPE OF THE DAY</p>
