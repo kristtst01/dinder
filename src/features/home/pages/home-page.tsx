@@ -1,18 +1,18 @@
 import LoadingSpinner from '@/components/loading-spinner';
 import { useAuth } from '@common/hooks/use-auth';
-import { LogIn, LogOut } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { EmptyState } from '../../../components/empty-state';
 import { FilterPanel, type FilterState } from '../../../shared/filter-panel';
 import { RecipeCard } from '../../../shared/recipe-card';
+import { Navbar } from '../../../shared/navbar';
 import { ALL_RECIPES } from '../../../utils/recipe-loader';
-import { AuthModal } from '../../login/ui/auth-modal';
 
 export function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { user, loading, signOut } = useAuth();
-  const [showAuthModal, setShowAuthModal] = useState(false);
+  const { loading } = useAuth();
+  const [navOpen, setNavOpen] = useState(false);
   // Get search and filter values from URL
   const kitchenParam = searchParams.get('kitchen') || 'all';
   const difficultyParam = searchParams.get('difficulty') || 'all';
@@ -126,64 +126,41 @@ export function HomePage() {
     filters.searchQuery || hasActiveFilters ? filteredRecipes.length === 0 : false;
 
   return (
-    <div className="w-full md:w-4/5 md:max-w-7xl mx-auto px-6 py-4 min-h-screen pb-32 overflow-x-hidden">
-      {/* Header */}
-      {/* Example loading spinner, we have no data fetching so... */}
-      {loading && <LoadingSpinner />}
-      <div>
-        <div className="flex items-center justify-between mb-8">
-          {user ? (
-            <>
-              <div className="flex items-center gap-3">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-xl">
-                  {user.user_metadata?.full_name?.[0] || user.email?.[0].toUpperCase()}
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-gray-900">
-                    {user.user_metadata?.full_name || 'User'}
-                  </h2>
-                  <p className="text-sm text-gray-400">{user.email}</p>
-                </div>
-              </div>
-              <button
-                onClick={signOut}
-                className="relative hover:bg-gray-50 p-2 rounded-full transition-colors"
-              >
-                <LogOut className="w-6 h-6 text-gray-700" />
-              </button>
-            </>
-          ) : (
-            <>
-              <div>
-                <h2 className="text-lg font-bold text-gray-900">Welcome!</h2>
-                <p className="text-sm text-gray-400">Sign in to save recipes</p>
-              </div>
-              <button
-                onClick={() => setShowAuthModal(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full font-medium hover:shadow-lg transition-all"
-              >
-                <LogIn className="w-5 h-5" />
-                Sign In
-              </button>
-            </>
-          )}
+    <div className="min-h-screen bg-gray-50 flex overflow-x-clip">
+      {/* Left Navbar */}
+      <Navbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Mobile Header */}
+        <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between gap-4 sticky top-0 z-30 md:hidden">
+          <div className="flex items-center gap-4">
+            <button onClick={() => setNavOpen(true)} className="p-2 hover:bg-gray-100 rounded-lg">
+              <Menu size={24} className="text-gray-700" />
+            </button>
+            <h1 className="text-xl font-bold text-gray-900">Home</h1>
+          </div>
+        </header>
+
+        {/* Desktop Header */}
+        <div className="hidden md:block bg-white border-b border-gray-200 px-6 py-6">
+          <div className="mb-4">
+            <p className="text-xs text-gray-400 mb-2 font-medium">New Update 1.4</p>
+            <h1 className="text-3xl font-bold text-gray-900 leading-tight">
+              What Do You Want To Cook Today?
+            </h1>
+          </div>
         </div>
 
-        <div className="mb-6">
-          <p className="text-xs text-gray-400 mb-3 font-medium">New Update 1.4</p>
-          <h1 className="text-3xl font-bold text-gray-900 leading-tight">
-            What Do You Want To
-            <br />
-            Cook Today?
-          </h1>
-        </div>
-      </div>
+        {/* Example loading spinner */}
+        {loading && <LoadingSpinner />}
 
-      {/* Filter Panel */}
-      <div className="">
-        <FilterPanel filters={filters} onChange={updateFilters} recipes={allRecipes} />
-      </div>
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+        {/* Main Content Area */}
+        <main className="flex-1 p-4 pb-6 md:p-6">
+          {/* Filter Panel */}
+          <div className="mb-6">
+            <FilterPanel filters={filters} onChange={updateFilters} recipes={allRecipes} />
+          </div>
       {/* Categories - Hide when searching/filtering */}
       {!filters.searchQuery && !hasActiveFilters && (
         <div className="px-6 py-4 md:px-6 md:mx-auto">
@@ -250,6 +227,8 @@ export function HomePage() {
           </div>
         </div>
       )}
+        </main>
+      </div>
     </div>
   );
 }
