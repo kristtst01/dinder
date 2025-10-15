@@ -1,5 +1,15 @@
 import { Spinner } from '@/components/ui/shadcn-io/spinner';
 
-const loadingSpinner = () => <Spinner />;
+const LoadingSpinner = ({ isFullScreen = false }: { isFullScreen?: boolean }) => (
+  <div
+    className={
+      isFullScreen
+        ? 'flex items-center justify-center min-h-screen w-full'
+        : 'flex items-center justify-center'
+    }
+  >
+    <Spinner />
+  </div>
+);
 
-export default loadingSpinner;
+export default LoadingSpinner;
