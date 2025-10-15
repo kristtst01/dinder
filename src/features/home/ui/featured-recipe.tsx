@@ -11,9 +11,9 @@ export function FeaturedRecipe({ recipe }: FeaturedRecipeProps) {
   return (
     <div
       onClick={() => navigate(`/recipe/${recipe.id}`)}
-      className="mb-8 relative rounded-2xl overflow-hidden bg-gradient-to-br from-orange-400/80 to-orange-500/80 text-white shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
+      className="mb-8 relative rounded-2xl overflow-hidden bg-gradient-to-br from-orange-400/40 to-orange-500/40 text-white shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
     >
-      <div className="absolute inset-0 opacity-30">
+      <div className="absolute inset-0 opacity-50">
         <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" />
       </div>
       <div className="relative p-6 md:p-8">

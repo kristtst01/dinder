@@ -34,48 +34,48 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
       {/* Sidebar */}
       <div
         className={`
-          fixed top-0 left-0 h-screen w-72 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 z-50
+          fixed top-0 left-0 h-screen w-72 bg-white border-r border-gray-200 z-50
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           md:translate-x-0 md:sticky md:top-0 md:h-screen md:z-auto
-          flex flex-col shadow-2xl
+          flex flex-col shadow-lg
         `}
       >
         {/* Close button (mobile only) */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 md:hidden text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-all z-10"
+          className="absolute top-4 right-4 p-2 md:hidden text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all z-10"
         >
           <X size={20} />
         </button>
 
         {/* Brand Header */}
-        <div className="p-6 md:px-6 md:py-8">
+        <div className="p-6 md:px-6 md:py-8 border-b border-gray-200">
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+            <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center shadow-md">
               <ChefHat className="text-white" size={24} />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white">Dinder</h2>
-              <p className="text-xs text-gray-400">Recipe Manager</p>
+              <h2 className="text-xl font-bold text-gray-900">Dinder</h2>
+              <p className="text-xs text-gray-500">Recipe Manager</p>
             </div>
           </div>
 
           {/* Profile Card */}
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10 hover:bg-white/10 transition-all cursor-pointer group">
+          <div className="bg-orange-50 rounded-2xl p-4 border border-orange-100 hover:bg-orange-100 transition-all cursor-pointer group">
             <div className="flex items-center gap-3">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-400 via-pink-500 to-purple-500 flex items-center justify-center text-white font-bold text-lg shadow-lg ring-2 ring-white/20">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
                 AR
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-white truncate group-hover:text-orange-300 transition-colors">
+                <h3 className="font-semibold text-gray-900 truncate group-hover:text-orange-600 transition-colors">
                   Abigail Raychielle
                 </h3>
-                <p className="text-sm text-gray-400 truncate">Housewife</p>
+                <p className="text-sm text-gray-600 truncate">Housewife</p>
               </div>
               <User
                 size={16}
-                className="text-gray-500 group-hover:text-orange-300 transition-colors"
+                className="text-gray-400 group-hover:text-orange-600 transition-colors"
               />
             </div>
           </div>
@@ -95,13 +95,13 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
                 flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all group
                 ${
                   isActive(path)
-                    ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg shadow-orange-500/30'
-                    : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                    ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md'
+                    : 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
                 }
               `}
               onClick={onClose}
             >
-              <div className={`p-1.5 rounded-lg ${isActive(path) ? 'bg-white/20' : 'bg-white/5'}`}>
+              <div className={`p-1.5 rounded-lg ${isActive(path) ? 'bg-white/20' : 'bg-orange-100'}`}>
                 <Icon size={20} />
               </div>
               <span className="font-medium">{label}</span>
@@ -113,16 +113,16 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
         </nav>
 
         {/* Bottom Section */}
-        <div className="p-4 space-y-3">
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-red-500/10 hover:text-red-400 transition-all group">
-            <div className="p-1.5 rounded-lg bg-white/5 group-hover:bg-red-500/20 transition-colors">
+        <div className="p-4 space-y-3 border-t border-gray-200">
+          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-red-50 hover:text-red-600 transition-all group">
+            <div className="p-1.5 rounded-lg bg-red-50 group-hover:bg-red-100 transition-colors">
               <LogOut size={20} />
             </div>
             <span className="font-medium">Logout</span>
           </button>
 
           <div className="text-center py-2">
-            <p className="text-xs text-gray-600">Dinder v1.0.0</p>
+            <p className="text-xs text-gray-500">Dinder v1.0.0</p>
           </div>
         </div>
       </div>
