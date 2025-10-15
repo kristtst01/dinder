@@ -114,9 +114,6 @@ export function HomePage() {
     });
   }, [allRecipes, filters]);
 
-  const chickenRecipes = filteredRecipes.filter((r) => r.category === 'Chicken');
-  const soupRecipes = filteredRecipes.filter((r) => r.category !== 'Chicken');
-
   const hasActiveFilters =
     filters.kitchen !== 'all' ||
     filters.difficulty !== 'all' ||
@@ -176,57 +173,19 @@ export function HomePage() {
           </div>
         </div>
       )}
-      {/* Empty State */}
-      {hasNoResults && (
-        <EmptyState searchQuery={filters.searchQuery} hasFilters={hasActiveFilters} />
-      )}
+          {/* Empty State */}
+          {hasNoResults && (
+            <EmptyState searchQuery={filters.searchQuery} hasFilters={hasActiveFilters} />
+          )}
 
-      {/* Chicken Recipes */}
-      {!hasNoResults && chickenRecipes.length > 0 && (
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-5 px-6 mx-auto">
-            <h3 className="text-2xl font-bold text-gray-900">Chicken Recipes</h3>
-            <button className="text-sm text-gray-500 flex items-center gap-1 font-medium">
-              See More <span className="text-lg">›</span>
-            </button>
-          </div>
-          <div className="flex gap-5 overflow-x-auto pb-2 -mx-6 px-6 scrollbar-hide md:hidden">
-            {chickenRecipes.map((recipe) => (
-              <div key={recipe.id} className="flex-shrink-0 w-72">
-                <RecipeCard recipe={recipe} />
-              </div>
-            ))}
-          </div>
-          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 mx-auto">
-            {chickenRecipes.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} />
-            ))}
-          </div>
-        </div>
-      )}
-      {/* Soup Recipes */}
-      {!hasNoResults && soupRecipes.length > 0 && (
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-5 px-6 mx-auto">
-            <h3 className="text-2xl font-bold text-gray-900">Soup Recipes</h3>
-            <button className="text-sm text-gray-500 flex items-center gap-1 font-medium">
-              See More <span className="text-lg">›</span>
-            </button>
-          </div>
-          <div className="flex gap-5 overflow-x-auto pb-2 -mx-6 px-6 scrollbar-hide md:hidden">
-            {soupRecipes.map((recipe) => (
-              <div key={recipe.id} className="flex-shrink-0 w-72">
-                <RecipeCard recipe={recipe} />
-              </div>
-            ))}
-          </div>
-          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 mx-auto">
-            {soupRecipes.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} />
-            ))}
-          </div>
-        </div>
-      )}
+          {/* All Recipes Grid */}
+          {!hasNoResults && filteredRecipes.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {filteredRecipes.map((recipe) => (
+                <RecipeCard key={recipe.id} recipe={recipe} />
+              ))}
+            </div>
+          )}
         </main>
       </div>
     </div>
