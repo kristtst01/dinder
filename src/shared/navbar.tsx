@@ -10,6 +10,7 @@ import {
   LogIn,
   LogOut,
   Moon,
+  Settings,
   Sun,
   User,
   X,
@@ -34,7 +35,7 @@ const navLinks: NavLinkItem[] = [
   { path: '/saved', label: 'Saved Recipes', icon: Bookmark },
   { path: '/weekplans', label: 'Week Plans', icon: Calendar },
   { path: '/statistics', label: 'Statistics', icon: BarChart3 },
-  { path: '/profile', label: 'Profile', icon: User },
+  { path: '/preferences', label: 'Preferences', icon: Settings },
 ];
 
 export function Navbar({ isOpen, onClose }: NavbarProps) {
@@ -111,7 +112,10 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
               </button>
             </>
           ) : (
-            <div className="bg-orange-50 dark:bg-gray-800 rounded-2xl p-4 border border-orange-100 dark:border-gray-700 hover:bg-orange-100 dark:hover:bg-gray-700 transition-all cursor-pointer group">
+            <Link
+              to="/profile"
+              className="bg-orange-50 dark:bg-gray-800 rounded-2xl p-4 border border-orange-100 dark:border-gray-700 hover:bg-orange-100 dark:hover:bg-gray-700 transition-all cursor-pointer group block"
+            >
               <div className="flex items-center gap-3">
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
                   {userInitials}
@@ -129,7 +133,7 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
                   className="text-gray-400 dark:text-gray-500 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors"
                 />
               </div>
-            </div>
+            </Link>
           )}
         </div>
 
@@ -139,7 +143,7 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
             Menu
           </div>
 
-          <div className="flex-1 flex flex-col justify-evenly">
+          <div className="flex-1 flex flex-col space-y-1">
             {navLinks.map(({ path, label, icon: Icon }) => (
               <Link
                 key={path}
