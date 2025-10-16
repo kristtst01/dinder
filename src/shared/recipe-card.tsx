@@ -12,13 +12,13 @@ export function RecipeCard({ recipe, onClick, badge }: RecipeCardProps) {
   const getDifficultyColor = (difficulty?: string) => {
     switch (difficulty) {
       case 'Easy':
-        return 'bg-green-100 text-green-700';
+        return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400';
       case 'Medium':
-        return 'bg-yellow-100 text-yellow-700';
+        return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400';
       case 'Hard':
-        return 'bg-red-100 text-red-700';
+        return 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400';
       default:
-        return 'bg-gray-100 text-gray-700';
+        return 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300';
     }
   };
 
@@ -26,7 +26,7 @@ export function RecipeCard({ recipe, onClick, badge }: RecipeCardProps) {
     <Link to={`/recipe/${recipe.id}`} state={{ recipe }} className="block h-full">
       <div
         onClick={onClick}
-        className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all cursor-pointer min-h-[120px] flex flex-col h-full"
+        className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all cursor-pointer min-h-[120px] flex flex-col h-full"
       >
         <div className="relative aspect-video w-full">
           <img
@@ -43,13 +43,13 @@ export function RecipeCard({ recipe, onClick, badge }: RecipeCardProps) {
         </div>
 
         <div className="p-4 flex-1 flex flex-col gap-3">
-          <h3 className="text-lg font-bold text-gray-900 line-clamp-2 leading-tight">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2 leading-tight">
             {recipe.title}
           </h3>
 
           <div className="flex items-center gap-3 flex-wrap">
             {recipe.cookingTime && (
-              <div className="flex items-center gap-1.5 text-gray-600">
+              <div className="flex items-center gap-1.5 text-gray-600 dark:text-gray-300">
                 <Clock className="w-4 h-4" />
                 <span className="text-sm font-medium">{recipe.cookingTime} min</span>
               </div>
@@ -66,7 +66,7 @@ export function RecipeCard({ recipe, onClick, badge }: RecipeCardProps) {
             )}
 
             {recipe.area && (
-              <div className="flex items-center gap-1.5 text-gray-600">
+              <div className="flex items-center gap-1.5 text-gray-600 dark:text-gray-300">
                 <ChefHat className="w-4 h-4" />
                 <span className="text-sm font-medium">{recipe.area}</span>
               </div>
@@ -74,7 +74,9 @@ export function RecipeCard({ recipe, onClick, badge }: RecipeCardProps) {
           </div>
 
           {recipe.category && (
-            <span className="text-xs text-gray-500 font-medium mt-auto">{recipe.category}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-auto">
+              {recipe.category}
+            </span>
           )}
         </div>
       </div>
@@ -84,12 +86,12 @@ export function RecipeCard({ recipe, onClick, badge }: RecipeCardProps) {
 
 export function RecipeCardSkeleton() {
   return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-md min-h-[120px] flex flex-col animate-pulse">
-      <div className="aspect-video w-full bg-gray-200" />
+    <div className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md min-h-[120px] flex flex-col animate-pulse">
+      <div className="aspect-video w-full bg-gray-200 dark:bg-gray-700" />
       <div className="p-4 flex-1 flex flex-col gap-3">
-        <div className="h-5 bg-gray-200 rounded w-3/4" />
-        <div className="h-4 bg-gray-200 rounded w-1/2" />
-        <div className="h-4 bg-gray-200 rounded w-1/3 mt-auto" />
+        <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mt-auto" />
       </div>
     </div>
   );

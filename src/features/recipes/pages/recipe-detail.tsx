@@ -52,9 +52,9 @@ export default function RecipeDetail() {
 
   if (!recipe) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6">
         <div className="text-center">
-          <p className="text-gray-600 mb-4 text-lg">Recipe not found</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-4 text-lg">Recipe not found</p>
           <button
             onClick={() => navigate(-1)}
             className="px-4 py-2 bg-orange-500 text-white rounded-lg"
@@ -74,17 +74,19 @@ export default function RecipeDetail() {
   const steps = recipe.steps ?? [];
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-8">
       {/* Header - sticky with actions */}
-      <header className="sticky top-0 z-30 bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
+      <header className="sticky top-0 z-30 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center gap-3">
         <button
           onClick={() => navigate(-1)}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           aria-label="Go back"
         >
-          <ArrowLeft size={20} className="text-gray-700" />
+          <ArrowLeft size={20} className="text-gray-700 dark:text-gray-200" />
         </button>
-        <h1 className="text-lg font-semibold text-gray-900 flex-1 truncate">{recipe.title}</h1>
+        <h1 className="text-lg font-semibold text-gray-900 dark:text-white flex-1 truncate">
+          {recipe.title}
+        </h1>
 
         {/* Cook Mode Toggle - Mobile Only */}
         <button
@@ -92,7 +94,7 @@ export default function RecipeDetail() {
           aria-pressed={cookMode}
           className={`
             md:hidden p-2 rounded-lg transition-colors
-            ${cookMode ? 'bg-orange-500 text-white' : 'hover:bg-gray-100 text-gray-700'}
+            ${cookMode ? 'bg-orange-500 text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200'}
           `}
           aria-label={cookMode ? 'Exit cook mode' : 'Enter cook mode'}
           title={cookMode ? 'Cook mode active - screen stays on' : 'Enable cook mode'}
@@ -102,19 +104,19 @@ export default function RecipeDetail() {
 
         <button
           onClick={() => recipe && handleShare(recipe.title, window.location.href)}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           aria-label="Share recipe"
         >
-          <Share2 size={20} className="text-gray-700" />
+          <Share2 size={20} className="text-gray-700 dark:text-gray-200" />
         </button>
         <button
           onClick={() => toggle(recipe.id)}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           aria-label={isSaved(recipe.id) ? 'Unsave recipe' : 'Save recipe'}
         >
           <Heart
             size={20}
-            className={isSaved(recipe.id) ? 'text-red-500' : 'text-gray-700'}
+            className={isSaved(recipe.id) ? 'text-red-500' : 'text-gray-700 dark:text-gray-200'}
             fill={isSaved(recipe.id) ? 'currentColor' : 'none'}
           />
         </button>
@@ -134,45 +136,51 @@ export default function RecipeDetail() {
       </div>
 
       {/* Title & Meta */}
-      <div className="px-4 py-4 bg-white">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">{recipe.title}</h2>
+      <div className="px-4 py-4 bg-white dark:bg-gray-800">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{recipe.title}</h2>
 
         {/* Quick Stats - Large, readable */}
         <div className="grid grid-cols-3 gap-2 mt-4">
-          <div className="flex flex-col items-center p-3 bg-orange-50 rounded-lg">
-            <Clock size={20} className="text-orange-600 mb-1" />
-            <span className="text-xs text-gray-600">Time</span>
-            <span className="text-sm font-semibold text-gray-900">{cookingTime}m</span>
+          <div className="flex flex-col items-center p-3 bg-orange-50 dark:bg-gray-700 rounded-lg">
+            <Clock size={20} className="text-orange-600 dark:text-orange-400 mb-1" />
+            <span className="text-xs text-gray-600 dark:text-gray-300">Time</span>
+            <span className="text-sm font-semibold text-gray-900 dark:text-white">
+              {cookingTime}m
+            </span>
           </div>
-          <div className="flex flex-col items-center p-3 bg-orange-50 rounded-lg">
-            <Users size={20} className="text-orange-600 mb-1" />
-            <span className="text-xs text-gray-600">Servings</span>
-            <span className="text-sm font-semibold text-gray-900">{servings}</span>
+          <div className="flex flex-col items-center p-3 bg-orange-50 dark:bg-gray-700 rounded-lg">
+            <Users size={20} className="text-orange-600 dark:text-orange-400 mb-1" />
+            <span className="text-xs text-gray-600 dark:text-gray-300">Servings</span>
+            <span className="text-sm font-semibold text-gray-900 dark:text-white">{servings}</span>
           </div>
-          <div className="flex flex-col items-center p-3 bg-orange-50 rounded-lg">
-            <ChefHat size={20} className="text-orange-600 mb-1" />
-            <span className="text-xs text-gray-600">Level</span>
-            <span className="text-sm font-semibold text-gray-900">{difficulty}</span>
+          <div className="flex flex-col items-center p-3 bg-orange-50 dark:bg-gray-700 rounded-lg">
+            <ChefHat size={20} className="text-orange-600 dark:text-orange-400 mb-1" />
+            <span className="text-xs text-gray-600 dark:text-gray-300">Level</span>
+            <span className="text-sm font-semibold text-gray-900 dark:text-white">
+              {difficulty}
+            </span>
           </div>
         </div>
       </div>
 
       {/* Ingredients Section - with scaling */}
-      <section className="px-4 py-5 bg-white mt-2">
+      <section className="px-4 py-5 bg-white dark:bg-gray-800 mt-2">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold text-gray-900">Ingredients</h3>
-          <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">Ingredients</h3>
+          <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
             <button
               onClick={() => setServings(Math.max(1, servings - 1))}
-              className="px-3 py-1 text-gray-700 hover:bg-white rounded transition-colors"
+              className="px-3 py-1 text-gray-700 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-600 rounded transition-colors"
               aria-label="Decrease servings"
             >
               -
             </button>
-            <span className="px-2 text-sm font-medium text-gray-900">{servings} servings</span>
+            <span className="px-2 text-sm font-medium text-gray-900 dark:text-white">
+              {servings} servings
+            </span>
             <button
               onClick={() => setServings(servings + 1)}
-              className="px-3 py-1 text-gray-700 hover:bg-white rounded transition-colors"
+              className="px-3 py-1 text-gray-700 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-600 rounded transition-colors"
               aria-label="Increase servings"
             >
               +
@@ -195,7 +203,7 @@ export default function RecipeDetail() {
                     ${
                       checkedIngredients.has(index)
                         ? 'bg-orange-500 border-orange-500'
-                        : 'border-gray-300 hover:border-orange-400'
+                        : 'border-gray-300 dark:border-gray-600 hover:border-orange-400'
                     }
                   `}
                   aria-label={`Mark ingredient ${index + 1} as ${checkedIngredients.has(index) ? 'unchecked' : 'checked'}`}
@@ -217,7 +225,7 @@ export default function RecipeDetail() {
                   )}
                 </button>
                 <span
-                  className={`text-base text-gray-700 ${checkedIngredients.has(index) ? 'line-through text-gray-400' : ''}`}
+                  className={`text-base ${checkedIngredients.has(index) ? 'line-through text-gray-400 dark:text-gray-500' : 'text-gray-700 dark:text-gray-300'}`}
                 >
                   {displayIngredient}
                 </span>
@@ -228,8 +236,8 @@ export default function RecipeDetail() {
       </section>
 
       {/* Instructions Section - with checkboxes for cooking mode */}
-      <section className="px-4 py-5 bg-white mt-2">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Instructions</h3>
+      <section className="px-4 py-5 bg-white dark:bg-gray-800 mt-2">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Instructions</h3>
         <div className="space-y-4">
           {steps.map((step, index) => (
             <div key={index} className="flex gap-3 items-start">
@@ -240,7 +248,7 @@ export default function RecipeDetail() {
                   ${
                     checkedSteps.has(index)
                       ? 'bg-orange-500 border-orange-500'
-                      : 'border-gray-300 hover:border-orange-400'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-orange-400'
                   }
                 `}
                 aria-label={`Mark step ${index + 1} as ${checkedSteps.has(index) ? 'incomplete' : 'complete'}`}
@@ -263,11 +271,11 @@ export default function RecipeDetail() {
               </button>
               <div className="flex-1">
                 <div className="flex items-start gap-2">
-                  <span className="flex-shrink-0 w-7 h-7 bg-orange-100 text-orange-700 rounded-full text-sm font-semibold flex items-center justify-center">
+                  <span className="flex-shrink-0 w-7 h-7 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded-full text-sm font-semibold flex items-center justify-center">
                     {index + 1}
                   </span>
                   <p
-                    className={`flex-1 text-base leading-relaxed ${checkedSteps.has(index) ? 'text-gray-400 line-through' : 'text-gray-700'}`}
+                    className={`flex-1 text-base leading-relaxed ${checkedSteps.has(index) ? 'text-gray-400 dark:text-gray-500 line-through' : 'text-gray-700 dark:text-gray-300'}`}
                   >
                     {step}
                   </p>
@@ -279,7 +287,7 @@ export default function RecipeDetail() {
       </section>
 
       {/* Action Buttons - "I Have Tried This" */}
-      <section className="px-4 py-5 bg-white mt-2">
+      <section className="px-4 py-5 bg-white dark:bg-gray-800 mt-2">
         <button
           onClick={toggleTriedRecipe}
           className={`
@@ -295,7 +303,7 @@ export default function RecipeDetail() {
           {hasTriedRecipe ? "You've Tried This Recipe!" : 'Mark as Tried'}
         </button>
         {hasTriedRecipe && (
-          <p className="text-center text-sm text-gray-500 mt-2">
+          <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-2">
             You have tried this recipe before.
           </p>
         )}

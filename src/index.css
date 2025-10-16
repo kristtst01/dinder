@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@variant dark (&:where(.dark, .dark *));
+
 /* Prevent overscroll bounce effect on mobile */
 html,
 body {
