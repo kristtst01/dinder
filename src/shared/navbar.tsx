@@ -1,5 +1,6 @@
 import { useAuth } from '@common/hooks/use-auth';
 import { AuthModal } from '@features/login/ui/auth-modal';
+import { useProfile } from '@features/profile/hooks/useProfile';
 import type { LucideIcon } from 'lucide-react';
 import {
   BarChart3,
@@ -18,7 +19,7 @@ import {
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../common/hooks/use-theme';
-import { useProfile } from '@features/profile/hooks/useProfile';
+import getInitials from './getInitials';
 
 interface NavbarProps {
   isOpen: boolean;
@@ -48,13 +49,8 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
 
   // Get user display name and initials
   const userName = user?.user_metadata?.full_name || user?.email || 'Guest';
-  const userInitials =
-    userName
-      .split(' ')
-      .map((n: string) => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2) || 'G';
+  const userInitials = getInitials(userName);
+  const { data: profile, isLoading: profileLoading, error } = useProfile(user?.id);
 
   return (
     <>
@@ -119,7 +115,15 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
             >
               <div className="flex items-center gap-3">
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
-                  {userInitials}
+                  {!error && !profileLoading && profile.avatar_url ? (
+                    <img
+                      src={profile.avatar_url}
+                      alt="Profile"
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    userInitials
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">

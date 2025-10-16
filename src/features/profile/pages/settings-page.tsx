@@ -1,4 +1,6 @@
 import { useAuth } from '@common/hooks/use-auth';
+import { useTheme } from '@common/hooks/use-theme';
+import getInitials from '@shared/getInitials';
 import { Navbar } from '@shared/navbar';
 import {
   Bell,
@@ -24,12 +26,14 @@ export default function SettingsPage() {
   const [expandedSections, setExpandedSections] = useState<ExpandedSections>({});
   const [settings, setSettings] = useState<Settings | null>(null);
   const [loading, setLoading] = useState(false);
+  const { toggleTheme } = useTheme();
 
   const { user } = useAuth();
 
   const [navOpen, setNavOpen] = useState(false);
   const userName = user?.user_metadata?.full_name || user?.email || 'Guest';
   const email = user?.email || '';
+  const userInitials = getInitials(userName);
 
   useEffect(() => {
     setLoading(true);
@@ -97,6 +101,11 @@ export default function SettingsPage() {
     }));
   };
 
+  function switchTheme(val: boolean) {
+    toggleTheme();
+    updateSetting('darkMode', val);
+  }
+
   const updateSetting = async <K extends keyof Settings>(key: K, value: Settings[K]) => {
     const {
       data: { user },
@@ -116,17 +125,6 @@ export default function SettingsPage() {
     if (error) {
       console.error('Failed to update:', error);
     }
-  };
-
-  const getInitials = () => {
-    return (
-      userName
-        .split(' ')
-        .map((n: String) => n[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2) || 'U'
-    );
   };
 
   // Edit Profile View
@@ -151,15 +149,11 @@ export default function SettingsPage() {
       ) : (
         <div className="flex-1 flex flex-col min-w-0 bg-gray-50 dark:bg-gray-900">
           {/* Header */}
-          <div className="bg-white border-b border-gray-200 px-4 py-4 sticky top-0 z-10">
+          <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
             <div className="flex items-center justify-between">
-              <button
-                onClick={() => window.history.back()}
-                className="text-gray-600 hover:text-gray-900"
-              >
-                ← Back
-              </button>
-              <h1 className="text-xl font-bold text-gray-900">Profile & Settings</h1>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+                Profile & Settings
+              </h1>
               <div className="w-16"></div>
             </div>
           </div>
@@ -169,7 +163,7 @@ export default function SettingsPage() {
             <section className="bg-white rounded-2xl shadow-sm p-6">
               <div className="flex items-center space-x-4">
                 <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                  {getInitials()}
+                  {userInitials}
                 </div>
                 <div className="flex-1">
                   <h2 className="text-xl font-bold text-gray-900">{userName}</h2>
@@ -185,14 +179,11 @@ export default function SettingsPage() {
               {/* Dark Mode */}
               <SettingRow
                 icon={
-                  settings.darkMode ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />
+                  settings.darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />
                 }
                 label="Dark Mode"
                 control={
-                  <Toggle
-                    enabled={settings.darkMode}
-                    onChange={(val) => updateSetting('darkMode', val)}
-                  />
+                  <Toggle enabled={settings.darkMode} onChange={(val) => switchTheme(val)} />
                 }
               />
 

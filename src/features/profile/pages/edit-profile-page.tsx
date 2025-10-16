@@ -69,10 +69,9 @@ export default function EditProfilePage() {
       );
     }
 
-    // Main profile edit form
     return (
       <>
-        <div className="bg-white border-b border-gray-200 px-4 py-4 sticky top-0 z-10">
+        <div className="border-b border-gray-200 px-4 py-4 sticky top-0 z-10">
           <h1 className="text-xl font-bold text-gray-900">Edit Profile</h1>
         </div>
 
@@ -247,12 +246,11 @@ export default function EditProfilePage() {
   };
 
   const handleSaveProfile = async () => {
-    if (!user) return; // Type guard
+    if (!user) return;
 
     setSaving(true);
     let avatarUrl = formData.avatar_url;
 
-    // Upload new image if selected
     if (selectedFile) {
       const uploadedUrl = await uploadImage(selectedFile, user.id);
       if (uploadedUrl) {
@@ -265,18 +263,14 @@ export default function EditProfilePage() {
     }
 
     try {
-      // Update profile with new data including avatar
       await profileService.updateProfile(user.id, {
         ...formData,
         avatar_url: avatarUrl,
       });
 
-      // Refetch profile to get updated data
       await refetch();
 
-      // Clear selected file
       setSelectedFile(null);
-
       alert('Profile updated successfully!');
     } catch (error) {
       console.error('Error updating profile:', error);
