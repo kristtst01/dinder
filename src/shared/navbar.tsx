@@ -128,11 +128,11 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
           </div>
 
           <div className="flex-1 flex flex-col justify-evenly">
-          {navLinks.map(({ path, label, icon: Icon }) => (
-            <Link
-              key={path}
-              to={path}
-              className={`
+            {navLinks.map(({ path, label, icon: Icon }) => (
+              <Link
+                key={path}
+                to={path}
+                className={`
                 flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all group
                 ${
                   isActive(path)
@@ -140,19 +140,19 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
                     : 'text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-800 hover:text-orange-600 dark:hover:text-orange-400'
                 }
               `}
-              onClick={onClose}
-            >
-              <div
-                className={`p-1.5 rounded-lg ${isActive(path) ? 'bg-white/20' : 'bg-orange-100 dark:bg-gray-700'}`}
+                onClick={onClose}
               >
-                <Icon size={20} />
-              </div>
-              <span className="font-medium">{label}</span>
-              {isActive(path) && (
-                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-              )}
-            </Link>
-          ))}
+                <div
+                  className={`p-1.5 rounded-lg ${isActive(path) ? 'bg-white/20' : 'bg-orange-100 dark:bg-gray-700'}`}
+                >
+                  <Icon size={20} />
+                </div>
+                <span className="font-medium">{label}</span>
+                {isActive(path) && (
+                  <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                )}
+              </Link>
+            ))}
           </div>
         </nav>
 
