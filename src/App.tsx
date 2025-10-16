@@ -1,4 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { SpeedInsights } from '@vercel/speed-insights/react';
+import { Analytics } from '@vercel/analytics/react';
 import { SavedRecipesProvider } from './features/recipes/context/SavedRecipesContext';
 import { HomePage } from './features/home/pages/home-page';
 import ProfilePage from './features/profile/pages/profile-page';
@@ -20,6 +22,8 @@ function App() {
           <Route path="/weekplanner" element={<WeekPlanner />} />
         </Routes>
       </BrowserRouter>
+      <SpeedInsights />
+      <Analytics />
     </SavedRecipesProvider>
   );
 }
