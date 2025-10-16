@@ -94,19 +94,22 @@ export default function SavedPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 flex overflow-x-clip">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex overflow-x-clip">
       {/* Left Navbar */}
       <Navbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile Saved Page Header */}
-        <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between gap-4 sticky top-0 z-30 md:hidden">
+        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-4 flex items-center justify-between gap-4 sticky top-0 z-30 md:hidden">
           <div className="flex items-center gap-4">
-            <button onClick={() => setNavOpen(true)} className="p-2 hover:bg-gray-100 rounded-lg">
-              <Menu size={24} className="text-gray-700" />
+            <button
+              onClick={() => setNavOpen(true)}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+            >
+              <Menu size={24} className="text-gray-700 dark:text-gray-200" />
             </button>
-            <h1 className="text-xl font-bold text-gray-900">
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">
               {viewMode === 'recipes' ? 'Saved Recipes' : 'Week Plans'}
             </h1>
           </div>
@@ -117,7 +120,9 @@ export default function SavedPage() {
               onClick={() => setViewMode('recipes')}
               aria-label="Show recipes"
               className={`p-2 rounded-md transition ${
-                viewMode === 'recipes' ? 'bg-gray-100 text-gray-900' : 'text-gray-500'
+                viewMode === 'recipes'
+                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+                  : 'text-gray-500 dark:text-gray-400'
               }`}
             >
               <ChefHat size={18} />
@@ -126,7 +131,9 @@ export default function SavedPage() {
               onClick={() => setViewMode('weekplans')}
               aria-label="Show weekplans"
               className={`p-2 rounded-md transition ${
-                viewMode === 'weekplans' ? 'bg-gray-100 text-gray-900' : 'text-gray-500'
+                viewMode === 'weekplans'
+                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+                  : 'text-gray-500 dark:text-gray-400'
               }`}
             >
               <Calendar size={18} />
@@ -153,15 +160,17 @@ export default function SavedPage() {
             <>
               {savedRecipes.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-gray-500 text-lg mb-2">No saved recipes yet</p>
-                  <p className="text-sm text-gray-400">
+                  <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">
+                    No saved recipes yet
+                  </p>
+                  <p className="text-sm text-gray-400 dark:text-gray-500">
                     Start adding recipes by clicking the heart icon on any recipe from the home page
                   </p>
                 </div>
               ) : filteredRecipes.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-gray-500">No recipes match your filters</p>
-                  <p className="text-sm text-gray-400 mt-2">
+                  <p className="text-gray-500 dark:text-gray-400">No recipes match your filters</p>
+                  <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
                     Try adjusting your filters or clearing them
                   </p>
                 </div>
@@ -187,8 +196,12 @@ export default function SavedPage() {
             <>
               {weekplans.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-gray-500 text-lg mb-2">Du har ingen ukeplaner ennå</p>
-                  <p className="text-sm text-gray-400">Opprett din første ukeplan nå!</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">
+                    Du har ingen ukeplaner ennå
+                  </p>
+                  <p className="text-sm text-gray-400 dark:text-gray-500">
+                    Opprett din første ukeplan nå!
+                  </p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -218,7 +231,7 @@ export default function SavedPage() {
         {viewMode === 'recipes' && (
           <div
             className={`
-              md:hidden fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent
+              md:hidden fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-gray-50 dark:from-gray-900 via-gray-50 dark:via-gray-900 to-transparent
               transition-transform duration-300 ease-in-out z-20
               ${showMobileFilter && !navOpen ? 'translate-y-0' : 'translate-y-full'}
             `}

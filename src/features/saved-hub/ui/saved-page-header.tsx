@@ -26,14 +26,14 @@ export function SavedPageHeader({
   onViewModeChange,
 }: SavedPageHeaderProps) {
   return (
-    <header className="hidden md:block bg-white border-b border-gray-200 px-6 py-6 sticky top-0 z-30">
+    <header className="hidden md:block bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-6 sticky top-0 z-30">
       {/* Title row */}
       <div className="flex items-center justify-between gap-4 mb-4 min-w-0">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold text-gray-900 truncate">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white truncate">
             {viewMode === 'recipes' ? 'Saved Recipes' : 'Week Plans'}
           </h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
             {viewMode === 'recipes'
               ? `${filteredCount} recipe${filteredCount !== 1 ? 's' : ''} found`
               : 'Dine lagrede ukeplaner – legg til, rediger eller bestill når du vil.'}
@@ -41,13 +41,13 @@ export function SavedPageHeader({
         </div>
 
         {/* Toggle Button */}
-        <div className="flex items-center gap-2 bg-gray-100 rounded-xl p-1 shrink-0">
+        <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-xl p-1 shrink-0">
           <button
             onClick={() => onViewModeChange('recipes')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all font-medium ${
               viewMode === 'recipes'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
+                : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
             }`}
           >
             <ChefHat size={18} />
@@ -57,8 +57,8 @@ export function SavedPageHeader({
             onClick={() => onViewModeChange('weekplans')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all font-medium ${
               viewMode === 'weekplans'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
+                : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
             }`}
           >
             <Calendar size={18} />
@@ -68,7 +68,7 @@ export function SavedPageHeader({
       </div>
 
       {/* --- visual separation line --- */}
-      <hr className="border-gray-200 mb-4" />
+      <hr className="border-gray-200 dark:border-gray-700 mb-4" />
 
       {/* Filter panel (contains search + dropdowns) - Only show for recipes view */}
       {viewMode === 'recipes' && (

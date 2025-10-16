@@ -49,22 +49,22 @@ export function FilterPanel({
   ].filter(Boolean).length;
 
   return (
-    <div className="w-full bg-white border border-gray-200 rounded-2xl p-4 mb-4">
+    <div className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 mb-4">
       {/* Search Bar and Filter Toggle */}
       <div className="flex items-center gap-3">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
           <input
             type="text"
             placeholder="Search recipes..."
             value={filters.searchQuery}
             onChange={(e) => onChange({ ...filters, searchQuery: e.target.value })}
-            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
           />
         </div>
         <button
           onClick={() => toggleFilters(!showFilters)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100 transition-colors font-medium text-gray-700"
+          className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors font-medium text-gray-700 dark:text-gray-200"
         >
           <Sliders className="w-4 h-4" />
           <span className="hidden sm:inline">Filters</span>
@@ -90,10 +90,12 @@ export function FilterPanel({
           ${showFilters ? 'max-h-[600px] sm:max-h-96 opacity-100' : 'max-h-0 opacity-0'}
         `}
       >
-        <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-0.5">
+        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-0.5">
           {/* Kitchen / Area */}
           <div className="relative">
-            <label className="block text-gray-600 text-xs font-medium mb-1.5">Kitchen</label>
+            <label className="block text-gray-600 dark:text-gray-300 text-xs font-medium mb-1.5">
+              Kitchen
+            </label>
             <input
               type="text"
               value={filters.kitchen === 'all' ? kitchenSearch : filters.kitchen}
@@ -107,17 +109,17 @@ export function FilterPanel({
               onFocus={() => setShowKitchenDropdown(true)}
               onBlur={() => setTimeout(() => setShowKitchenDropdown(false), 200)}
               placeholder="Search kitchens..."
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-800 dark:text-white bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
             {showKitchenDropdown && kitchenSearch.length >= 2 && (
-              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+              <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg max-h-48 overflow-y-auto">
                 <button
                   onClick={() => {
                     onChange({ ...filters, kitchen: 'all' });
                     setKitchenSearch('');
                     setShowKitchenDropdown(false);
                   }}
-                  className="w-full text-left px-3 py-2 text-sm text-gray-800 hover:bg-orange-50 transition-colors"
+                  className="w-full text-left px-3 py-2 text-sm text-gray-800 dark:text-white hover:bg-orange-50 dark:hover:bg-gray-600 transition-colors"
                 >
                   All Kitchens
                 </button>
@@ -129,13 +131,15 @@ export function FilterPanel({
                       setKitchenSearch('');
                       setShowKitchenDropdown(false);
                     }}
-                    className="w-full text-left px-3 py-2 text-sm text-gray-800 hover:bg-orange-50 transition-colors"
+                    className="w-full text-left px-3 py-2 text-sm text-gray-800 dark:text-white hover:bg-orange-50 dark:hover:bg-gray-600 transition-colors"
                   >
                     {a}
                   </button>
                 ))}
                 {filteredAreas.length === 0 && (
-                  <div className="px-3 py-2 text-sm text-gray-400">No kitchens found</div>
+                  <div className="px-3 py-2 text-sm text-gray-400 dark:text-gray-500">
+                    No kitchens found
+                  </div>
                 )}
               </div>
             )}
@@ -143,13 +147,15 @@ export function FilterPanel({
 
           {/* Difficulty */}
           <div>
-            <label className="block text-gray-600 text-xs font-medium mb-1.5">Difficulty</label>
+            <label className="block text-gray-600 dark:text-gray-300 text-xs font-medium mb-1.5">
+              Difficulty
+            </label>
             <select
               value={filters.difficulty}
               onChange={(e) =>
                 onChange({ ...filters, difficulty: e.target.value as FilterState['difficulty'] })
               }
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-800 dark:text-white bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               <option value="all">All Levels</option>
               <option>Easy</option>
@@ -160,7 +166,9 @@ export function FilterPanel({
 
           {/* Max Time */}
           <div>
-            <label className="block text-gray-600 text-xs font-medium mb-1.5">Max Prep Time</label>
+            <label className="block text-gray-600 dark:text-gray-300 text-xs font-medium mb-1.5">
+              Max Prep Time
+            </label>
             <input
               type="number"
               min={0}
@@ -173,7 +181,7 @@ export function FilterPanel({
                 });
               }}
               placeholder="Any (minutes)"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-800 dark:text-white bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
             <div className="flex flex-wrap gap-2 mt-2">
               {[15, 30, 60].map((time) => (
@@ -183,7 +191,7 @@ export function FilterPanel({
                   className={`px-3 py-1.5 text-xs rounded-lg border transition-colors ${
                     filters.maxPrepTime === time
                       ? 'bg-orange-500 text-white border-orange-500'
-                      : 'bg-white text-gray-700 border-gray-200 hover:border-orange-300'
+                      : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-orange-300'
                   }`}
                 >
                   {time}m
@@ -194,13 +202,15 @@ export function FilterPanel({
 
           {/* Vegetarian */}
           <div>
-            <label className="block text-gray-600 text-xs font-medium mb-1.5">Vegetarian</label>
+            <label className="block text-gray-600 dark:text-gray-300 text-xs font-medium mb-1.5">
+              Vegetarian
+            </label>
             <select
               value={filters.vegetarian}
               onChange={(e) =>
                 onChange({ ...filters, vegetarian: e.target.value as FilterState['vegetarian'] })
               }
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-800 dark:text-white bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               <option value="any">Any</option>
               <option value="only">Vegetarian Only</option>

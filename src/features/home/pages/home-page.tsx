@@ -1,19 +1,20 @@
 import LoadingSpinner from '@/components/loading-spinner';
 import { useAuth } from '@common/hooks/use-auth';
-import { Bookmark, Home, LogIn, LogOut, Search, User } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { EmptyState } from '../../../components/empty-state';
 import { FilterPanel, type FilterState } from '../../../shared/filter-panel';
 import { RecipeCard } from '../../../shared/recipe-card';
+import { Navbar } from '../../../shared/navbar';
 import { ALL_RECIPES } from '../../../utils/recipe-loader';
-import { AuthModal } from '../../login/ui/auth-modal';
+import { FeaturedRecipe } from '../ui/featured-recipe';
+import { WeekplanCTA } from '../ui/weekplan-cta';
 
 export function HomePage() {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { user, loading, signOut } = useAuth();
-  const [showAuthModal, setShowAuthModal] = useState(false);
+  const { loading } = useAuth();
+  const [navOpen, setNavOpen] = useState(false);
   // Get search and filter values from URL
   const kitchenParam = searchParams.get('kitchen') || 'all';
   const difficultyParam = searchParams.get('difficulty') || 'all';
@@ -67,19 +68,20 @@ export function HomePage() {
     [setSearchParams]
   );
 
-  const categories = [
-    { icon: '🍔', label: 'Western' },
-    { icon: '🍞', label: 'Bread' },
-    { icon: '🥘', label: 'Western' },
-    { icon: '🍲', label: 'Soup' },
-    { icon: '🍨', label: 'Dessert' },
-    { icon: '🍸', label: 'Coctail' },
-    { icon: '🍝', label: 'Noodles' },
-    { icon: '☕', label: 'Coffee' },
-  ];
-
   // Use recipes from recipe-loader
   const allRecipes = ALL_RECIPES;
+
+  // Random recipe for hero section
+  const randomRecipe = useMemo(() => {
+    return allRecipes[Math.floor(Math.random() * allRecipes.length)];
+  }, [allRecipes]);
+
+  // Popular recipes (mock data - will be replaced with Supabase data later)
+  const popularRecipes = useMemo(() => {
+    // For now, just get a random selection of recipes
+    const shuffled = [...allRecipes].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 8);
+  }, [allRecipes]);
 
   // Filter recipes based on FilterState
   const filteredRecipes = useMemo(() => {
@@ -115,9 +117,6 @@ export function HomePage() {
     });
   }, [allRecipes, filters]);
 
-  const chickenRecipes = filteredRecipes.filter((r) => r.category === 'Chicken');
-  const soupRecipes = filteredRecipes.filter((r) => r.category !== 'Chicken');
-
   const hasActiveFilters =
     filters.kitchen !== 'all' ||
     filters.difficulty !== 'all' ||
@@ -127,150 +126,87 @@ export function HomePage() {
     filters.searchQuery || hasActiveFilters ? filteredRecipes.length === 0 : false;
 
   return (
-    <div className="w-full md:w-4/5 md:max-w-7xl mx-auto px-6 py-4 min-h-screen pb-32 overflow-x-hidden">
-      {/* Header */}
-      {/* Example loading spinner, we have no data fetching so... */}
-      {loading && <LoadingSpinner />}
-      <div>
-        <div className="flex items-center justify-between mb-8">
-          {user ? (
-            <>
-              <div className="flex items-center gap-3">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-xl">
-                  {user.user_metadata?.full_name?.[0] || user.email?.[0].toUpperCase()}
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-gray-900">
-                    {user.user_metadata?.full_name || 'User'}
-                  </h2>
-                  <p className="text-sm text-gray-400">{user.email}</p>
-                </div>
-              </div>
-              <button
-                onClick={signOut}
-                className="relative hover:bg-gray-50 p-2 rounded-full transition-colors"
-              >
-                <LogOut className="w-6 h-6 text-gray-700" />
-              </button>
-            </>
-          ) : (
-            <>
-              <div>
-                <h2 className="text-lg font-bold text-gray-900">Welcome!</h2>
-                <p className="text-sm text-gray-400">Sign in to save recipes</p>
-              </div>
-              <button
-                onClick={() => setShowAuthModal(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full font-medium hover:shadow-lg transition-all"
-              >
-                <LogIn className="w-5 h-5" />
-                Sign In
-              </button>
-            </>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex overflow-x-clip">
+      {/* Left Navbar */}
+      <Navbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Mobile Header */}
+        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-4 flex items-center justify-between gap-4 sticky top-0 z-30 md:hidden">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setNavOpen(true)}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+            >
+              <Menu size={24} className="text-gray-700 dark:text-gray-200" />
+            </button>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Home</h1>
+          </div>
+        </header>
+
+        {/* Desktop Header */}
+        <div className="hidden md:block bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-6">
+          <div className="mb-4">
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-2 font-medium">
+              New Update 1.4
+            </p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white leading-tight">
+              What Do You Want To Cook Today?
+            </h1>
+          </div>
+        </div>
+
+        {/* Example loading spinner */}
+        {loading && <LoadingSpinner />}
+
+        {/* Main Content Area */}
+        <main className="flex-1 p-4 pb-6 md:p-6">
+          {/* Featured Recipe */}
+          {!filters.searchQuery && !hasActiveFilters && randomRecipe && (
+            <FeaturedRecipe recipe={randomRecipe} />
           )}
-        </div>
 
-        <div className="mb-6">
-          <p className="text-xs text-gray-400 mb-3 font-medium">New Update 1.4</p>
-          <h1 className="text-3xl font-bold text-gray-900 leading-tight">
-            What Do You Want To
-            <br />
-            Cook Today?
-          </h1>
-        </div>
-      </div>
-
-      {/* Filter Panel */}
-      <div className="">
-        <FilterPanel filters={filters} onChange={updateFilters} recipes={allRecipes} />
-      </div>
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
-      {/* Categories - Hide when searching/filtering */}
-      {!filters.searchQuery && !hasActiveFilters && (
-        <div className="px-6 py-4 md:px-6 md:mx-auto">
-          <div className="grid grid-cols-4 gap-6">
-            {categories.map((category, index) => (
-              <button key={index} className="flex flex-col items-center gap-3">
-                <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center text-3xl hover:bg-orange-50 transition-colors shadow-sm">
-                  {category.icon}
-                </div>
-                <span className="text-xs text-gray-700 font-medium">{category.label}</span>
-              </button>
-            ))}
+          {/* Filter Panel */}
+          <div className="mb-6">
+            <FilterPanel filters={filters} onChange={updateFilters} recipes={allRecipes} />
           </div>
-        </div>
-      )}
-      {/* Empty State */}
-      {hasNoResults && (
-        <EmptyState searchQuery={filters.searchQuery} hasFilters={hasActiveFilters} />
-      )}
 
-      {/* Chicken Recipes */}
-      {!hasNoResults && chickenRecipes.length > 0 && (
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-5 px-6 mx-auto">
-            <h3 className="text-2xl font-bold text-gray-900">Chicken Recipes</h3>
-            <button className="text-sm text-gray-500 flex items-center gap-1 font-medium">
-              See More <span className="text-lg">›</span>
-            </button>
-          </div>
-          <div className="flex gap-5 overflow-x-auto pb-2 -mx-6 px-6 scrollbar-hide md:hidden">
-            {chickenRecipes.map((recipe) => (
-              <div key={recipe.id} className="flex-shrink-0 w-72">
-                <RecipeCard recipe={recipe} />
+          {/* Week Plan CTA - Only show when no filters/search active */}
+          {!filters.searchQuery && !hasActiveFilters && <WeekplanCTA />}
+
+          {/* Popular Recipes Section - Only show when no filters/search active */}
+          {!filters.searchQuery && !hasActiveFilters && popularRecipes.length > 0 && (
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  Popular This Week
+                </h3>
               </div>
-            ))}
-          </div>
-          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 mx-auto">
-            {chickenRecipes.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} />
-            ))}
-          </div>
-        </div>
-      )}
-      {/* Soup Recipes */}
-      {!hasNoResults && soupRecipes.length > 0 && (
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-5 px-6 mx-auto">
-            <h3 className="text-2xl font-bold text-gray-900">Soup Recipes</h3>
-            <button className="text-sm text-gray-500 flex items-center gap-1 font-medium">
-              See More <span className="text-lg">›</span>
-            </button>
-          </div>
-          <div className="flex gap-5 overflow-x-auto pb-2 -mx-6 px-6 scrollbar-hide md:hidden">
-            {soupRecipes.map((recipe) => (
-              <div key={recipe.id} className="flex-shrink-0 w-72">
-                <RecipeCard recipe={recipe} />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {popularRecipes.map((recipe) => (
+                  <RecipeCard key={recipe.id} recipe={recipe} />
+                ))}
               </div>
-            ))}
-          </div>
-          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 mx-auto">
-            {soupRecipes.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} />
-            ))}
-          </div>
-        </div>
-      )}
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white rounded-full shadow-2xl px-6 py-3 flex items-center gap-6 border border-gray-100">
-        <button className="w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all">
-          <Home className="w-6 h-6 text-white" strokeWidth={2.5} />
-        </button>
-        <button className="w-14 h-14 flex items-center justify-center hover:bg-gray-50 rounded-full transition-all">
-          <Search className="w-6 h-6 text-orange-500" strokeWidth={2} />
-        </button>
-        <button
-          className="w-14 h-14 flex items-center justify-center hover:bg-gray-50 rounded-full transition-all"
-          onClick={() => navigate('/saved')}
-        >
-          <Bookmark className="w-6 h-6 text-orange-500" strokeWidth={2} />
-        </button>
-        <button
-          className="w-14 h-14 flex items-center justify-center hover:bg-gray-50 rounded-full transition-all"
-          onClick={() => navigate('/profile')}
-        >
-          <User className="w-6 h-6 text-orange-500" strokeWidth={2} />
-        </button>
+            </div>
+          )}
+
+          {/* Empty State */}
+          {hasNoResults && (
+            <EmptyState searchQuery={filters.searchQuery} hasFilters={hasActiveFilters} />
+          )}
+
+          {/* All Recipes Grid - Show when filtering/searching */}
+          {(filters.searchQuery || hasActiveFilters) &&
+            !hasNoResults &&
+            filteredRecipes.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {filteredRecipes.map((recipe) => (
+                  <RecipeCard key={recipe.id} recipe={recipe} />
+                ))}
+              </div>
+            )}
+        </main>
       </div>
     </div>
   );

@@ -8,19 +8,22 @@ export default function WeekPlanner() {
   const [navOpen, setNavOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex overflow-x-clip">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex overflow-x-clip">
       {/* Left Navbar */}
       <Navbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile Header */}
-        <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between gap-4 sticky top-0 z-30 md:hidden">
+        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-4 flex items-center justify-between gap-4 sticky top-0 z-30 md:hidden">
           <div className="flex items-center gap-4">
-            <button onClick={() => setNavOpen(true)} className="p-2 hover:bg-gray-100 rounded-lg">
-              <Menu size={24} className="text-gray-700" />
+            <button
+              onClick={() => setNavOpen(true)}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+            >
+              <Menu size={24} className="text-gray-700 dark:text-gray-200" />
             </button>
-            <h1 className="text-xl font-bold text-gray-900">Week Planner</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Week Planner</h1>
           </div>
         </header>
 
