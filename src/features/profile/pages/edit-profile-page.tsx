@@ -1,7 +1,9 @@
 import { supabase } from '@/lib/supabase/supabase';
+import { useAuth } from '@common/hooks/use-auth';
 import { Navbar } from '@shared/navbar';
 import { Camera, Save, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { useProfile } from '../hooks/useProfile';
 import { profileService } from '../services/profile.service';
 import type { ProfileData } from '../types';
 
@@ -11,165 +13,65 @@ export default function EditProfilePage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [profile, setProfile] = useState<ProfileData>({
-    username: '',
+  const [formData, setFormData] = useState<ProfileData>({
     email: '',
-    avatarUrl: null,
+    full_name: '',
+    avatar_url: null,
+    username: '',
     address: {
       street: '',
       city: '',
-      postalCode: '',
-      country: 'Norway',
+      postal_code: '',
+      country: '',
     },
   });
 
+  const { user, loading: authLoading } = useAuth();
+  const { data: profile, isLoading: profileLoading, error, refetch } = useProfile(user?.id);
   useEffect(() => {
-    async function fetchData() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    if (profile) {
+      setFormData(profile);
+      setPreviewUrl(profile.avatar_url);
+    }
+  }, [profile]);
 
-      if (!user) {
-        return;
-      }
-
-      try {
-        const profileData = await profileService.getProfile(user.id);
-        setProfile({
-          username: profileData.username || user.email?.split('@')[0] || '',
-          email: user.email || '',
-          avatarUrl: profileData.avatar_url,
-          address: {
-            street: profileData.address?.street || '',
-            city: profileData.address?.city || '',
-            postalCode: profileData.address?.postal_code || '',
-            country: profileData.address?.country || 'Norway',
-          },
-        });
-        setPreviewUrl(profileData.avatar_url);
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-        setProfile({
-          username: user.email?.split('@')[0] || '',
-          email: user.email || '',
-          avatarUrl: null,
-          address: {
-            street: '',
-            city: '',
-            postalCode: '',
-            country: 'Norway',
-          },
-        });
-      }
+  const renderContent = () => {
+    if (authLoading || profileLoading) {
+      return (
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading...</p>
+          </div>
+        </div>
+      );
     }
 
-    fetchData();
-  }, []);
-
-  const handleSaveProfile = async () => {
-    setSaving(true);
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
-
-      let avatarUrl = profile.avatarUrl;
-
-      if (selectedFile) {
-        const uploadedUrl = await uploadImage(selectedFile, user.id);
-        if (uploadedUrl) {
-          avatarUrl = uploadedUrl;
-        }
-      }
-
-      const { error } = await supabase.from('profiles').upsert({
-        id: user.id,
-        username: profile.username,
-        avatar_url: avatarUrl,
-        address: {
-          street: profile.address.street,
-          city: profile.address.city,
-          postal_code: profile.address.postalCode,
-          country: profile.address.country,
-        },
-        updated_at: new Date().toISOString(),
-      });
-
-      if (error) throw error;
-
-      setProfile((prev) => ({ ...prev, avatarUrl }));
-      setSelectedFile(null);
-    } catch (error) {
-      console.error('Error saving profile:', error);
-      alert('Failed to save profile. Please try again.');
-    } finally {
-      setSaving(false);
+    if (!user) {
+      return (
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <p className="text-xl text-gray-900 mb-2">Please sign in</p>
+            <p className="text-gray-600">You need to be authenticated to edit your profile</p>
+          </div>
+        </div>
+      );
     }
-  };
 
-  const getInitials = () => {
+    if (error) {
+      return (
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <p className="text-xl text-red-600 mb-2">Error loading profile</p>
+            <p className="text-gray-600">Please try refreshing the page</p>
+          </div>
+        </div>
+      );
+    }
+
+    // Main profile edit form
     return (
-      profile.username
-        .split(' ')
-        .map((n) => n[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2) || 'U'
-    );
-  };
-
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const uploadImage = async (file: File, userId: string): Promise<string | null> => {
-    try {
-      const allowedTypes = ['image/jpeg', 'image/png'];
-      if (!allowedTypes.includes(file.type)) {
-        console.error('Invalid file type. Only JPG and PNG are allowed.');
-        return null;
-      }
-
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      if (file.size > maxSize) {
-        console.error('File too large. Maximum size is 5MB.');
-        return null;
-      }
-
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${userId}/profile.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('profile-pic')
-        .upload(filePath, file, {
-          upsert: true,
-        });
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage.from('profile-pic').getPublicUrl(filePath);
-
-      return `${data.publicUrl}?t=${Date.now()}`;
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      return null;
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex overflow-x-clip">
-      {/* Left Navbar */}
-      <Navbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
-      <div className="min-h-screen bg-gray-50 pb-20 flex-1 flex flex-col min-w-0">
+      <>
         <div className="bg-white border-b border-gray-200 px-4 py-4 sticky top-0 z-10">
           <h1 className="text-xl font-bold text-gray-900">Edit Profile</h1>
         </div>
@@ -212,17 +114,27 @@ export default function EditProfilePage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
                 <input
                   type="text"
-                  value={profile.username}
-                  onChange={(e) => setProfile((prev) => ({ ...prev, username: e.target.value }))}
+                  value={formData.username}
+                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                   placeholder="Enter your username"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                <input
+                  type="text"
+                  value={formData.full_name || ''}
+                  onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  placeholder="Enter your full name"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
                 <input
                   type="email"
-                  value={profile.email}
+                  value={formData.email}
                   disabled
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
                 />
@@ -239,12 +151,12 @@ export default function EditProfilePage() {
                 </label>
                 <input
                   type="text"
-                  value={profile.address.street}
+                  value={formData.address.street}
                   onChange={(e) =>
-                    setProfile((prev) => ({
-                      ...prev,
-                      address: { ...prev.address, street: e.target.value },
-                    }))
+                    setFormData({
+                      ...formData,
+                      address: { ...formData.address, street: e.target.value },
+                    })
                   }
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                   placeholder="123 Main Street"
@@ -255,12 +167,12 @@ export default function EditProfilePage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">City</label>
                   <input
                     type="text"
-                    value={profile.address.city}
+                    value={formData.address.city}
                     onChange={(e) =>
-                      setProfile((prev) => ({
-                        ...prev,
-                        address: { ...prev.address, city: e.target.value },
-                      }))
+                      setFormData({
+                        ...formData,
+                        address: { ...formData.address, city: e.target.value },
+                      })
                     }
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                     placeholder="Oslo"
@@ -272,33 +184,32 @@ export default function EditProfilePage() {
                   </label>
                   <input
                     type="text"
-                    value={profile.address.postalCode}
+                    value={formData.address.postal_code}
                     onChange={(e) =>
-                      setProfile((prev) => ({
-                        ...prev,
-                        address: { ...prev.address, postalCode: e.target.value },
-                      }))
+                      setFormData({
+                        ...formData,
+                        address: { ...formData.address, postal_code: e.target.value },
+                      })
                     }
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    placeholder={profile.address.postalCode.toString()}
+                    placeholder="12345"
                   />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Country</label>
                 <select
-                  value={profile.address.country}
+                  value={formData.address.country}
                   onChange={(e) =>
-                    setProfile((prev) => ({
-                      ...prev,
-                      address: { ...prev.address, country: e.target.value },
-                    }))
+                    setFormData({
+                      ...formData,
+                      address: { ...formData.address, country: e.target.value },
+                    })
                   }
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 >
                   <option value="Norway">Norway</option>
-                  <option value="Sweden">Sweden</option>
-                  <option value="Denmark">Denmark</option>
+                  <option value="England">England</option>
                 </select>
               </div>
             </div>
@@ -306,10 +217,7 @@ export default function EditProfilePage() {
 
           <div className="flex gap-3">
             <button
-              onClick={() => {
-                setPreviewUrl(profile.avatarUrl);
-                setSelectedFile(null);
-              }}
+              onClick={handleCancel}
               className="flex-1 flex items-center justify-center gap-2 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50"
             >
               <X className="w-5 h-5" />
@@ -334,6 +242,122 @@ export default function EditProfilePage() {
             </button>
           </div>
         </div>
+      </>
+    );
+  };
+
+  const handleSaveProfile = async () => {
+    if (!user) return; // Type guard
+
+    setSaving(true);
+    let avatarUrl = formData.avatar_url;
+
+    // Upload new image if selected
+    if (selectedFile) {
+      const uploadedUrl = await uploadImage(selectedFile, user.id);
+      if (uploadedUrl) {
+        avatarUrl = uploadedUrl;
+      } else {
+        alert('Failed to upload image. Please try again.');
+        setSaving(false);
+        return;
+      }
+    }
+
+    try {
+      // Update profile with new data including avatar
+      await profileService.updateProfile(user.id, {
+        ...formData,
+        avatar_url: avatarUrl,
+      });
+
+      // Refetch profile to get updated data
+      await refetch();
+
+      // Clear selected file
+      setSelectedFile(null);
+
+      alert('Profile updated successfully!');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert('Failed to update profile. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const getInitials = () => {
+    return (
+      formData.username
+        .split(' ')
+        .map((n: string) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2) || 'U'
+    );
+  };
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const uploadImage = async (file: File, userId: string): Promise<string | null> => {
+    try {
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      if (!allowedTypes.includes(file.type)) {
+        alert('Invalid file type. Only JPG and PNG are allowed.');
+        return null;
+      }
+
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        alert('File too large. Maximum size is 5MB.');
+        return null;
+      }
+
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${userId}/profile.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('profile-pic')
+        .upload(filePath, file, {
+          upsert: true,
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage.from('profile-pic').getPublicUrl(filePath);
+
+      return `${data.publicUrl}?t=${Date.now()}`;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      return null;
+    }
+  };
+
+  const handleCancel = () => {
+    // Reset form to original profile data
+    if (profile) {
+      setFormData(profile);
+      setPreviewUrl(profile.avatar_url);
+      setSelectedFile(null);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex overflow-x-clip">
+      {/* Left Navbar */}
+      <Navbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
+      <div className="min-h-screen bg-gray-50 pb-20 flex-1 flex flex-col min-w-0">
+        {renderContent()}
       </div>
     </div>
   );

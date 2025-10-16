@@ -9,13 +9,14 @@ export interface Settings {
 }
 
 export interface ProfileData {
-  username: string;
   email: string;
-  avatarUrl: string | null;
+  full_name: string;
+  avatar_url: string | null;
+  username: string;
   address: {
     street: string;
     city: string;
-    postalCode: string;
+    postal_code: string;
     country: string;
   };
 }

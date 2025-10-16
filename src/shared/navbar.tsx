@@ -18,6 +18,7 @@ import {
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../common/hooks/use-theme';
+import { useProfile } from '@features/profile/hooks/useProfile';
 
 interface NavbarProps {
   isOpen: boolean;
