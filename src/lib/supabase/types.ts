@@ -1,7 +1,6 @@
 export interface UserPreference {
   id: string;
   user_id: string;
-  dark_mode: boolean;
   language: string;
   notifications: boolean;
   smart_suggestions: boolean;
@@ -13,6 +12,25 @@ export interface UserPreference {
   updated_at: string;
 }
 
-export type UserPreferenceUpdate = Partial<
-  Omit<UserPreference, 'id' | 'user_id' | 'created_at' | 'updated_at'>
+export interface PublicProfile {
+  id: string;
+  email: string;
+  full_name: string;
+  avatar_url: string | null;
+  username: string;
+  address: {
+    street: string;
+    city: string;
+    postal_code: string;
+    country: string;
+  };
+  created_at: string;
+  updated_at: string;
+}
+
+export type UserPreferenceFormData = Omit<
+  UserPreference,
+  'id' | 'user_id' | 'created_at' | 'updated_at'
 >;
+
+export type PublicProfileFormData = Omit<PublicProfile, 'id' | 'created_at' | 'updated_at'>;

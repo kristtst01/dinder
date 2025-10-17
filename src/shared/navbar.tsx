@@ -115,7 +115,7 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
             >
               <div className="flex items-center gap-3">
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
-                  {!error && !profileLoading && profile.avatar_url ? (
+                  {!error && !profileLoading && profile?.avatar_url ? (
                     <img
                       src={profile.avatar_url}
                       alt="Profile"

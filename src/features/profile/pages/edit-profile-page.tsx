@@ -1,19 +1,18 @@
 import { supabase } from '@/lib/supabase/supabase';
+import type { PublicProfileFormData } from '@/lib/supabase/types';
 import { useAuth } from '@common/hooks/use-auth';
 import { Navbar } from '@shared/navbar';
-import { Camera, Save, X } from 'lucide-react';
+import { Camera, Menu, Save, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useProfile } from '../hooks/useProfile';
-import { profileService } from '../services/profile.service';
-import type { ProfileData } from '../types';
-
+import { ProfileRepository } from '../repositories/profile.repository';
 export default function EditProfilePage() {
   const [navOpen, setNavOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [formData, setFormData] = useState<ProfileData>({
+  const [formData, setFormData] = useState<PublicProfileFormData>({
     email: '',
     full_name: '',
     avatar_url: null,
@@ -71,12 +70,8 @@ export default function EditProfilePage() {
 
     return (
       <>
-        <div className="border-b border-gray-200 px-4 py-4 sticky top-0 z-10">
-          <h1 className="text-xl font-bold text-gray-900">Edit Profile</h1>
-        </div>
-
         <div className="max-w-2xl mx-auto px-4 py-8">
-          <div className="bg-white rounded-2xl shadow-sm p-8 mb-6">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8 mb-6">
             <div className="flex flex-col items-center">
               <div className="relative">
                 <div className="w-40 h-40 rounded-full overflow-hidden bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-4xl font-bold shadow-lg">
@@ -100,52 +95,60 @@ export default function EditProfilePage() {
                   className="hidden"
                 />
               </div>
-              <p className="mt-4 text-sm text-gray-600 text-center">
+              <p className="mt-4 text-sm text-gray-600 dark:text-gray-300 text-center">
                 Click the camera icon to upload a new photo
               </p>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Personal Information</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6 mb-6">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+              Personal Information
+            </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+                  Username
+                </label>
                 <input
                   type="text"
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:text-white"
                   placeholder="Enter your username"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+                  Full Name
+                </label>
                 <input
                   type="text"
                   value={formData.full_name || ''}
                   onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:text-white"
                   placeholder="Enter your full name"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+                  Email
+                </label>
                 <input
                   type="email"
                   value={formData.email}
                   disabled
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 rounded-lg bg-gray-50 text-gray-700 dark:text-white cursor-not-allowed bg-gray-100 dark:bg-gray-700"
                 />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Address</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6 mb-6">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Address</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
                   Street Address
                 </label>
                 <input
@@ -157,13 +160,15 @@ export default function EditProfilePage() {
                       address: { ...formData.address, street: e.target.value },
                     })
                   }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-700 dark:text-white"
                   placeholder="123 Main Street"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">City</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+                    City
+                  </label>
                   <input
                     type="text"
                     value={formData.address.city}
@@ -173,12 +178,12 @@ export default function EditProfilePage() {
                         address: { ...formData.address, city: e.target.value },
                       })
                     }
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-700 dark:text-white"
                     placeholder="Oslo"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
                     Postal Code
                   </label>
                   <input
@@ -190,13 +195,15 @@ export default function EditProfilePage() {
                         address: { ...formData.address, postal_code: e.target.value },
                       })
                     }
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-700 dark:text-white"
                     placeholder="12345"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Country</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+                  Country
+                </label>
                 <select
                   value={formData.address.country}
                   onChange={(e) =>
@@ -205,7 +212,7 @@ export default function EditProfilePage() {
                       address: { ...formData.address, country: e.target.value },
                     })
                   }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-700 dark:text-white"
                 >
                   <option value="Norway">Norway</option>
                   <option value="England">England</option>
@@ -217,7 +224,7 @@ export default function EditProfilePage() {
           <div className="flex gap-3">
             <button
               onClick={handleCancel}
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50"
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-white"
             >
               <X className="w-5 h-5" />
               Cancel
@@ -225,7 +232,7 @@ export default function EditProfilePage() {
             <button
               onClick={handleSaveProfile}
               disabled={saving}
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 disabled:opacity-50"
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 disabled:opacity-50 text-gray-700 dark:text-white"
             >
               {saving ? (
                 <>
@@ -263,7 +270,7 @@ export default function EditProfilePage() {
     }
 
     try {
-      await profileService.updateProfile(user.id, {
+      await ProfileRepository.updateProfile(user.id, {
         ...formData,
         avatar_url: avatarUrl,
       });
@@ -350,7 +357,18 @@ export default function EditProfilePage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex overflow-x-clip">
       {/* Left Navbar */}
       <Navbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
-      <div className="min-h-screen bg-gray-50 pb-20 flex-1 flex flex-col min-w-0">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20 flex-1 flex flex-col min-w-0">
+        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-4 flex items-center justify-between gap-4 sticky top-0 z-30 md:hidden">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setNavOpen(true)}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+            >
+              <Menu size={24} className="text-gray-700 dark:text-gray-200" />
+            </button>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Edit Profile</h1>
+          </div>
+        </header>
         {renderContent()}
       </div>
     </div>

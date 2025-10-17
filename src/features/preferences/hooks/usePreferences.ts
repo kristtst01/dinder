@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
-import { ProfileRepository } from '../repositories/profile.repository';
+import { PreferenceRepository } from '../repositories/preference.repository';
 
-export function useProfile(userId: string | undefined) {
+export function usePreferences(userId: string | undefined) {
   return useQuery({
-    queryKey: ['profile', userId],
+    queryKey: ['user_preferences', userId],
     queryFn: () => {
       if (!userId) {
         throw new Error('User ID is required for profile query');
       }
-      return ProfileRepository.getProfile(userId);
+      return PreferenceRepository.getPreference(userId);
     },
     enabled: !!userId,
     staleTime: 5 * 60 * 1000,

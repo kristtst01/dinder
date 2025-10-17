@@ -9,7 +9,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { HomePage } from './features/home/pages/home-page';
-import SettingsPage from './features/profile/pages/settings-page';
+import SettingsPage from './features/preferences/pages/preferences-page';
 import { SavedRecipesProvider } from './features/recipes/context/SavedRecipesContext';
 
 function App() {
