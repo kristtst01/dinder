@@ -9,6 +9,7 @@ import {
   DollarSign,
   Download,
   Globe,
+  Loader2,
   Menu,
   Moon,
   Scale,
@@ -17,9 +18,11 @@ import {
   Users,
   Zap,
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import type { ExpandedSections } from '../../profile/types';
+import { useDebouncedSave } from '../hooks/useDebounceSave';
 import { usePreferences } from '../hooks/usePreferences';
+import { PreferenceRepository } from '../repositories/preference.repository';
 
 type SectionKey = 'delivery' | 'dietary' | 'price' | 'orders';
 
@@ -41,11 +44,34 @@ export default function SettingsPage() {
     dietary_preferences: [],
   });
 
+  // Load preferences into form when available
   useEffect(() => {
     if (preferences) {
       setFormData(preferences);
     }
   }, [preferences]);
+
+  // Debounced save function
+  const savePreferences = useCallback(
+    async (data: UserPreferenceFormData) => {
+      if (!user?.id) return;
+      await PreferenceRepository.updatePreference(user.id, data);
+    },
+    [user?.id]
+  );
+
+  // Use debounced save hook
+  const { isSaving, error: saveError } = useDebouncedSave(
+    formData,
+    savePreferences,
+    1000, // 1 second delay
+    !!user?.id && !preferenceLoading // Only enable when user is loaded
+  );
+
+  // Helper function to update form data
+  const updateFormData = useCallback((updates: Partial<UserPreferenceFormData>) => {
+    setFormData((prev) => ({ ...prev, ...updates }));
+  }, []);
 
   const renderContent = () => {
     if (authLoading || preferenceLoading) {
@@ -81,6 +107,9 @@ export default function SettingsPage() {
 
     return (
       <>
+        {/* Save Status Indicator */}
+        <SaveStatusIndicator isSaving={isSaving} error={saveError} />
+
         <div className="w-full max-w-2xl lg:max-w-none lg:w-[50%] mx-auto px-4 py-8 space-y-6">
           {/* Quick Settings */}
           <section className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-4">
@@ -102,7 +131,7 @@ export default function SettingsPage() {
               control={
                 <Toggle
                   enabled={formData.notifications}
-                  onChange={(val) => setFormData({ ...formData, notifications: val })}
+                  onChange={(val) => updateFormData({ notifications: val })}
                 />
               }
             />
@@ -115,7 +144,7 @@ export default function SettingsPage() {
               control={
                 <Toggle
                   enabled={formData.smart_suggestions}
-                  onChange={(val) => setFormData({ ...formData, smart_suggestions: val })}
+                  onChange={(val) => updateFormData({ smart_suggestions: val })}
                 />
               }
             />
@@ -134,8 +163,8 @@ export default function SettingsPage() {
               control={
                 <select
                   value={formData.language}
-                  onChange={(val) => setFormData({ ...formData, language: val.target.value })}
-                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  onChange={(e) => updateFormData({ language: e.target.value })}
+                  className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                 >
                   <option value="NB">Norsk</option>
                   <option value="EN">English</option>
@@ -151,8 +180,8 @@ export default function SettingsPage() {
               control={
                 <select
                   value={formData.measurements}
-                  onChange={(val) => setFormData({ ...formData, measurements: val.target.value })}
-                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  onChange={(e) => updateFormData({ measurements: e.target.value })}
+                  className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                 >
                   <option value="metric">Metric</option>
                   <option value="imperial">Imperial</option>
@@ -167,10 +196,8 @@ export default function SettingsPage() {
               control={
                 <select
                   value={formData.default_servings}
-                  onChange={(val) =>
-                    setFormData({ ...formData, default_servings: parseInt(val.target.value) })
-                  }
-                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  onChange={(e) => updateFormData({ default_servings: parseInt(e.target.value) })}
+                  className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                 >
                   <option value="1">1 serving</option>
                   <option value="2">2 servings</option>
@@ -205,6 +232,13 @@ export default function SettingsPage() {
                 >
                   <input
                     type="checkbox"
+                    checked={formData.dietary_preferences?.includes(diet)}
+                    onChange={(e) => {
+                      const newDietary = e.target.checked
+                        ? [...(formData.dietary_preferences || []), diet]
+                        : (formData.dietary_preferences || []).filter((d) => d !== diet);
+                      updateFormData({ dietary_preferences: newDietary });
+                    }}
                     className="w-4 h-4 text-orange-600 rounded focus:ring-orange-500"
                   />
                   <span className="text-gray-700 dark:text-white">{diet}</span>
@@ -221,7 +255,7 @@ export default function SettingsPage() {
             onToggle={() => toggleSection('price')}
           >
             <div className="space-y-4">
-              <div className="flex justify-between text-sm text-gray-600 mb-2">
+              <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
                 <span>Budget-Friendly</span>
                 <span>Premium</span>
               </div>
@@ -229,7 +263,14 @@ export default function SettingsPage() {
                 type="range"
                 min="1"
                 max="5"
-                defaultValue="3"
+                value={
+                  formData.price_range === 'low' ? 1 : formData.price_range === 'medium' ? 3 : 5
+                }
+                onChange={(e) => {
+                  const val = parseInt(e.target.value);
+                  const range = val <= 2 ? 'low' : val <= 4 ? 'medium' : 'high';
+                  updateFormData({ price_range: range });
+                }}
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-500"
               />
               <div className="flex justify-between text-xs text-gray-500">
@@ -267,7 +308,7 @@ export default function SettingsPage() {
 
             <button className="w-full flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg text-left">
               <div className="flex items-center space-x-3">
-                <Download className="w-5 h-5 text-blue-600 dark:text-white" />
+                <Download className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 <span className="font-medium text-gray-900 dark:text-white">Download My Data</span>
               </div>
               <ChevronRight className="w-5 h-5 text-gray-400" />
@@ -291,6 +332,7 @@ export default function SettingsPage() {
       </>
     );
   };
+
   const toggleSection = (section: SectionKey) => {
     setExpandedSections((prev) => ({
       ...prev,
@@ -382,6 +424,26 @@ export default function SettingsPage() {
           </div>
         )}
       </section>
+    );
+  }
+
+  function SaveStatusIndicator({ isSaving, error }: { isSaving: boolean; error: string | null }) {
+    if (!isSaving && !error) return null;
+
+    return (
+      <div className="fixed top-4 right-4 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
+        {isSaving && (
+          <div className="bg-orange-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            <span className="text-sm font-medium">Saving...</span>
+          </div>
+        )}
+        {error && (
+          <div className="bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
+            <span className="text-sm font-medium">{error}</span>
+          </div>
+        )}
+      </div>
     );
   }
 
