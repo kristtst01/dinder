@@ -54,6 +54,8 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
 
   return (
     <>
+      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+
       {/* Overlay */}
       {isOpen && <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={onClose} />}
 
@@ -86,7 +88,6 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
               <p className="text-xs text-gray-500 dark:text-gray-400">Recipe Manager</p>
             </div>
           </div>
-          <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
           {/* Profile Card */}
           {loading ? (
             <div className="bg-orange-50 dark:bg-gray-800 rounded-2xl p-4 border border-orange-100 dark:border-gray-700 animate-pulse">

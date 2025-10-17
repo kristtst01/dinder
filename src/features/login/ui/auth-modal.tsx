@@ -67,11 +67,18 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
       setMessage(error.message);
       setLoading(false);
     }
+    setLoading(false);
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl max-w-md w-full p-8 relative">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-100 p-4"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white rounded-3xl max-w-md w-full p-8 relative"
+      >
         <button
           onClick={onClose}
           className="absolute top-6 right-6 text-gray-400 hover:text-gray-600"
@@ -82,24 +89,6 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         <h2 className="text-2xl font-bold text-gray-900 mb-6">
           {isSignUp ? 'Create Account' : 'Welcome Back'}
         </h2>
-
-        {/* Google Button */}
-        <button
-          onClick={handleGoogleAuth}
-          disabled={loading}
-          className="w-full py-3 px-4 border border-gray-300 rounded-2xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors disabled:opacity-50 mb-4"
-        >
-          Continue with Google
-        </button>
-
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-200"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-3 bg-white text-gray-500">Or continue with email</span>
-          </div>
-        </div>
 
         {/* Email Form */}
         <form onSubmit={handleEmailAuth} className="space-y-4">
@@ -147,6 +136,24 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
             {loading ? 'Loading...' : isSignUp ? 'Sign Up' : 'Sign In'}
           </button>
         </form>
+
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-200"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-3 bg-white text-gray-500">Or continue with Google</span>
+          </div>
+        </div>
+
+        {/* Google Button */}
+        <button
+          onClick={handleGoogleAuth}
+          disabled={loading}
+          className="w-full py-3 px-4 border border-gray-300 rounded-2xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors disabled:opacity-50 mb-4"
+        >
+          Continue with Google
+        </button>
 
         {message && (
           <div
