@@ -8,8 +8,11 @@ assignees: ''
 ---
 
 ## Summary
-Briefly describe the task or issue.  
+Briefly describe the task or issue.
 _Example: Implement dark mode toggle for UI._
+
+**Branch name**: `feature/branch-name-here`
+_Example: `feature/dark-mode-toggle`_
 
 ---
 
