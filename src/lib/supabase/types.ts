@@ -46,6 +46,8 @@ export interface DBRecipe {
   servings: number;
   category: string;
   difficulty: Difficulty;
+  image: string | null;
+  area: string | null;
 }
 
 export interface DBIngredient {

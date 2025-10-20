@@ -6,12 +6,13 @@ import { Navbar } from '../../../shared/navbar';
 import { SavedPageHeader } from '../ui/saved-page-header';
 import { WeekplanCard } from '../../../shared/weekplan-card';
 import { useSavedRecipesContext } from '../../recipes/context/SavedRecipesContext';
-import { ALL_RECIPES } from '../../../utils/recipe-loader';
+import { useRecipes } from '../../recipes/hooks/use-recipes';
 
 export type ViewMode = 'recipes' | 'weekplans';
 
 export default function SavedPage() {
   const { isSaved } = useSavedRecipesContext();
+  const { recipes: allRecipes, loading: recipesLoading } = useRecipes();
   const [navOpen, setNavOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('recipes');
   const [filters, setFilters] = useState<FilterState>({
@@ -59,7 +60,7 @@ export default function SavedPage() {
   }, [mobileFiltersExpanded]);
 
   // Get saved recipes only
-  const savedRecipes = ALL_RECIPES.filter((r) => isSaved(r.id));
+  const savedRecipes = allRecipes.filter((r) => isSaved(r.id));
   const recipesToShow = savedRecipes;
 
   // Apply filters and search
@@ -158,7 +159,11 @@ export default function SavedPage() {
           {viewMode === 'recipes' ? (
             /* Recipe Grid or Empty State */
             <>
-              {savedRecipes.length === 0 ? (
+              {recipesLoading ? (
+                <div className="text-center py-12">
+                  <p className="text-gray-500 dark:text-gray-400">Loading recipes...</p>
+                </div>
+              ) : savedRecipes.length === 0 ? (
                 <div className="text-center py-12">
                   <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">
                     No saved recipes yet
