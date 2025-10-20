@@ -4,7 +4,6 @@ import { useTheme } from '@common/hooks/use-theme';
 import { Navbar } from '@shared/navbar';
 import {
   Bell,
-  ChevronDown,
   ChevronRight,
   DollarSign,
   Download,
@@ -18,8 +17,11 @@ import {
   Users,
   Zap,
 } from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { ExpandedSections } from '../../profile/types';
+import { ExpandableSection } from '../components/expandable-settings';
+import SettingRow from '../components/settings-row';
+import Toggle from '../components/toggle';
 import { useDebouncedSave } from '../hooks/useDebounceSave';
 import { usePreferences } from '../hooks/usePreferences';
 import { PreferenceRepository } from '../repositories/preference.repository';
@@ -339,93 +341,6 @@ export default function SettingsPage() {
     }));
   };
 
-  // Reusable Components
-  interface SettingRowProps {
-    icon: React.ReactNode;
-    label: string;
-    subtitle?: string;
-    control: React.ReactNode;
-  }
-
-  function SettingRow({ icon, label, subtitle, control }: SettingRowProps) {
-    return (
-      <div className="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg">
-        <div className="flex items-center space-x-3 flex-1">
-          <div className="text-gray-600 dark:text-white">{icon}</div>
-          <div>
-            <p className="font-medium text-gray-900 dark:text-white">{label}</p>
-            {subtitle && (
-              <p className="text-xs text-gray-500 dark:text-gray-300 mt-0.5">{subtitle}</p>
-            )}
-          </div>
-        </div>
-        <div>{control}</div>
-      </div>
-    );
-  }
-
-  interface ToggleProps {
-    enabled: boolean;
-    onChange: (value: boolean) => void;
-  }
-
-  function Toggle({ enabled, onChange }: ToggleProps) {
-    return (
-      <button
-        onClick={() => onChange(!enabled)}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-          enabled ? 'bg-orange-500' : 'bg-gray-300'
-        }`}
-      >
-        <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-            enabled ? 'translate-x-6' : 'translate-x-1'
-          }`}
-        />
-      </button>
-    );
-  }
-
-  interface ExpandableSectionProps {
-    title: string;
-    icon: React.ReactNode;
-    expanded?: boolean;
-    onToggle: () => void;
-    children: React.ReactNode;
-  }
-
-  function ExpandableSection({
-    title,
-    icon,
-    expanded,
-    onToggle,
-    children,
-  }: ExpandableSectionProps) {
-    return (
-      <section className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden">
-        <button
-          onClick={onToggle}
-          className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700"
-        >
-          <div className="flex items-center space-x-3">
-            <div className="text-gray-600 dark:text-white">{icon}</div>
-            <span className="font-bold text-gray-900 dark:text-white">{title}</span>
-          </div>
-          {expanded ? (
-            <ChevronDown className="w-5 h-5 text-gray-400" />
-          ) : (
-            <ChevronRight className="w-5 h-5 text-gray-400" />
-          )}
-        </button>
-        {expanded && (
-          <div className="px-4 pb-4 border-t border-gray-100 dark:border-gray-700">
-            <div className="pt-4">{children}</div>
-          </div>
-        )}
-      </section>
-    );
-  }
-
   function SaveStatusIndicator({ isSaving, error }: { isSaving: boolean; error: string | null }) {
     if (!isSaving && !error) return null;
 
@@ -446,6 +361,9 @@ export default function SettingsPage() {
     );
   }
 
+  {
+    /* Main render */
+  }
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex overflow-x-clip">
       {/* Left Navbar */}
