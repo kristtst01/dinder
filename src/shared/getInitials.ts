@@ -1,4 +1,5 @@
 export function getInitials(name: string) {
+  if (!name) return 'UU';
   return (
     name
       .split(' ')

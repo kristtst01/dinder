@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase/supabase';
 import type { PublicProfileFormData } from '@/lib/supabase/types';
 import { useAuth } from '@common/hooks/use-auth';
+import getInitials from '@shared/getInitials';
 import { Navbar } from '@shared/navbar';
 import { Camera, Menu, Save, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -78,7 +79,7 @@ export default function EditProfilePage() {
                   {previewUrl ? (
                     <img src={previewUrl} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
-                    <span>{getInitials()}</span>
+                    <span>{getInitials(formData.full_name)}</span>
                   )}
                 </div>
                 <button
@@ -285,17 +286,6 @@ export default function EditProfilePage() {
     } finally {
       setSaving(false);
     }
-  };
-
-  const getInitials = () => {
-    return (
-      formData.username
-        .split(' ')
-        .map((n: string) => n[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2) || 'U'
-    );
   };
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
