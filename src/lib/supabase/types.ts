@@ -34,3 +34,54 @@ export type UserPreferenceFormData = Omit<
 >;
 
 export type PublicProfileFormData = Omit<PublicProfile, 'id' | 'created_at' | 'updated_at'>;
+
+export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
+export type Difficulty = 'easy' | 'medium' | 'hard';
+
+export interface DBRecipe {
+  uid: string;
+  name: string;
+  creator: string | null;
+  time: number;
+  servings: number;
+  category: string;
+  difficulty: Difficulty;
+}
+
+export interface DBIngredient {
+  uid: string;
+  name: string;
+}
+
+export interface DBRecipeIngredient {
+  uid: string;
+  recipe_id: string;
+  ingredient_id: string;
+  amount: number;
+  unit: string;
+  note: string | null;
+}
+
+export interface DBDirection {
+  uid: string;
+  recipe_id: string;
+  sequence: number;
+  description: string;
+  image: string | null;
+}
+
+export interface DBWeekplan {
+  id: string;
+  user_id: string;
+  name: string | null;
+  start_date: string | null;
+  created_at: string;
+}
+
+export interface DBWeekplanEntry {
+  id: string;
+  weekplan_id: string;
+  day_index: number;
+  meal_type: MealType;
+  recipe_id: string;
+}
