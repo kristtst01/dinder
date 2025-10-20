@@ -60,12 +60,11 @@ export default function SettingsPage() {
     [user?.id]
   );
 
-  // Use debounced save hook
   const { isSaving, error: saveError } = useDebouncedSave(
     formData,
     savePreferences,
-    1000, // 1 second delay
-    !!user?.id && !preferenceLoading // Only enable when user is loaded
+    3000,
+    !!user?.id && !preferenceLoading
   );
 
   // Helper function to update form data
