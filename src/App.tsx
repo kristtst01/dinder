@@ -1,13 +1,16 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { SpeedInsights } from '@vercel/speed-insights/react';
-import { Analytics } from '@vercel/analytics/react';
-import { SavedRecipesProvider } from './features/recipes/context/SavedRecipesContext';
-import { HomePage } from './features/home/pages/home-page';
-import ProfilePage from './features/profile/pages/profile-page';
-import SavedPage from '@features/saved-hub/pages/saved-recipes-page';
+import EditProfilePage from '@features/profile/pages/edit-profile-page';
 import RecipeDetail from '@features/recipes/pages/recipe-detail';
-import WeekplanPage from '@features/weekplans/pages/weekplan';
-import WeekPlanner from '@features/weekplans/pages/weekplan';
+import SavedPage from '@features/saved-hub/pages/saved-recipes-page';
+import {
+  default as WeekPlanner,
+  default as WeekplanPage,
+} from '@features/weekplans/pages/weekplan';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { HomePage } from './features/home/pages/home-page';
+import SettingsPage from './features/preferences/pages/preferences-page';
+import { SavedRecipesProvider } from './features/recipes/context/SavedRecipesContext';
 
 function App() {
   return (
@@ -17,9 +20,10 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/saved" element={<SavedPage />} />
           <Route path="/recipe/:id" element={<RecipeDetail />} />
-          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/preferences" element={<SettingsPage />} />
           <Route path="/weekplans" element={<WeekplanPage />} />
           <Route path="/weekplanner" element={<WeekPlanner />} />
+          <Route path="/profile" element={<EditProfilePage />} />
         </Routes>
       </BrowserRouter>
       <SpeedInsights />

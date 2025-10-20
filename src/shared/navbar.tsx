@@ -1,20 +1,25 @@
-import {
-  Settings,
-  BarChart3,
-  Calendar,
-  X,
-  ChefHat,
-  LogOut,
-  User,
-  Home,
-  Bookmark,
-  Moon,
-  Sun,
-} from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
-import type { LucideIcon } from 'lucide-react';
-import { useTheme } from '../common/hooks/use-theme';
 import { useAuth } from '@common/hooks/use-auth';
+import { AuthModal } from '@features/login/ui/auth-modal';
+import { useProfile } from '@features/profile/hooks/useProfile';
+import type { LucideIcon } from 'lucide-react';
+import {
+  BarChart3,
+  Bookmark,
+  Calendar,
+  ChefHat,
+  Home,
+  LogIn,
+  LogOut,
+  Moon,
+  Settings,
+  Sun,
+  User,
+  X,
+} from 'lucide-react';
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useTheme } from '../common/hooks/use-theme';
+import getInitials from './getInitials';
 
 interface NavbarProps {
   isOpen: boolean;
@@ -32,28 +37,25 @@ const navLinks: NavLinkItem[] = [
   { path: '/saved', label: 'Saved Recipes', icon: Bookmark },
   { path: '/weekplans', label: 'Week Plans', icon: Calendar },
   { path: '/statistics', label: 'Statistics', icon: BarChart3 },
-  { path: '/settings', label: 'Settings', icon: Settings },
+  { path: '/preferences', label: 'Preferences', icon: Settings },
 ];
 
 export function Navbar({ isOpen, onClose }: NavbarProps) {
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
-  const { user, loading } = useAuth();
-
+  const { user, loading, signOut } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const isActive = (path: string) => location.pathname === path;
 
   // Get user display name and initials
   const userName = user?.user_metadata?.full_name || user?.email || 'Guest';
-  const userInitials =
-    userName
-      .split(' ')
-      .map((n: string) => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2) || 'G';
+  const userInitials = getInitials(userName);
+  const { data: profile, isLoading: profileLoading, error } = useProfile(user?.id);
 
   return (
     <>
+      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+
       {/* Overlay */}
       {isOpen && <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={onClose} />}
 
@@ -86,7 +88,6 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
               <p className="text-xs text-gray-500 dark:text-gray-400">Recipe Manager</p>
             </div>
           </div>
-
           {/* Profile Card */}
           {loading ? (
             <div className="bg-orange-50 dark:bg-gray-800 rounded-2xl p-4 border border-orange-100 dark:border-gray-700 animate-pulse">
@@ -98,11 +99,32 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
                 </div>
               </div>
             </div>
+          ) : !user ? (
+            <>
+              <button
+                onClick={() => setShowAuthModal(true)}
+                className="w-full flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-medium hover:shadow-lg transition-all"
+              >
+                <LogIn className="w-5 h-5" />
+                Sign In
+              </button>
+            </>
           ) : (
-            <div className="bg-orange-50 dark:bg-gray-800 rounded-2xl p-4 border border-orange-100 dark:border-gray-700 hover:bg-orange-100 dark:hover:bg-gray-700 transition-all cursor-pointer group">
+            <Link
+              to="/profile"
+              className="bg-orange-50 dark:bg-gray-800 rounded-2xl p-4 border border-orange-100 dark:border-gray-700 hover:bg-orange-100 dark:hover:bg-gray-700 transition-all cursor-pointer group block"
+            >
               <div className="flex items-center gap-3">
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
-                  {userInitials}
+                  {!error && !profileLoading && profile?.avatar_url ? (
+                    <img
+                      src={profile.avatar_url}
+                      alt="Profile"
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    userInitials
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
@@ -117,7 +139,7 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
                   className="text-gray-400 dark:text-gray-500 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors"
                 />
               </div>
-            </div>
+            </Link>
           )}
         </div>
 
@@ -127,7 +149,7 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
             Menu
           </div>
 
-          <div className="flex-1 flex flex-col justify-evenly">
+          <div className="flex-1 flex flex-col space-y-1">
             {navLinks.map(({ path, label, icon: Icon }) => (
               <Link
                 key={path}
@@ -168,7 +190,10 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
             <span className="font-medium">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
           </button>
 
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-all group">
+          <button
+            onClick={signOut}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-all group"
+          >
             <div className="p-1.5 rounded-lg bg-red-50 dark:bg-red-900/20 group-hover:bg-red-100 dark:group-hover:bg-red-900/30 transition-colors">
               <LogOut size={20} />
             </div>
