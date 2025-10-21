@@ -76,7 +76,7 @@ export interface DBWeekplan {
   id: string;
   user_id: string;
   name: string | null;
-  start_date: string | null;
+  start_date: string;
   created_at: string;
 }
 
@@ -86,6 +86,7 @@ export interface DBWeekplanEntry {
   day_index: number;
   meal_type: MealType;
   recipe_id: string;
+  sequence: number;
 }
 
 export interface DBUserTriedRecipe {
