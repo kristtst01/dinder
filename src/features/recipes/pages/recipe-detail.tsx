@@ -1,11 +1,12 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart, Share2, Clock, Users, ChefHat, Flame, Check } from 'lucide-react';
-import { ALL_RECIPES } from '@utils/recipe-loader';
 import { useSavedRecipesContext } from '../context/SavedRecipesContext';
 import { useCookMode } from '../hooks/useCookMode';
 import { useTriedRecipe } from '../hooks/useTriedRecipe';
 import { useRecipeShare } from '../hooks/use-recipe-share';
+import { useRecipe } from '../hooks/use-recipes';
+import { useRecipeIngredients, useRecipeDirections } from '../hooks/use-recipe-details';
 
 export default function RecipeDetail() {
   const { id } = useParams<{ id: string }>();
@@ -22,8 +23,13 @@ export default function RecipeDetail() {
   const { hasTriedRecipe, toggleTriedRecipe } = useTriedRecipe(id);
   const { handleShare } = useRecipeShare();
 
-  // Recipe fetching - in production, fetch from API or database
-  const recipe = useMemo(() => ALL_RECIPES.find((r) => r.id === id), [id]);
+  // Fetch recipe and its details from database
+  const { recipe, loading: recipeLoading, error: recipeError } = useRecipe(id);
+  const { ingredients: dbIngredients, loading: ingredientsLoading } = useRecipeIngredients(id);
+  const { directions: dbDirections, loading: directionsLoading } = useRecipeDirections(id);
+
+  const loading = recipeLoading || ingredientsLoading || directionsLoading;
+  const error = recipeError;
 
   useEffect(() => {
     if (recipe) {
@@ -50,11 +56,23 @@ export default function RecipeDetail() {
   const toggleStep = (index: number) => toggleInSet(setCheckedSteps, index);
   const toggleIngredient = (index: number) => toggleInSet(setCheckedIngredients, index);
 
-  if (!recipe) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6">
         <div className="text-center">
-          <p className="text-gray-600 dark:text-gray-400 mb-4 text-lg">Recipe not found</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-4 text-lg">Loading recipe...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !recipe) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6">
+        <div className="text-center">
+          <p className="text-gray-600 dark:text-gray-400 mb-4 text-lg">
+            {error ? 'Error loading recipe' : 'Recipe not found'}
+          </p>
           <button
             onClick={() => navigate(-1)}
             className="px-4 py-2 bg-orange-500 text-white rounded-lg"
@@ -70,8 +88,23 @@ export default function RecipeDetail() {
   const difficulty = recipe.difficulty || 'Medium';
   const cookingTime = recipe.cookingTime || 30;
   const scaleFactor = servings / baseServings;
-  const ingredients = recipe.ingredients ?? [];
-  const steps = recipe.steps ?? [];
+
+  // Format ingredients from database into display strings
+  const ingredients = dbIngredients.map(ing => {
+    const amount = ing.amount * scaleFactor;
+    const unit = ing.unit;
+    const name = ing.ingredient.name;
+    const note = ing.note;
+
+    let displayText = `${amount} ${unit} ${name}`;
+    if (note) {
+      displayText += ` (${note})`;
+    }
+    return displayText;
+  });
+
+  // Get steps from directions (sorted by sequence)
+  const steps = dbDirections.map(dir => dir.description);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-8">
