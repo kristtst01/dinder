@@ -90,7 +90,7 @@ export default function RecipeDetail() {
   const scaleFactor = servings / baseServings;
 
   // Format ingredients from database into display strings
-  const ingredients = dbIngredients.map(ing => {
+  const ingredients = dbIngredients.map((ing) => {
     const amount = ing.amount * scaleFactor;
     const unit = ing.unit;
     const name = ing.ingredient.name;
@@ -104,7 +104,7 @@ export default function RecipeDetail() {
   });
 
   // Get steps from directions (sorted by sequence)
-  const steps = dbDirections.map(dir => dir.description);
+  const steps = dbDirections.map((dir) => dir.description);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-8">
