@@ -33,7 +33,9 @@ export function WeekplanPage() {
               key={i}
               title={plan.title}
               author={plan.author}
-              onClick={() => console.log('Åpne', plan.title)}
+              onClick={() => {
+                // TODO: Navigate to weekplan detail page
+              }}
             />
           ))}
         </div>
