@@ -87,3 +87,9 @@ export interface DBWeekplanEntry {
   meal_type: MealType;
   recipe_id: string;
 }
+
+export interface DBUserTriedRecipe {
+  user_id: string;
+  recipe_id: string;
+  tried_at: string;
+}
