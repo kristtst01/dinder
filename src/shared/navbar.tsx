@@ -11,6 +11,7 @@ import {
   LogIn,
   LogOut,
   Moon,
+  Plus,
   Settings,
   Sun,
   User,
@@ -34,6 +35,7 @@ interface NavLinkItem {
 
 const navLinks: NavLinkItem[] = [
   { path: '/', label: 'Home', icon: Home },
+  { path: '/recipe/create', label: 'Create Recipe', icon: Plus },
   { path: '/saved', label: 'Saved Recipes', icon: Bookmark },
   { path: '/weekplans', label: 'Week Plans', icon: Calendar },
   { path: '/statistics', label: 'Statistics', icon: BarChart3 },

@@ -1,5 +1,7 @@
 import EditProfilePage from '@features/profile/pages/edit-profile-page';
 import RecipeDetail from '@features/recipes/pages/recipe-detail';
+import { RecipeCreatePage } from '@features/recipes/pages/recipe-create';
+import { RecipeEditPage } from '@features/recipes/pages/recipe-edit';
 import SavedPage from '@features/saved-hub/pages/saved-recipes-page';
 import {
   default as WeekPlanner,
@@ -19,6 +21,8 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/saved" element={<SavedPage />} />
+          <Route path="/recipe/create" element={<RecipeCreatePage />} />
+          <Route path="/recipe/edit/:id" element={<RecipeEditPage />} />
           <Route path="/recipe/:id" element={<RecipeDetail />} />
           <Route path="/preferences" element={<SettingsPage />} />
           <Route path="/weekplans" element={<WeekplanPage />} />
