@@ -4,7 +4,7 @@ import { useProfile } from '@features/profile/hooks/useProfile';
 import type { LucideIcon } from 'lucide-react';
 import {
   BarChart3,
-  Bookmark,
+  BookOpen,
   Calendar,
   ChefHat,
   Home,
@@ -36,7 +36,7 @@ interface NavLinkItem {
 const navLinks: NavLinkItem[] = [
   { path: '/', label: 'Home', icon: Home },
   { path: '/recipe/create', label: 'Create Recipe', icon: Plus },
-  { path: '/saved', label: 'Saved Recipes', icon: Bookmark },
+  { path: '/cookbook', label: 'Cookbook', icon: BookOpen },
   { path: '/weekplans', label: 'Week Plans', icon: Calendar },
   { path: '/statistics', label: 'Statistics', icon: BarChart3 },
   { path: '/preferences', label: 'Preferences', icon: Settings },

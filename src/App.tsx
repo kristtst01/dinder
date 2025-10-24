@@ -2,11 +2,9 @@ import EditProfilePage from '@features/profile/pages/edit-profile-page';
 import RecipeDetail from '@features/recipes/pages/recipe-detail';
 import { RecipeCreatePage } from '@features/recipes/pages/recipe-create';
 import { RecipeEditPage } from '@features/recipes/pages/recipe-edit';
-import SavedPage from '@features/saved-hub/pages/saved-recipes-page';
-import {
-  default as WeekPlanner,
-  default as WeekplanPage,
-} from '@features/weekplans/pages/weekplan';
+import CookbookPage from '@features/cookbook/pages/cookbook-page';
+import { WeekplanPage } from '@features/weekplans/pages/weekplan-cards-page';
+import WeekPlanner from '@features/weekplans/pages/weekplan';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -20,7 +18,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/saved" element={<SavedPage />} />
+          <Route path="/cookbook" element={<CookbookPage />} />
           <Route path="/recipe/create" element={<RecipeCreatePage />} />
           <Route path="/recipe/edit/:id" element={<RecipeEditPage />} />
           <Route path="/recipe/:id" element={<RecipeDetail />} />
