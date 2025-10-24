@@ -6,6 +6,7 @@ import { useRecipeUpload, type RecipeUploadData } from '../hooks/use-recipe-uplo
 import { useImageUpload } from '../hooks/use-image-upload';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/common/hooks/use-auth';
+import { compressMainImage, compressStepImage, validateImageFile } from '../utils/image-utils';
 
 interface RecipeUploadFormProps {
   initialData?: Partial<RecipeUploadData> & { id?: string };
@@ -38,21 +39,49 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
   const [mainImageFile, setMainImageFile] = useState<File | null>(null);
   const [mainImagePreview, setMainImagePreview] = useState<string>(formData.image);
 
-  const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMainImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setMainImageFile(file);
-      setMainImagePreview(URL.createObjectURL(file));
+    if (!file) return;
+
+    // Validate file
+    const validationError = validateImageFile(file);
+    if (validationError) {
+      alert(validationError);
+      return;
+    }
+
+    try {
+      // Compress image
+      const compressedFile = await compressMainImage(file);
+      setMainImageFile(compressedFile);
+      setMainImagePreview(URL.createObjectURL(compressedFile));
+    } catch (error) {
+      alert('Failed to process image. Please try another file.');
+      console.error(error);
     }
   };
 
   const handleStepImageUpload = async (index: number, file: File) => {
-    const imageUrl = await uploadImage(file);
-    if (imageUrl) {
-      const updatedSteps = steps.map((step, i) =>
-        i === index ? { ...step, image: imageUrl } : step
-      );
-      setSteps(updatedSteps);
+    // Validate file
+    const validationError = validateImageFile(file);
+    if (validationError) {
+      alert(validationError);
+      return;
+    }
+
+    try {
+      // Compress image
+      const compressedFile = await compressStepImage(file);
+      const imageUrl = await uploadImage(compressedFile);
+      if (imageUrl) {
+        const updatedSteps = steps.map((step, i) =>
+          i === index ? { ...step, image: imageUrl } : step
+        );
+        setSteps(updatedSteps);
+      }
+    } catch (error) {
+      alert('Failed to process step image. Please try another file.');
+      console.error(error);
     }
   };
 
@@ -230,10 +259,14 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
             <input
               type="number"
               value={formData.time || ''}
-              onChange={(e) => setFormData({ ...formData, time: parseInt(e.target.value) || 0 })}
+              onChange={(e) => {
+                const value = parseInt(e.target.value) || 0;
+                setFormData({ ...formData, time: Math.min(Math.max(value, 0), 2147483647) });
+              }}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
               required
               min="1"
+              max="2147483647"
               placeholder="e.g., 30"
             />
           </div>
@@ -245,12 +278,14 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
             <input
               type="number"
               value={formData.servings || ''}
-              onChange={(e) =>
-                setFormData({ ...formData, servings: parseInt(e.target.value) || 1 })
-              }
+              onChange={(e) => {
+                const value = parseInt(e.target.value) || 1;
+                setFormData({ ...formData, servings: Math.min(Math.max(value, 1), 2147483647) });
+              }}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
               required
               min="1"
+              max="2147483647"
               placeholder="e.g., 4"
             />
           </div>

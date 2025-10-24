@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase/supabase';
 import { useAuth } from '@/common/hooks/use-auth';
+import { validateImageFile } from '../utils/image-utils';
 
 export function useImageUpload() {
   const [uploading, setUploading] = useState(false);
@@ -17,20 +18,14 @@ export function useImageUpload() {
       setUploading(true);
       setError(null);
 
-      // Validate file type
-      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-      if (!validTypes.includes(file.type)) {
-        throw new Error('Invalid file type. Please upload a JPEG, PNG, or WebP image.');
-      }
-
-      // Validate file size (max 5MB)
-      const maxSize = 5 * 1024 * 1024;
-      if (file.size > maxSize) {
-        throw new Error('File size too large. Maximum size is 5MB.');
+      // Validate file
+      const validationError = validateImageFile(file);
+      if (validationError) {
+        throw new Error(validationError);
       }
 
       // Create unique file name
-      const fileExt = file.name.split('.').pop();
+      const fileExt = 'jpg'; // Always use .jpg since we compress to JPEG
       const fileName = `${user.id}/${Date.now()}.${fileExt}`;
 
       // Upload to Supabase Storage
