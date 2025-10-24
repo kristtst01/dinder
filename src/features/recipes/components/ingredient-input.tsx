@@ -15,9 +15,10 @@ export interface IngredientData {
 interface IngredientInputProps {
   ingredients: IngredientData[];
   onChange: (ingredients: IngredientData[]) => void;
+  invalidIndices?: Set<number>;
 }
 
-export function IngredientInput({ ingredients, onChange }: IngredientInputProps) {
+export function IngredientInput({ ingredients, onChange, invalidIndices }: IngredientInputProps) {
   const addIngredient = () => {
     onChange([...ingredients, { name: '', amount: 0, unit: '' }]);
   };
@@ -47,66 +48,80 @@ export function IngredientInput({ ingredients, onChange }: IngredientInputProps)
       </div>
 
       <div className="space-y-3">
-        {ingredients.map((ingredient, index) => (
-          <div
-            key={index}
-            className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg space-y-2"
-          >
-            <div className="flex gap-2">
+        {ingredients.map((ingredient, index) => {
+          const isInvalid = invalidIndices?.has(index);
+          return (
+            <div
+              key={index}
+              className={`p-3 border rounded-lg space-y-2 ${
+                isInvalid
+                  ? 'border-red-500 bg-red-50 dark:bg-red-900/10'
+                  : 'border-gray-200 dark:border-gray-700'
+              }`}
+            >
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Ingredient name"
+                  value={ingredient.name}
+                  onChange={(e) => updateIngredient(index, 'name', e.target.value)}
+                  maxLength={MAX_INGREDIENT_NAME_LENGTH}
+                  className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => removeIngredient(index)}
+                  className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex-shrink-0"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  placeholder="Amount"
+                  value={ingredient.amount || ''}
+                  onChange={(e) =>
+                    updateIngredient(index, 'amount', parseFloat(e.target.value) || 0)
+                  }
+                  className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
+                  required
+                  min="0"
+                  step="0.01"
+                />
+                <input
+                  type="text"
+                  placeholder="Unit"
+                  value={ingredient.unit}
+                  onChange={(e) => updateIngredient(index, 'unit', e.target.value.toLowerCase())}
+                  list="units-list"
+                  maxLength={20}
+                  className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
+                  required
+                />
+                <datalist id="units-list">
+                  {ALLOWED_UNITS.map((unit) => (
+                    <option key={unit} value={unit} />
+                  ))}
+                </datalist>
+              </div>
               <input
                 type="text"
-                placeholder="Ingredient name"
-                value={ingredient.name}
-                onChange={(e) => updateIngredient(index, 'name', e.target.value)}
-                maxLength={MAX_INGREDIENT_NAME_LENGTH}
-                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
-                required
+                placeholder="Note (optional)"
+                value={ingredient.note || ''}
+                onChange={(e) => updateIngredient(index, 'note', e.target.value)}
+                maxLength={MAX_INGREDIENT_NOTE_LENGTH}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
               />
-              <button
-                type="button"
-                onClick={() => removeIngredient(index)}
-                className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex-shrink-0"
-              >
-                <X size={20} />
-              </button>
+              {isInvalid && (
+                <p className="text-red-600 dark:text-red-400 text-xs">
+                  Please fill in all required fields
+                </p>
+              )}
             </div>
-            <div className="flex gap-2">
-              <input
-                type="number"
-                placeholder="Amount"
-                value={ingredient.amount || ''}
-                onChange={(e) => updateIngredient(index, 'amount', parseFloat(e.target.value) || 0)}
-                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
-                required
-                min="0"
-                step="0.01"
-              />
-              <input
-                type="text"
-                placeholder="Unit"
-                value={ingredient.unit}
-                onChange={(e) => updateIngredient(index, 'unit', e.target.value.toLowerCase())}
-                list="units-list"
-                maxLength={20}
-                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
-                required
-              />
-              <datalist id="units-list">
-                {ALLOWED_UNITS.map((unit) => (
-                  <option key={unit} value={unit} />
-                ))}
-              </datalist>
-            </div>
-            <input
-              type="text"
-              placeholder="Note (optional)"
-              value={ingredient.note || ''}
-              onChange={(e) => updateIngredient(index, 'note', e.target.value)}
-              maxLength={MAX_INGREDIENT_NOTE_LENGTH}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
-            />
-          </div>
-        ))}
+          );
+        })}
 
         {ingredients.length === 0 && (
           <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">

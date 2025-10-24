@@ -6,7 +6,7 @@ import {
   MAX_INGREDIENT_NAME_LENGTH,
   MAX_INGREDIENT_NOTE_LENGTH,
   MAX_STEP_DESCRIPTION_LENGTH,
-  ALLOWED_UNITS,
+  normalizeUnit,
 } from './recipe-constants';
 
 export function validateRecipeData(data: RecipeUploadData): string | null {
@@ -65,11 +65,12 @@ export function validateRecipeData(data: RecipeUploadData): string | null {
       return `Ingredient ${i + 1}: unit is required`;
     }
 
-    // Normalize and check if unit is in allowed list
-    ing.unit = ing.unit.toLowerCase();
-    if (!ALLOWED_UNITS.includes(ing.unit as any)) {
-      return `Ingredient ${i + 1}: "${ing.unit}" is not a valid unit. Please use one of: ${ALLOWED_UNITS.join(', ')}`;
+    // Normalize unit (e.g., "grams" → "g")
+    const normalizedUnit = normalizeUnit(ing.unit);
+    if (!normalizedUnit) {
+      return `Ingredient ${i + 1}: "${ing.unit}" is not a valid unit. Try: g, kg, ml, l, oz, cup, tbsp, tsp, etc.`;
     }
+    ing.unit = normalizedUnit;
 
     if (ing.note && ing.note.length > MAX_INGREDIENT_NOTE_LENGTH) {
       return `Ingredient ${i + 1}: note cannot exceed ${MAX_INGREDIENT_NOTE_LENGTH} characters`;

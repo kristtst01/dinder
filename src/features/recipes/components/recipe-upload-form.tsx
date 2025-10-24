@@ -33,9 +33,9 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
     name: initialData?.name || '',
     category: initialData?.category || '',
     area: initialData?.area || '',
-    difficulty: (initialData?.difficulty || 'easy') as 'easy' | 'medium' | 'hard',
+    difficulty: (initialData?.difficulty || '') as 'easy' | 'medium' | 'hard' | '',
     time: initialData?.time || 0,
-    servings: initialData?.servings || 1,
+    servings: initialData?.servings || 0,
     image: initialData?.image || '',
   });
 
@@ -43,6 +43,9 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
   const [steps, setSteps] = useState<StepData[]>(initialData?.steps || []);
   const [mainImageFile, setMainImageFile] = useState<File | null>(null);
   const [mainImagePreview, setMainImagePreview] = useState<string>(formData.image);
+  const [fieldErrors, setFieldErrors] = useState<Set<string>>(new Set());
+  const [invalidIngredients, setInvalidIngredients] = useState<Set<number>>(new Set());
+  const [invalidSteps, setInvalidSteps] = useState<Set<number>>(new Set());
 
   const handleMainImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -51,7 +54,6 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
     // Validate file
     const validationError = validateImageFile(file);
     if (validationError) {
-      alert(validationError);
       return;
     }
 
@@ -61,7 +63,6 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
       setMainImageFile(compressedFile);
       setMainImagePreview(URL.createObjectURL(compressedFile));
     } catch (error) {
-      alert('Failed to process image. Please try another file.');
       console.error(error);
     }
   };
@@ -70,7 +71,6 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
     // Validate file
     const validationError = validateImageFile(file);
     if (validationError) {
-      alert(validationError);
       return;
     }
 
@@ -93,20 +93,72 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const errors = new Set<string>();
+
     if (!user) {
-      alert('You must be logged in to create a recipe');
-      return;
+      errors.add('auth');
+    }
+
+    if (!formData.name.trim()) {
+      errors.add('name');
+    }
+
+    if (!formData.category.trim()) {
+      errors.add('category');
+    }
+
+    if (!formData.area.trim()) {
+      errors.add('area');
+    }
+
+    if (!formData.difficulty) {
+      errors.add('difficulty');
+    }
+
+    if (formData.time < 1) {
+      errors.add('time');
+    }
+
+    if (formData.servings < 1) {
+      errors.add('servings');
     }
 
     if (ingredients.length === 0) {
-      alert('Please add at least one ingredient');
+      errors.add('ingredients');
+    }
+
+    // Validate individual ingredients
+    const invalidIngredientIndices = new Set<number>();
+    ingredients.forEach((ing, index) => {
+      if (!ing.name.trim() || ing.amount <= 0 || !ing.unit.trim()) {
+        invalidIngredientIndices.add(index);
+        errors.add('ingredients');
+      }
+    });
+
+    if (steps.length === 0) {
+      errors.add('steps');
+    }
+
+    // Validate individual steps
+    const invalidStepIndices = new Set<number>();
+    steps.forEach((step, index) => {
+      if (!step.description.trim()) {
+        invalidStepIndices.add(index);
+        errors.add('steps');
+      }
+    });
+
+    if (errors.size > 0) {
+      setFieldErrors(errors);
+      setInvalidIngredients(invalidIngredientIndices);
+      setInvalidSteps(invalidStepIndices);
       return;
     }
 
-    if (steps.length === 0) {
-      alert('Please add at least one step');
-      return;
-    }
+    setFieldErrors(new Set());
+    setInvalidIngredients(new Set());
+    setInvalidSteps(new Set());
 
     let imageUrl = formData.image;
 
@@ -116,7 +168,6 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
       if (uploadedUrl) {
         imageUrl = uploadedUrl;
       } else {
-        alert('Failed to upload image. Please try again.');
         return;
       }
     }
@@ -125,7 +176,7 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
       name: formData.name,
       category: formData.category,
       area: formData.area,
-      difficulty: formData.difficulty,
+      difficulty: formData.difficulty as 'easy' | 'medium' | 'hard',
       time: formData.time,
       servings: formData.servings,
       image: imageUrl,
@@ -148,15 +199,13 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
 
     if (success && recipeId) {
       navigate(`/recipe/${recipeId}`);
-    } else {
-      alert(uploadError?.message || 'Failed to save recipe. Please try again.');
     }
   };
 
   const isLoading = uploadLoading || imageUploading;
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl mx-auto p-4">
+    <form onSubmit={handleSubmit} noValidate className="space-y-6 max-w-4xl mx-auto p-4">
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 space-y-6">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
           {isEdit ? 'Edit Recipe' : 'Create New Recipe'}
@@ -201,12 +250,28 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, name: e.target.value });
+                if (e.target.value.trim()) {
+                  setFieldErrors((prev) => {
+                    const next = new Set(prev);
+                    next.delete('name');
+                    return next;
+                  });
+                }
+              }}
               maxLength={MAX_RECIPE_NAME_LENGTH}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 dark:text-white ${
+                fieldErrors.has('name')
+                  ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
+                  : 'border-gray-300 dark:border-gray-600 dark:bg-gray-800'
+              }`}
               required
               placeholder="e.g., Spaghetti Carbonara"
             />
+            {fieldErrors.has('name') && (
+              <p className="text-red-600 dark:text-red-400 text-sm mt-1">Recipe name is required</p>
+            )}
           </div>
 
           <div>
@@ -216,12 +281,28 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
             <input
               type="text"
               value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, category: e.target.value });
+                if (e.target.value.trim()) {
+                  setFieldErrors((prev) => {
+                    const next = new Set(prev);
+                    next.delete('category');
+                    return next;
+                  });
+                }
+              }}
               maxLength={MAX_CATEGORY_LENGTH}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 dark:text-white ${
+                fieldErrors.has('category')
+                  ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
+                  : 'border-gray-300 dark:border-gray-600 dark:bg-gray-800'
+              }`}
               required
               placeholder="e.g., Pasta"
             />
+            {fieldErrors.has('category') && (
+              <p className="text-red-600 dark:text-red-400 text-sm mt-1">Category is required</p>
+            )}
           </div>
 
           <div>
@@ -231,12 +312,28 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
             <input
               type="text"
               value={formData.area}
-              onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, area: e.target.value });
+                if (e.target.value.trim()) {
+                  setFieldErrors((prev) => {
+                    const next = new Set(prev);
+                    next.delete('area');
+                    return next;
+                  });
+                }
+              }}
               maxLength={MAX_CUISINE_LENGTH}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 dark:text-white ${
+                fieldErrors.has('area')
+                  ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
+                  : 'border-gray-300 dark:border-gray-600 dark:bg-gray-800'
+              }`}
               required
               placeholder="e.g., Italian"
             />
+            {fieldErrors.has('area') && (
+              <p className="text-red-600 dark:text-red-400 text-sm mt-1">Cuisine is required</p>
+            )}
           </div>
 
           <div>
@@ -245,19 +342,34 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
             </label>
             <select
               value={formData.difficulty}
-              onChange={(e) =>
+              onChange={(e) => {
                 setFormData({
                   ...formData,
                   difficulty: e.target.value as 'easy' | 'medium' | 'hard',
-                })
-              }
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
+                });
+                if (e.target.value) {
+                  setFieldErrors((prev) => {
+                    const next = new Set(prev);
+                    next.delete('difficulty');
+                    return next;
+                  });
+                }
+              }}
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 dark:text-white ${
+                fieldErrors.has('difficulty')
+                  ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
+                  : 'border-gray-300 dark:border-gray-600 dark:bg-gray-800'
+              }`}
               required
             >
+              <option value="">Select difficulty</option>
               <option value="easy">Easy</option>
               <option value="medium">Medium</option>
               <option value="hard">Hard</option>
             </select>
+            {fieldErrors.has('difficulty') && (
+              <p className="text-red-600 dark:text-red-400 text-sm mt-1">Difficulty is required</p>
+            )}
           </div>
 
           <div>
@@ -270,13 +382,29 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
               onChange={(e) => {
                 const value = parseInt(e.target.value) || 0;
                 setFormData({ ...formData, time: Math.min(Math.max(value, 0), 2147483647) });
+                if (value >= 1) {
+                  setFieldErrors((prev) => {
+                    const next = new Set(prev);
+                    next.delete('time');
+                    return next;
+                  });
+                }
               }}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 dark:text-white ${
+                fieldErrors.has('time')
+                  ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
+                  : 'border-gray-300 dark:border-gray-600 dark:bg-gray-800'
+              }`}
               required
               min="1"
               max="2147483647"
-              placeholder="e.g., 30"
+              placeholder="e.g., 30 (approximate)"
             />
+            {fieldErrors.has('time') && (
+              <p className="text-red-600 dark:text-red-400 text-sm mt-1">
+                Cooking time is required
+              </p>
+            )}
           </div>
 
           <div>
@@ -287,27 +415,112 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
               type="number"
               value={formData.servings || ''}
               onChange={(e) => {
-                const value = parseInt(e.target.value) || 1;
-                setFormData({ ...formData, servings: Math.min(Math.max(value, 1), 2147483647) });
+                const value = parseInt(e.target.value) || 0;
+                setFormData({ ...formData, servings: Math.min(Math.max(value, 0), 2147483647) });
+                if (value >= 1) {
+                  setFieldErrors((prev) => {
+                    const next = new Set(prev);
+                    next.delete('servings');
+                    return next;
+                  });
+                }
               }}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 dark:text-white ${
+                fieldErrors.has('servings')
+                  ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
+                  : 'border-gray-300 dark:border-gray-600 dark:bg-gray-800'
+              }`}
               required
               min="1"
               max="2147483647"
               placeholder="e.g., 4"
             />
+            {fieldErrors.has('servings') && (
+              <p className="text-red-600 dark:text-red-400 text-sm mt-1">Servings is required</p>
+            )}
           </div>
         </div>
       </div>
 
       {/* Ingredients */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
-        <IngredientInput ingredients={ingredients} onChange={setIngredients} />
+      <div
+        className={`bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 ${
+          fieldErrors.has('ingredients') ? 'ring-2 ring-red-500' : ''
+        }`}
+      >
+        <IngredientInput
+          ingredients={ingredients}
+          onChange={(newIngredients) => {
+            setIngredients(newIngredients);
+
+            // Clear validation for valid ingredients
+            const newInvalidIndices = new Set<number>();
+            newIngredients.forEach((ing, index) => {
+              if (!ing.name.trim() || ing.amount <= 0 || !ing.unit.trim()) {
+                newInvalidIndices.add(index);
+              }
+            });
+            setInvalidIngredients(newInvalidIndices);
+
+            // Clear field error if all ingredients are valid and at least one exists
+            if (newIngredients.length > 0 && newInvalidIndices.size === 0) {
+              setFieldErrors((prev) => {
+                const next = new Set(prev);
+                next.delete('ingredients');
+                return next;
+              });
+            }
+          }}
+          invalidIndices={invalidIngredients}
+        />
+        {fieldErrors.has('ingredients') && (
+          <p className="text-red-600 dark:text-red-400 text-sm mt-2">
+            {ingredients.length === 0
+              ? 'At least one ingredient is required'
+              : 'Please fill in all required fields for each ingredient'}
+          </p>
+        )}
       </div>
 
       {/* Steps */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
-        <StepInput steps={steps} onChange={setSteps} onImageUpload={handleStepImageUpload} />
+      <div
+        className={`bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 ${
+          fieldErrors.has('steps') ? 'ring-2 ring-red-500' : ''
+        }`}
+      >
+        <StepInput
+          steps={steps}
+          onChange={(newSteps) => {
+            setSteps(newSteps);
+
+            // Clear validation for valid steps
+            const newInvalidIndices = new Set<number>();
+            newSteps.forEach((step, index) => {
+              if (!step.description.trim()) {
+                newInvalidIndices.add(index);
+              }
+            });
+            setInvalidSteps(newInvalidIndices);
+
+            // Clear field error if all steps are valid and at least one exists
+            if (newSteps.length > 0 && newInvalidIndices.size === 0) {
+              setFieldErrors((prev) => {
+                const next = new Set(prev);
+                next.delete('steps');
+                return next;
+              });
+            }
+          }}
+          onImageUpload={handleStepImageUpload}
+          invalidIndices={invalidSteps}
+        />
+        {fieldErrors.has('steps') && (
+          <p className="text-red-600 dark:text-red-400 text-sm mt-2">
+            {steps.length === 0
+              ? 'At least one step is required'
+              : 'Please provide a description for each step'}
+          </p>
+        )}
       </div>
 
       {/* Error Display */}
@@ -324,7 +537,7 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium"
+          className="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium cursor-pointer"
           disabled={isLoading}
         >
           Cancel
@@ -332,7 +545,7 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
         <button
           type="submit"
           disabled={isLoading}
-          className="flex-1 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:shadow-lg transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="flex-1 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:shadow-lg transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
         >
           {isLoading && <Loader2 className="w-5 h-5 animate-spin" />}
           {isLoading ? 'Saving...' : isEdit ? 'Update Recipe' : 'Create Recipe'}
