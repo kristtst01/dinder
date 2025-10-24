@@ -1,4 +1,9 @@
 import { X } from 'lucide-react';
+import {
+  ALLOWED_UNITS,
+  MAX_INGREDIENT_NAME_LENGTH,
+  MAX_INGREDIENT_NOTE_LENGTH,
+} from '../utils/recipe-constants';
 
 export interface IngredientData {
   name: string;
@@ -53,6 +58,7 @@ export function IngredientInput({ ingredients, onChange }: IngredientInputProps)
                 placeholder="Ingredient name"
                 value={ingredient.name}
                 onChange={(e) => updateIngredient(index, 'name', e.target.value)}
+                maxLength={MAX_INGREDIENT_NAME_LENGTH}
                 className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
                 required
               />
@@ -79,16 +85,24 @@ export function IngredientInput({ ingredients, onChange }: IngredientInputProps)
                 type="text"
                 placeholder="Unit"
                 value={ingredient.unit}
-                onChange={(e) => updateIngredient(index, 'unit', e.target.value)}
+                onChange={(e) => updateIngredient(index, 'unit', e.target.value.toLowerCase())}
+                list="units-list"
+                maxLength={20}
                 className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
                 required
               />
+              <datalist id="units-list">
+                {ALLOWED_UNITS.map((unit) => (
+                  <option key={unit} value={unit} />
+                ))}
+              </datalist>
             </div>
             <input
               type="text"
               placeholder="Note (optional)"
               value={ingredient.note || ''}
               onChange={(e) => updateIngredient(index, 'note', e.target.value)}
+              maxLength={MAX_INGREDIENT_NOTE_LENGTH}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
             />
           </div>

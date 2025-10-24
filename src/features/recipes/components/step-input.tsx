@@ -1,4 +1,5 @@
 import { X, Image as ImageIcon } from 'lucide-react';
+import { MAX_STEP_DESCRIPTION_LENGTH } from '../utils/recipe-constants';
 
 export interface StepData {
   description: string;
@@ -61,6 +62,7 @@ export function StepInput({ steps, onChange, onImageUpload }: StepInputProps) {
                 placeholder="Describe this step..."
                 value={step.description}
                 onChange={(e) => updateStep(index, 'description', e.target.value)}
+                maxLength={MAX_STEP_DESCRIPTION_LENGTH}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white resize-none"
                 rows={2}
                 required

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase/supabase';
 import { useAuth } from '@/common/hooks/use-auth';
+import { validateRecipeData } from '../utils/backend-validation';
 
 export interface RecipeUploadData {
   name: string;
@@ -30,6 +31,13 @@ export function useRecipeUpload() {
   const uploadRecipe = async (recipeData: RecipeUploadData): Promise<string | null> => {
     if (!user) {
       setError(new Error('You must be logged in to create a recipe'));
+      return null;
+    }
+
+    // Validate recipe data
+    const validationError = validateRecipeData(recipeData);
+    if (validationError) {
+      setError(new Error(validationError));
       return null;
     }
 
@@ -127,6 +135,13 @@ export function useRecipeUpload() {
   const updateRecipe = async (recipeId: string, recipeData: RecipeUploadData): Promise<boolean> => {
     if (!user) {
       setError(new Error('You must be logged in to update a recipe'));
+      return false;
+    }
+
+    // Validate recipe data
+    const validationError = validateRecipeData(recipeData);
+    if (validationError) {
+      setError(new Error(validationError));
       return false;
     }
 

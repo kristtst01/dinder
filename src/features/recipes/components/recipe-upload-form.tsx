@@ -7,6 +7,11 @@ import { useImageUpload } from '../hooks/use-image-upload';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/common/hooks/use-auth';
 import { compressMainImage, compressStepImage, validateImageFile } from '../utils/image-utils';
+import {
+  MAX_RECIPE_NAME_LENGTH,
+  MAX_CATEGORY_LENGTH,
+  MAX_CUISINE_LENGTH,
+} from '../utils/recipe-constants';
 
 interface RecipeUploadFormProps {
   initialData?: Partial<RecipeUploadData> & { id?: string };
@@ -197,6 +202,7 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              maxLength={MAX_RECIPE_NAME_LENGTH}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
               required
               placeholder="e.g., Spaghetti Carbonara"
@@ -211,6 +217,7 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
               type="text"
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              maxLength={MAX_CATEGORY_LENGTH}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
               required
               placeholder="e.g., Pasta"
@@ -225,6 +232,7 @@ export function RecipeUploadForm({ initialData, isEdit = false }: RecipeUploadFo
               type="text"
               value={formData.area}
               onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+              maxLength={MAX_CUISINE_LENGTH}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
               required
               placeholder="e.g., Italian"
