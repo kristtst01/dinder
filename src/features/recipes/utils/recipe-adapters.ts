@@ -1,5 +1,5 @@
 import type { DBRecipe } from '@/lib/supabase/types';
-import type { Recipe } from '../../saved-hub/types/recipe';
+import type { Recipe } from '../types/recipe';
 
 export function dbRecipeToRecipe(dbRecipe: DBRecipe): Recipe {
   return {

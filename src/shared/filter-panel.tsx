@@ -1,6 +1,6 @@
 import { Plus, Search, Sliders, X } from 'lucide-react';
 import { useState } from 'react';
-import type { Recipe } from '../features/saved-hub/types/recipe';
+import type { Recipe } from '@features/recipes/types/recipe';
 import { Link } from 'react-router-dom';
 export type FilterState = {
   kitchen: string | 'all';

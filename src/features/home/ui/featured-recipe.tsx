@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import type { Recipe } from '../../saved-hub/types/recipe';
+import type { Recipe } from '@features/recipes/types/recipe';
 
 interface FeaturedRecipeProps {
   recipe: Recipe;

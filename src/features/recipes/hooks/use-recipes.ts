@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase/supabase';
-import type { Recipe } from '../../saved-hub/types/recipe';
+import type { Recipe } from '../types/recipe';
 import { dbRecipesToRecipes, dbRecipeToRecipe } from '../utils/recipe-adapters';
 
 export function useRecipes() {
