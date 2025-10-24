@@ -65,9 +65,9 @@ export function useRecipeUpload() {
           .from('ingredients')
           .select('uid')
           .eq('name', ingredient.name.toLowerCase())
-          .single();
+          .maybeSingle();
 
-        if (ingredientSearchError && ingredientSearchError.code !== 'PGRST116') {
+        if (ingredientSearchError) {
           throw ingredientSearchError;
         }
 
@@ -161,9 +161,9 @@ export function useRecipeUpload() {
           .from('ingredients')
           .select('uid')
           .eq('name', ingredient.name.toLowerCase())
-          .single();
+          .maybeSingle();
 
-        if (ingredientSearchError && ingredientSearchError.code !== 'PGRST116') {
+        if (ingredientSearchError) {
           throw ingredientSearchError;
         }
 
