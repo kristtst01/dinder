@@ -34,3 +34,42 @@ export type UserPreferenceFormData = Omit<
 >;
 
 export type PublicProfileFormData = Omit<PublicProfile, 'id' | 'created_at' | 'updated_at'>;
+
+// ============================================
+// Weekplan & Recipe Types
+// ============================================
+
+export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snacks';
+
+export interface Recipe {
+  uid: string;
+  name: string;
+  creator: string;
+  time: number;
+  servings: number;
+  category: string;
+  difficulty: string;
+  image: string;
+  area: string;
+}
+
+export interface Weekplan {
+  id: string;
+  user_id: string;
+  name: string;
+  start_date: string;
+  created_at: string;
+}
+
+export interface WeekplanEntry {
+  id: string;
+  weekplan_id: string;
+  day_index: number;
+  meal_type: MealType;
+  recipe_id: string;
+  sequence: number;
+}
+
+// Form types for creating/updating
+export type WeekplanFormData = Omit<Weekplan, 'id' | 'created_at'>;
+export type WeekplanEntryFormData = Omit<WeekplanEntry, 'id'>;

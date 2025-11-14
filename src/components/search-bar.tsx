@@ -1,4 +1,4 @@
-import { Search } from 'lucide-react';
+ import { Search } from 'lucide-react';
 import { useDeferredValue, useEffect, useState } from 'react';
 
 interface SearchBarProps {

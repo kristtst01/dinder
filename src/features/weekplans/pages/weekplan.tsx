@@ -1,11 +1,51 @@
 import { useState } from 'react';
 import { Menu } from 'lucide-react';
 import { WeekplanHeader } from '../ui/weekplan-header';
-import { WeekplanTableSkeleton } from '../ui/weekplan-table';
+import { WeekplanTable } from '../ui/weekplan-table';
 import { Navbar } from '../../../shared/navbar';
+import type { MealType } from '@/lib/supabase/types';
+
+interface WeekplanData {
+  id?: string;
+  title: string;
+  recipes: {
+    [dayIndex: number]: {
+      [key in MealType]?: Array<{
+        id: string;
+        name: string;
+        image: string;
+        category: string;
+        nutrition?: {
+          calories: number;
+          protein: string;
+          carbs: string;
+          fat: string;
+        };
+      }>;
+    };
+  };
+}
 
 export default function WeekPlanner() {
   const [navOpen, setNavOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [weekplanData, setWeekplanData] = useState<WeekplanData>({
+    title: 'Week 42 - Dinners',
+    recipes: {},
+  });
+
+  const handleToggleEditMode = () => {
+    setIsEditMode(!isEditMode);
+  };
+
+  const handleSaveWeekplan = async () => {
+    // TODO: Implement save logic
+    console.log('Saving weekplan:', weekplanData);
+  };
+
+  const handleTitleChange = (newTitle: string) => {
+    setWeekplanData((prev) => ({ ...prev, title: newTitle }));
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex overflow-x-clip">
@@ -28,8 +68,14 @@ export default function WeekPlanner() {
         </header>
 
         {/* Desktop Header and Content */}
-        <WeekplanHeader />
-        <WeekplanTableSkeleton />
+        <WeekplanHeader
+          isEditMode={isEditMode}
+          weekplanTitle={weekplanData.title}
+          onToggleEditMode={handleToggleEditMode}
+          onSaveWeekplan={handleSaveWeekplan}
+          onTitleChange={handleTitleChange}
+        />
+        <WeekplanTable isEditMode={isEditMode} weekplanData={weekplanData} />
       </div>
     </div>
   );

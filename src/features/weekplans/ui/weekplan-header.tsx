@@ -1,12 +1,27 @@
-import { Calendar, Share2, ShoppingBag, Pencil } from 'lucide-react';
+import { Calendar, Share2, ShoppingBag, Pencil, Save, X } from 'lucide-react';
 import { useAuth } from '@common/hooks/use-auth';
+import { useState } from 'react';
 
-export function WeekplanHeader() {
+interface WeekplanHeaderProps {
+  isEditMode: boolean;
+  weekplanTitle: string;
+  onToggleEditMode: () => void;
+  onSaveWeekplan: () => void;
+  onTitleChange: (title: string) => void;
+}
+
+export function WeekplanHeader({
+  isEditMode,
+  weekplanTitle,
+  onToggleEditMode,
+  onSaveWeekplan,
+  onTitleChange,
+}: WeekplanHeaderProps) {
   const { user, loading } = useAuth();
+  const [localTitle, setLocalTitle] = useState(weekplanTitle);
 
   // --- mock data ---
   const plan = {
-    title: 'Week 42 - Dinners',
     createdAt: 'Created Oct 8, 2025',
     nutrition: {
       kcal: 11250,
@@ -14,6 +29,14 @@ export function WeekplanHeader() {
       carbs: 950,
       fat: 400,
     },
+  };
+
+  const handleTitleBlur = () => {
+    if (localTitle.trim()) {
+      onTitleChange(localTitle.trim());
+    } else {
+      setLocalTitle(weekplanTitle);
+    }
   };
 
   // Get user display name and avatar
@@ -44,7 +67,18 @@ export function WeekplanHeader() {
             {userInitial}
           </div>
           <div className="flex flex-col gap-1">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{plan.title}</h1>
+            {isEditMode ? (
+              <input
+                type="text"
+                value={localTitle}
+                onChange={(e) => setLocalTitle(e.target.value)}
+                onBlur={handleTitleBlur}
+                className="text-2xl font-bold text-gray-900 dark:text-white bg-transparent border-b-2 border-orange-500 focus:outline-none px-1 -mx-1"
+                placeholder="Enter weekplan title"
+              />
+            ) : (
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{weekplanTitle}</h1>
+            )}
             <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
               <span>{userName}</span>
               <span className="h-1 w-1 rounded-full bg-gray-300 dark:bg-gray-600" />
@@ -58,27 +92,51 @@ export function WeekplanHeader() {
 
         {/* Right: actions (mobile stacks underneath) */}
         <div className="flex flex-wrap gap-2">
-          <button
-            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 rounded-full border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition flex items-center gap-2"
-            aria-label="Share week plan"
-          >
-            <Share2 className="h-4 w-4" />
-            Share
-          </button>
-          <button
-            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 rounded-full border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition flex items-center gap-2"
-            aria-label="Order week plan"
-          >
-            <ShoppingBag className="h-4 w-4" />
-            Order
-          </button>
-          <button
-            className="px-4 py-2 text-sm font-medium text-white rounded-full bg-gradient-to-r from-orange-500 to-orange-600 hover:shadow-md transition flex items-center gap-2"
-            aria-label="Edit week plan"
-          >
-            <Pencil className="h-4 w-4" />
-            Edit
-          </button>
+          {!isEditMode ? (
+            <>
+              <button
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 rounded-full border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition flex items-center gap-2"
+                aria-label="Share week plan"
+              >
+                <Share2 className="h-4 w-4" />
+                Share
+              </button>
+              <button
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 rounded-full border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition flex items-center gap-2"
+                aria-label="Order week plan"
+              >
+                <ShoppingBag className="h-4 w-4" />
+                Order
+              </button>
+              <button
+                onClick={onToggleEditMode}
+                className="px-4 py-2 text-sm font-medium text-white rounded-full bg-gradient-to-r from-orange-500 to-orange-600 hover:shadow-md transition flex items-center gap-2"
+                aria-label="Edit week plan"
+              >
+                <Pencil className="h-4 w-4" />
+                Edit
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={onToggleEditMode}
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 rounded-full border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition flex items-center gap-2"
+                aria-label="Cancel editing"
+              >
+                <X className="h-4 w-4" />
+                Cancel
+              </button>
+              <button
+                onClick={onSaveWeekplan}
+                className="px-4 py-2 text-sm font-medium text-white rounded-full bg-gradient-to-r from-green-500 to-green-600 hover:shadow-md transition flex items-center gap-2"
+                aria-label="Save week plan"
+              >
+                <Save className="h-4 w-4" />
+                Save
+              </button>
+            </>
+          )}
         </div>
       </div>
 
