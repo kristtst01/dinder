@@ -24,11 +24,18 @@ interface WeekplanData {
 interface WeekplanTableProps {
   isEditMode: boolean;
   weekplanData: WeekplanData;
+  onOpenRecipeModal: (dayIndex: number, dayName: string, mealType: MealType) => void;
+  onRemoveRecipe: (dayIndex: number, mealType: MealType, recipeId: string) => void;
 }
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-export function WeekplanTable({ isEditMode, weekplanData }: WeekplanTableProps) {
+export function WeekplanTable({
+  isEditMode,
+  weekplanData,
+  onOpenRecipeModal,
+  onRemoveRecipe,
+}: WeekplanTableProps) {
   return (
     <section className="px-6 py-8">
       {/* Table grid: responsive columns */}
@@ -40,6 +47,8 @@ export function WeekplanTable({ isEditMode, weekplanData }: WeekplanTableProps) 
               dayIndex={dayIndex}
               isEditMode={isEditMode}
               recipes={weekplanData.recipes[dayIndex] || {}}
+              onOpenRecipeModal={onOpenRecipeModal}
+              onRemoveRecipe={onRemoveRecipe}
             />
           </div>
         ))}

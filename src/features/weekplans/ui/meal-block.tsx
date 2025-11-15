@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import type { MealType } from '@/lib/supabase/types';
 
 interface Recipe {
@@ -15,15 +15,26 @@ interface Recipe {
 }
 
 interface MealBlockProps {
+  dayIndex: number;
+  dayName: string;
   mealType: MealType;
   recipes: Recipe[];
   isEditMode: boolean;
+  onOpenRecipeModal: (dayIndex: number, dayName: string, mealType: MealType) => void;
+  onRemoveRecipe: (dayIndex: number, mealType: MealType, recipeId: string) => void;
 }
 
-export function MealBlock({ mealType, recipes, isEditMode }: MealBlockProps) {
+export function MealBlock({
+  dayIndex,
+  dayName,
+  mealType,
+  recipes,
+  isEditMode,
+  onOpenRecipeModal,
+  onRemoveRecipe,
+}: MealBlockProps) {
   const handleAddRecipe = () => {
-    // TODO: Open recipe selection modal
-    console.log('Add recipe to', mealType);
+    onOpenRecipeModal(dayIndex, dayName, mealType);
   };
 
   return (
@@ -47,6 +58,15 @@ export function MealBlock({ mealType, recipes, isEditMode }: MealBlockProps) {
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">{recipe.category}</p>
               </div>
+              {isEditMode && (
+                <button
+                  onClick={() => onRemoveRecipe(dayIndex, mealType, recipe.id)}
+                  className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition"
+                  aria-label="Remove recipe"
+                >
+                  <X size={16} className="text-gray-500 dark:text-gray-400" />
+                </button>
+              )}
             </div>
           ))}
         </div>
@@ -63,7 +83,10 @@ export function MealBlock({ mealType, recipes, isEditMode }: MealBlockProps) {
           className="w-full py-2 flex items-center justify-center gap-2 text-sm font-medium text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg transition"
         >
           <Plus size={16} />
-          Add Recipe
+          {(mealType === 'breakfast' || mealType === 'lunch' || mealType === 'dinner') &&
+          recipes.length > 0
+            ? 'Replace Recipe'
+            : 'Add Recipe'}
         </button>
       )}
     </div>

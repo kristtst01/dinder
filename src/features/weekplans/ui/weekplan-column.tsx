@@ -21,6 +21,8 @@ interface WeekplanColumnProps {
   recipes: {
     [key in MealType]?: Recipe[];
   };
+  onOpenRecipeModal: (dayIndex: number, dayName: string, mealType: MealType) => void;
+  onRemoveRecipe: (dayIndex: number, mealType: MealType, recipeId: string) => void;
 }
 
 const MEALS: { label: string; type: MealType }[] = [
@@ -30,7 +32,14 @@ const MEALS: { label: string; type: MealType }[] = [
   { label: 'Snacks', type: 'snacks' },
 ];
 
-export function WeekplanColumn({ day, dayIndex, isEditMode, recipes }: WeekplanColumnProps) {
+export function WeekplanColumn({
+  day,
+  dayIndex,
+  isEditMode,
+  recipes,
+  onOpenRecipeModal,
+  onRemoveRecipe,
+}: WeekplanColumnProps) {
   // Calculate daily nutrition totals
   const dailyNutrition = {
     calories: 0,
@@ -64,9 +73,13 @@ export function WeekplanColumn({ day, dayIndex, isEditMode, recipes }: WeekplanC
           <div key={meal.type}>
             <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">{meal.label}</p>
             <MealBlock
+              dayIndex={dayIndex}
+              dayName={day}
               mealType={meal.type}
               recipes={recipes[meal.type] || []}
               isEditMode={isEditMode}
+              onOpenRecipeModal={onOpenRecipeModal}
+              onRemoveRecipe={onRemoveRecipe}
             />
           </div>
         ))}

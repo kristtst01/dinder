@@ -3,7 +3,10 @@ import { Menu } from 'lucide-react';
 import { WeekplanHeader } from '../ui/weekplan-header';
 import { WeekplanTable } from '../ui/weekplan-table';
 import { Navbar } from '../../../shared/navbar';
+import { RecipeSelectionModal } from '../ui/recipe-selection-modal';
 import type { MealType } from '@/lib/supabase/types';
+import type { Recipe } from '@/features/saved-hub/types/recipe';
+import { ALL_RECIPES } from '@/utils/recipe-loader';
 
 interface WeekplanData {
   id?: string;
@@ -33,6 +36,17 @@ export default function WeekPlanner() {
     title: 'Week 42 - Dinners',
     recipes: {},
   });
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    dayIndex: number;
+    dayName: string;
+    mealType: MealType;
+  } | null>(null);
+
+  // Mock liked recipes - in production, fetch from Supabase
+  const [likedRecipes] = useState<Recipe[]>(
+    ALL_RECIPES.filter((_, index) => index % 3 === 0).slice(0, 10)
+  );
 
   const handleToggleEditMode = () => {
     setIsEditMode(!isEditMode);
@@ -45,6 +59,66 @@ export default function WeekPlanner() {
 
   const handleTitleChange = (newTitle: string) => {
     setWeekplanData((prev) => ({ ...prev, title: newTitle }));
+  };
+
+  const handleOpenRecipeModal = (dayIndex: number, dayName: string, mealType: MealType) => {
+    setModalState({ isOpen: true, dayIndex, dayName, mealType });
+  };
+
+  const handleCloseRecipeModal = () => {
+    setModalState(null);
+  };
+
+  const handleSelectRecipe = (recipe: Recipe) => {
+    if (!modalState) return;
+
+    const { dayIndex, mealType } = modalState;
+
+    setWeekplanData((prev) => {
+      const newRecipes = { ...prev.recipes };
+      const dayRecipes = { ...newRecipes[dayIndex] };
+      const mealRecipes = dayRecipes[mealType] || [];
+
+      // For breakfast, lunch, dinner: only one recipe allowed (replace existing)
+      // For snacks: allow multiple recipes
+      if (mealType === 'breakfast' || mealType === 'lunch' || mealType === 'dinner') {
+        dayRecipes[mealType] = [
+          {
+            id: recipe.id,
+            name: recipe.title,
+            image: recipe.image,
+            category: recipe.category,
+            nutrition: recipe.nutrition,
+          },
+        ];
+      } else {
+        // Snacks: allow multiple
+        dayRecipes[mealType] = [
+          ...mealRecipes,
+          {
+            id: recipe.id,
+            name: recipe.title,
+            image: recipe.image,
+            category: recipe.category,
+            nutrition: recipe.nutrition,
+          },
+        ];
+      }
+
+      newRecipes[dayIndex] = dayRecipes;
+      return { ...prev, recipes: newRecipes };
+    });
+  };
+
+  const handleRemoveRecipe = (dayIndex: number, mealType: MealType, recipeId: string) => {
+    setWeekplanData((prev) => {
+      const newRecipes = { ...prev.recipes };
+      const dayRecipes = { ...newRecipes[dayIndex] };
+      const mealRecipes = dayRecipes[mealType] || [];
+      dayRecipes[mealType] = mealRecipes.filter((r) => r.id !== recipeId);
+      newRecipes[dayIndex] = dayRecipes;
+      return { ...prev, recipes: newRecipes };
+    });
   };
 
   return (
@@ -75,7 +149,26 @@ export default function WeekPlanner() {
           onSaveWeekplan={handleSaveWeekplan}
           onTitleChange={handleTitleChange}
         />
-        <WeekplanTable isEditMode={isEditMode} weekplanData={weekplanData} />
+        <WeekplanTable
+          isEditMode={isEditMode}
+          weekplanData={weekplanData}
+          onOpenRecipeModal={handleOpenRecipeModal}
+          onRemoveRecipe={handleRemoveRecipe}
+        />
+
+        {/* Recipe Selection Modal */}
+        {modalState && (
+          <RecipeSelectionModal
+            isOpen={modalState.isOpen}
+            onClose={handleCloseRecipeModal}
+            onSelectRecipe={handleSelectRecipe}
+            dayName={modalState.dayName}
+            mealType={modalState.mealType}
+            availableRecipes={ALL_RECIPES}
+            likedRecipes={likedRecipes}
+            currentRecipes={weekplanData.recipes[modalState.dayIndex]?.[modalState.mealType] || []}
+          />
+        )}
       </div>
     </div>
   );
