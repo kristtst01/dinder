@@ -1,4 +1,4 @@
-import { Calendar, Share2, ShoppingBag, Pencil, Save, X } from 'lucide-react';
+import { Calendar, Share2, ShoppingBag, Pencil, Save, X, Trash2 } from 'lucide-react';
 import { useAuth } from '@common/hooks/use-auth';
 import { useState } from 'react';
 
@@ -8,6 +8,7 @@ interface WeekplanHeaderProps {
   onToggleEditMode: () => void;
   onSaveWeekplan: () => void;
   onTitleChange: (title: string) => void;
+  onDelete?: () => void;
   saving?: boolean;
   createdAt?: string;
   nutrition?: {
@@ -24,6 +25,7 @@ export function WeekplanHeader({
   onToggleEditMode,
   onSaveWeekplan,
   onTitleChange,
+  onDelete,
   saving = false,
   createdAt,
   nutrition,
@@ -125,6 +127,16 @@ export function WeekplanHeader({
             </>
           ) : (
             <>
+              {onDelete && (
+                <button
+                  onClick={onDelete}
+                  className="px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 rounded-full border border-red-200 dark:border-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition flex items-center gap-2"
+                  aria-label="Delete week plan"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete
+                </button>
+              )}
               <button
                 onClick={onToggleEditMode}
                 className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 rounded-full border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition flex items-center gap-2"
@@ -136,7 +148,7 @@ export function WeekplanHeader({
               <button
                 onClick={onSaveWeekplan}
                 disabled={saving}
-                className="px-4 py-2 text-sm font-medium text-white rounded-full bg-gradient-to-r from-green-500 to-green-600 hover:shadow-md transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 text-sm font-medium text-orange-500 rounded-full border border-orange-300 hover:bg-orange-50 transition flex items-center gap-2"
                 aria-label="Save week plan"
               >
                 <Save className="h-4 w-4" />

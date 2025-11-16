@@ -38,7 +38,6 @@ const navLinks: NavLinkItem[] = [
   { path: '/recipe/create', label: 'Create Recipe', icon: Plus },
   { path: '/cookbook', label: 'Cookbook', icon: BookOpen },
   { path: '/weekplans', label: 'Week Plans', icon: Calendar },
-  { path: '/statistics', label: 'Statistics', icon: BarChart3 },
   { path: '/preferences', label: 'Preferences', icon: Settings },
 ];
 

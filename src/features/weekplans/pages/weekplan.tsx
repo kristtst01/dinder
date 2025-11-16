@@ -53,6 +53,7 @@ export default function WeekPlanner() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [weekplanData, setWeekplanData] = useState<WeekplanData>({
     title: 'New Weekplan',
     recipes: {},
@@ -230,6 +231,18 @@ export default function WeekPlanner() {
     setWeekplanData((prev) => ({ ...prev, title: newTitle }));
   };
 
+  const handleDeleteWeekplan = async () => {
+    if (!weekplanData.id) return;
+
+    try {
+      await WeekplanRepository.deleteWeekplan(weekplanData.id);
+      navigate('/weekplans');
+    } catch (error) {
+      console.error('Error deleting weekplan:', error);
+      alert('Failed to delete weekplan. Please try again.');
+    }
+  };
+
   const handleOpenRecipeModal = (dayIndex: number, dayName: string, mealType: MealType) => {
     setModalState({ isOpen: true, dayIndex, dayName, mealType });
   };
@@ -325,6 +338,7 @@ export default function WeekPlanner() {
               onToggleEditMode={handleToggleEditMode}
               onSaveWeekplan={handleSaveWeekplan}
               onTitleChange={handleTitleChange}
+              onDelete={isEditMode && weekplanData.id ? () => setShowDeleteConfirm(true) : undefined}
               saving={saving}
               createdAt={weekplanData.createdAt}
             />
@@ -351,6 +365,40 @@ export default function WeekPlanner() {
               />
             )}
           </>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteConfirm && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowDeleteConfirm(false)}
+          >
+            <div
+              className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md mx-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                Delete Week Plan?
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                Are you sure you want to delete "{weekplanData.title}"? This action cannot be undone.
+              </p>
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteWeekplan}
+                  className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>
