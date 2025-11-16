@@ -7,6 +7,7 @@ interface WeekplanHeaderProps {
   onToggleEditMode: () => void;
   onSaveWeekplan: () => void;
   onTitleChange: (title: string) => void;
+  saving?: boolean;
 }
 
 export function WeekplanHeader({
@@ -15,6 +16,7 @@ export function WeekplanHeader({
   onToggleEditMode,
   onSaveWeekplan,
   onTitleChange,
+  saving = false,
 }: WeekplanHeaderProps) {
   const { user, loading } = useAuth();
   const [localTitle, setLocalTitle] = useState(weekplanTitle);
@@ -128,11 +130,12 @@ export function WeekplanHeader({
               </button>
               <button
                 onClick={onSaveWeekplan}
-                className="px-4 py-2 text-sm font-medium text-white rounded-full bg-gradient-to-r from-green-500 to-green-600 hover:shadow-md transition flex items-center gap-2 shadow-sm shadow-green-300"
+                disabled={saving}
+                className="px-4 py-2 text-sm font-medium text-white rounded-full bg-gradient-to-r from-green-500 to-green-600 hover:shadow-md transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-label="Save week plan"
               >
                 <Save className="h-4 w-4" />
-                Save
+                {saving ? 'Saving...' : 'Save'}
               </button>
             </>
           )}
