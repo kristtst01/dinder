@@ -1,16 +1,16 @@
 import { supabase } from '@/lib/supabase/supabase';
 import type {
-  Weekplan,
-  WeekplanEntry,
-  WeekplanFormData,
-  WeekplanEntryFormData,
+  DBWeekplan,
+  DBWeekplanEntry,
+  DBWeekplanFormData,
+  DBWeekplanEntryFormData,
 } from '@/lib/supabase/types';
 
 export class WeekplanRepository {
   /**
    * Get all weekplans for a specific user
    */
-  static async getWeekplans(userId: string): Promise<Weekplan[]> {
+  static async getWeekplans(userId: string): Promise<DBWeekplan[]> {
     if (!userId) throw new Error('User ID is required');
 
     const { data, error } = await supabase
@@ -27,8 +27,8 @@ export class WeekplanRepository {
    * Get a single weekplan by ID with all its entries
    */
   static async getWeekplan(weekplanId: string): Promise<{
-    weekplan: Weekplan;
-    entries: WeekplanEntry[];
+    weekplan: DBWeekplan;
+    entries: DBWeekplanEntry[];
   }> {
     if (!weekplanId) throw new Error('Weekplan ID is required');
 
@@ -60,16 +60,16 @@ export class WeekplanRepository {
   /**
    * Create a new weekplan
    */
-  static async createWeekplan(data: WeekplanFormData): Promise<Weekplan> {
-    if (!data.user_id) throw new Error('User ID is required');
-    if (!data.name || data.name.trim() === '') throw new Error('Weekplan name is required');
+  static async createWeekplan(weekplanData: DBWeekplanFormData): Promise<DBWeekplan> {
+    if (!weekplanData.user_id) throw new Error('User ID is required');
+    if (!weekplanData.name || weekplanData.name.trim() === '') throw new Error('Weekplan name is required');
 
     const { data: weekplan, error } = await supabase
       .from('weekplans')
       .insert({
-        user_id: data.user_id,
-        name: data.name.trim(),
-        start_date: data.start_date,
+        user_id: weekplanData.user_id,
+        name: weekplanData.name.trim(),
+        start_date: weekplanData.start_date,
       })
       .select()
       .single();
@@ -83,8 +83,8 @@ export class WeekplanRepository {
    */
   static async updateWeekplan(
     weekplanId: string,
-    updates: Partial<WeekplanFormData>
-  ): Promise<Weekplan> {
+    updates: Partial<DBWeekplanFormData>
+  ): Promise<DBWeekplan> {
     if (!weekplanId) throw new Error('Weekplan ID is required');
     if (!updates || Object.keys(updates).length === 0) {
       throw new Error('No updates provided');
@@ -122,9 +122,9 @@ export class WeekplanRepository {
   }
 
   /**
-   * Add a recipe to a weekplan
+   * Add a single recipe to a weekplan
    */
-  static async addRecipeToWeekplan(entry: WeekplanEntryFormData): Promise<WeekplanEntry> {
+  static async addRecipeToWeekplan(entry: DBWeekplanEntryFormData): Promise<DBWeekplanEntry> {
     if (!entry.weekplan_id) throw new Error('Weekplan ID is required');
     if (!entry.recipe_id) throw new Error('Recipe ID is required');
     if (entry.day_index === undefined || entry.day_index < 0 || entry.day_index > 6) {
@@ -150,7 +150,7 @@ export class WeekplanRepository {
   /**
    * Add multiple recipes to a weekplan (batch operation)
    */
-  static async addRecipesToWeekplan(entries: WeekplanEntryFormData[]): Promise<WeekplanEntry[]> {
+  static async addRecipesToWeekplan(entries: DBWeekplanEntryFormData[]): Promise<DBWeekplanEntry[]> {
     if (!entries || entries.length === 0) throw new Error('No entries provided');
 
     const { data, error } = await supabase
@@ -179,7 +179,7 @@ export class WeekplanRepository {
   static async updateRecipeSequence(
     entryId: string,
     newSequence: number
-  ): Promise<WeekplanEntry> {
+  ): Promise<DBWeekplanEntry> {
     if (!entryId) throw new Error('Entry ID is required');
 
     const { data, error } = await supabase
@@ -199,9 +199,9 @@ export class WeekplanRepository {
   static async moveRecipe(
     entryId: string,
     newDayIndex: number,
-    newMealType: WeekplanEntryFormData['meal_type'],
+    newMealType: DBWeekplanEntryFormData['meal_type'],
     newSequence: number
-  ): Promise<WeekplanEntry> {
+  ): Promise<DBWeekplanEntry> {
     if (!entryId) throw new Error('Entry ID is required');
 
     const { data, error } = await supabase
@@ -225,7 +225,7 @@ export class WeekplanRepository {
   static async clearMeal(
     weekplanId: string,
     dayIndex: number,
-    mealType: WeekplanEntryFormData['meal_type']
+    mealType: DBWeekplanEntryFormData['meal_type']
   ): Promise<void> {
     if (!weekplanId) throw new Error('Weekplan ID is required');
 
@@ -242,7 +242,7 @@ export class WeekplanRepository {
   /**
    * Get all entries for a specific weekplan (alternative to getWeekplan)
    */
-  static async getWeekplanEntries(weekplanId: string): Promise<WeekplanEntry[]> {
+  static async getWeekplanEntries(weekplanId: string): Promise<DBWeekplanEntry[]> {
     if (!weekplanId) throw new Error('Weekplan ID is required');
 
     const { data, error } = await supabase

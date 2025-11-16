@@ -6,13 +6,27 @@ import { WeekplanTable } from '../ui/weekplan-table';
 import { Navbar } from '../../../shared/navbar';
 import { RecipeSelectionModal } from '../ui/recipe-selection-modal';
 import { WeekplanRepository } from '../repositories/weekplan.repository';
-import type { MealType } from '@/lib/supabase/types';
+import { supabase } from '@/lib/supabase/supabase';
+import type { MealType, DBRecipe } from '@/lib/supabase/types';
 import type { Recipe } from '@/features/recipes/types/recipe';
 import { useAuth } from '@common/hooks/use-auth';
+
+// Helper to transform DBRecipe to Recipe
+const transformDBRecipeToRecipe = (dbRecipe: DBRecipe): Recipe => ({
+  id: dbRecipe.uid,
+  title: dbRecipe.name,
+  image: dbRecipe.image || '',
+  category: dbRecipe.category,
+  area: dbRecipe.area || '',
+  difficulty: dbRecipe.difficulty === 'easy' ? 'Easy' : dbRecipe.difficulty === 'medium' ? 'Medium' : 'Hard',
+  cookingTime: dbRecipe.time,
+  servings: dbRecipe.servings,
+});
 
 interface WeekplanData {
   id?: string;
   title: string;
+  createdAt?: string;
   recipes: {
     [dayIndex: number]: {
       [key in MealType]?: Array<{
@@ -49,16 +63,29 @@ export default function WeekPlanner() {
     dayName: string;
     mealType: MealType;
   } | null>(null);
+  const [availableRecipes, setAvailableRecipes] = useState<Recipe[]>([]);
+  const [likedRecipes, setLikedRecipes] = useState<Recipe[]>([]);
 
 
 
-  // Load weekplan from Supabase
+  // Load recipes and weekplan from Supabase
   useEffect(() => {
-    const loadWeekplan = async () => {
+    const loadData = async () => {
       if (!user) return;
 
       try {
         setLoading(true);
+
+        // Load all recipes from Supabase
+        const { data: recipesData, error: recipesError } = await supabase
+          .from('recipes')
+          .select('*');
+
+        if (recipesError) throw recipesError;
+
+        const allRecipes = (recipesData || []).map(transformDBRecipeToRecipe);
+        setAvailableRecipes(allRecipes);
+        setLikedRecipes(allRecipes.slice(0, 10)); // TODO: Filter by user's liked recipes
 
         if (weekplanId) {
           // Load existing weekplan
@@ -72,31 +99,33 @@ export default function WeekPlanner() {
               recipes[entry.day_index] = {};
             }
 
-            const recipe = ALL_RECIPES.find((r) => r.id === entry.recipe_id);
+            const recipe = allRecipes.find((r: Recipe) => r.id === entry.recipe_id);
             if (recipe) {
-              if (!recipes[entry.day_index][entry.meal_type]) {
-                recipes[entry.day_index][entry.meal_type] = [];
+              const mealType = entry.meal_type as MealType;
+              if (!recipes[entry.day_index][mealType]) {
+                recipes[entry.day_index][mealType] = [];
               }
 
-              recipes[entry.day_index][entry.meal_type]!.push({
+              recipes[entry.day_index][mealType]!.push({
                 id: recipe.id,
                 name: recipe.title,
                 image: recipe.image,
                 category: recipe.category,
-                nutrition: recipe.nutrition,
               });
             }
           });
 
           setWeekplanData({
             id: weekplan.id,
-            title: weekplan.name,
+            title: weekplan.name || 'Untitled Weekplan',
+            createdAt: weekplan.created_at,
             recipes,
           });
         } else {
           // New weekplan - set default empty state
           setWeekplanData({
             title: `Week ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
+            createdAt: new Date().toISOString(),
             recipes: {},
           });
           setIsEditMode(true); // Start in edit mode for new weekplan
@@ -108,7 +137,7 @@ export default function WeekPlanner() {
       }
     };
 
-    loadWeekplan();
+    loadData();
   }, [weekplanId, user]);
 
   const handleToggleEditMode = () => {
@@ -147,10 +176,12 @@ export default function WeekPlanner() {
       }
 
       // Delete all existing entries and recreate
-      const { entries } = await WeekplanRepository.getWeekplan(weekplanId);
-      await Promise.all(
-        entries.map((entry) => WeekplanRepository.removeRecipeFromWeekplan(entry.id))
-      );
+      if (weekplanId) {
+        const { entries } = await WeekplanRepository.getWeekplan(weekplanId);
+        await Promise.all(
+          entries.map((entry) => WeekplanRepository.removeRecipeFromWeekplan(entry.id))
+        );
+      }
 
       // Create new entries from current state
       const entriesToCreate: Array<{
@@ -163,13 +194,15 @@ export default function WeekPlanner() {
       for (const [dayIndex, dayRecipes] of Object.entries(weekplanData.recipes)) {
         for (const [mealType, recipes] of Object.entries(dayRecipes)) {
           recipes.forEach((recipe, index) => {
-            entriesToCreate.push({
-              weekplan_id: weekplanId,
-              recipe_id: recipe.id,
-              day_index: parseInt(dayIndex),
-              meal_type: mealType as MealType,
-              sequence: index,
-            });
+            if (weekplanId) {
+              entriesToCreate.push({
+                weekplan_id: weekplanId,
+                recipe_id: recipe.id,
+                day_index: parseInt(dayIndex),
+                meal_type: mealType as MealType,
+                sequence: index,
+              });
+            }
           });
         }
       }
@@ -224,7 +257,6 @@ export default function WeekPlanner() {
             name: recipe.title,
             image: recipe.image,
             category: recipe.category,
-            nutrition: recipe.nutrition,
           },
         ];
       } else {
@@ -236,7 +268,6 @@ export default function WeekPlanner() {
             name: recipe.title,
             image: recipe.image,
             category: recipe.category,
-            nutrition: recipe.nutrition,
           },
         ];
       }
@@ -295,6 +326,7 @@ export default function WeekPlanner() {
               onSaveWeekplan={handleSaveWeekplan}
               onTitleChange={handleTitleChange}
               saving={saving}
+              createdAt={weekplanData.createdAt}
             />
             <WeekplanTable
               isEditMode={isEditMode}
@@ -311,7 +343,7 @@ export default function WeekPlanner() {
                 onSelectRecipe={handleSelectRecipe}
                 dayName={modalState.dayName}
                 mealType={modalState.mealType}
-                availableRecipes={ALL_RECIPES}
+                availableRecipes={availableRecipes}
                 likedRecipes={likedRecipes}
                 currentRecipes={
                   weekplanData.recipes[modalState.dayIndex]?.[modalState.mealType] || []

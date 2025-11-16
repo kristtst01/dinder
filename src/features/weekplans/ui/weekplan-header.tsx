@@ -1,6 +1,7 @@
 import { Calendar, Share2, ShoppingBag, Pencil, Save, X } from 'lucide-react';
 import { useAuth } from '@common/hooks/use-auth';
 import { useState } from 'react';
+
 interface WeekplanHeaderProps {
   isEditMode: boolean;
   weekplanTitle: string;
@@ -8,6 +9,13 @@ interface WeekplanHeaderProps {
   onSaveWeekplan: () => void;
   onTitleChange: (title: string) => void;
   saving?: boolean;
+  createdAt?: string;
+  nutrition?: {
+    kcal: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  };
 }
 
 export function WeekplanHeader({
@@ -17,19 +25,16 @@ export function WeekplanHeader({
   onSaveWeekplan,
   onTitleChange,
   saving = false,
+  createdAt,
+  nutrition,
 }: WeekplanHeaderProps) {
   const { user, loading } = useAuth();
   const [localTitle, setLocalTitle] = useState(weekplanTitle);
 
-  // --- mock data ---
-  const plan = {
-    createdAt: 'Created Oct 8, 2025',
-    nutrition: {
-      kcal: 11250,
-      protein: 480,
-      carbs: 950,
-      fat: 400,
-    },
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'New Weekplan';
+    const date = new Date(dateString);
+    return `Created ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
   };
 
   const handleTitleBlur = () => {
@@ -85,7 +90,7 @@ export function WeekplanHeader({
               <span className="h-1 w-1 rounded-full bg-gray-300 dark:bg-gray-600" />
               <div className="flex items-center gap-1">
                 <Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" aria-hidden />
-                <span>{plan.createdAt}</span>
+                <span>{formatDate(createdAt)}</span>
               </div>
             </div>
           </div>
@@ -142,13 +147,15 @@ export function WeekplanHeader({
         </div>
       </div>
 
-      {/* Weekly nutrition summary (compact, orange-accented) */}
-      <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <StatCard label="Calories" value={`${plan.nutrition.kcal.toLocaleString()} kcal`} />
-        <StatCard label="Protein" value={`${plan.nutrition.protein} g`} />
-        <StatCard label="Carbs" value={`${plan.nutrition.carbs} g`} />
-        <StatCard label="Fat" value={`${plan.nutrition.fat} g`} />
-      </div>
+      {/* Weekly nutrition summary (compact, orange-accented) - only show if nutrition data available */}
+      {nutrition && (
+        <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <StatCard label="Calories" value={`${nutrition.kcal.toLocaleString()} kcal`} />
+          <StatCard label="Protein" value={`${nutrition.protein} g`} />
+          <StatCard label="Carbs" value={`${nutrition.carbs} g`} />
+          <StatCard label="Fat" value={`${nutrition.fat} g`} />
+        </div>
+      )}
     </header>
   );
 }

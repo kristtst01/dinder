@@ -94,3 +94,7 @@ export interface DBUserTriedRecipe {
   recipe_id: string;
   tried_at: string;
 }
+
+// Form types for creating/updating
+export type DBWeekplanFormData = Omit<DBWeekplan, 'id' | 'created_at'>;
+export type DBWeekplanEntryFormData = Omit<DBWeekplanEntry, 'id'>;

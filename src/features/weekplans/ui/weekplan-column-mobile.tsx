@@ -31,7 +31,7 @@ const MEALS: { label: string; type: MealType }[] = [
   { label: 'Breakfast', type: 'breakfast' },
   { label: 'Lunch', type: 'lunch' },
   { label: 'Dinner', type: 'dinner' },
-  { label: 'Snacks', type: 'snacks' },
+  { label: 'Snacks', type: 'snack' },
 ];
 
 export function WeekplanColumnMobile({
