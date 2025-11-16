@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { X, Search, Heart } from 'lucide-react';
-import type { Recipe } from '@/features/saved-hub/types/recipe';
+import type { Recipe } from '@/features/recipes/types/recipe';
 import type { MealType } from '@/lib/supabase/types';
 
 interface RecipeSelectionModalProps {
@@ -49,12 +49,11 @@ export function RecipeSelectionModal({
     breakfast: 'Breakfast',
     lunch: 'Lunch',
     dinner: 'Dinner',
-    snacks: 'Snacks',
+    snack: 'Snack',
   }[mealType];
 
   const isSlotFull = (mealType === 'breakfast' || mealType === 'lunch' || mealType === 'dinner') && currentRecipes.length > 0;
-  const allowsMultiple = mealType === 'snacks';
-
+  const allowsMultiple = mealType === 'snack';
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[85vh] flex flex-col m-4">

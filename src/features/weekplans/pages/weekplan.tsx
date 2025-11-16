@@ -7,8 +7,7 @@ import { Navbar } from '../../../shared/navbar';
 import { RecipeSelectionModal } from '../ui/recipe-selection-modal';
 import { WeekplanRepository } from '../repositories/weekplan.repository';
 import type { MealType } from '@/lib/supabase/types';
-import type { Recipe } from '@/features/saved-hub/types/recipe';
-import { ALL_RECIPES } from '@/utils/recipe-loader';
+import type { Recipe } from '@/features/recipes/types/recipe';
 import { useAuth } from '@common/hooks/use-auth';
 
 interface WeekplanData {
@@ -51,10 +50,7 @@ export default function WeekPlanner() {
     mealType: MealType;
   } | null>(null);
 
-  // Mock liked recipes - in production, fetch from Supabase
-  const [likedRecipes] = useState<Recipe[]>(
-    ALL_RECIPES.filter((_, index) => index % 3 === 0).slice(0, 10)
-  );
+
 
   // Load weekplan from Supabase
   useEffect(() => {
