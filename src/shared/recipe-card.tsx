@@ -1,5 +1,5 @@
 import { Clock, ChefHat } from 'lucide-react';
-import type { Recipe } from '../features/saved-hub/types/recipe';
+import type { Recipe } from '@features/recipes/types/recipe';
 import { Link } from 'react-router-dom';
 
 interface RecipeCardProps {

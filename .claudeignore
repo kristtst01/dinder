@@ -1,0 +1,10 @@
+# Environment files with secrets
+.env
+.env.local
+.env*.local
+
+# Supabase migrations directory (may contain sensitive data)
+supabase/
+
+# Node modules
+node_modules/
