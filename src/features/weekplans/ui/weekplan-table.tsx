@@ -1,4 +1,5 @@
 import { WeekplanColumn } from './weekplan-column';
+import { WeekplanColumnMobile } from './weekplan-column-mobile';
 import type { MealType } from '@/lib/supabase/types';
 
 interface WeekplanData {
@@ -38,19 +39,36 @@ export function WeekplanTable({
 }: WeekplanTableProps) {
   return (
     <section className="px-6 py-8">
-      {/* Table grid: responsive columns */}
-      <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide">
+      {/* Desktop View - All 7 days in horizontal scroll */}
+      <div className="hidden md:block">
+        <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide">
+          {DAYS.map((day, dayIndex) => (
+            <div key={dayIndex} className="flex-shrink-0 w-72">
+              <WeekplanColumn
+                day={day}
+                dayIndex={dayIndex}
+                isEditMode={isEditMode}
+                recipes={weekplanData.recipes[dayIndex] || {}}
+                onOpenRecipeModal={onOpenRecipeModal}
+                onRemoveRecipe={onRemoveRecipe}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Mobile View - Expandable stacks per day */}
+      <div className="md:hidden space-y-3">
         {DAYS.map((day, dayIndex) => (
-          <div key={dayIndex} className="flex-shrink-0 w-72">
-            <WeekplanColumn
-              day={day}
-              dayIndex={dayIndex}
-              isEditMode={isEditMode}
-              recipes={weekplanData.recipes[dayIndex] || {}}
-              onOpenRecipeModal={onOpenRecipeModal}
-              onRemoveRecipe={onRemoveRecipe}
-            />
-          </div>
+          <WeekplanColumnMobile
+            key={dayIndex}
+            day={day}
+            dayIndex={dayIndex}
+            isEditMode={isEditMode}
+            recipes={weekplanData.recipes[dayIndex] || {}}
+            onOpenRecipeModal={onOpenRecipeModal}
+            onRemoveRecipe={onRemoveRecipe}
+          />
         ))}
       </div>
     </section>
