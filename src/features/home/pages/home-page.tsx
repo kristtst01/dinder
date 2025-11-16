@@ -7,13 +7,14 @@ import { EmptyState } from '../../../components/empty-state';
 import { FilterPanel, type FilterState } from '../../../shared/filter-panel';
 import { RecipeCard } from '../../../shared/recipe-card';
 import { Navbar } from '../../../shared/navbar';
-import { ALL_RECIPES } from '../../../utils/recipe-loader';
+import { useRecipes } from '../../recipes/hooks/use-recipes';
 import { FeaturedRecipe } from '../ui/featured-recipe';
 import { WeekplanCTA } from '../ui/weekplan-cta';
 
 export function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { loading } = useAuth();
+  const { loading: authLoading } = useAuth();
+  const { recipes: allRecipes, loading: recipesLoading, error: recipesError } = useRecipes();
   const [navOpen, setNavOpen] = useState(false);
   // Get search and filter values from URL
   const kitchenParam = searchParams.get('kitchen') || 'all';
@@ -68,8 +69,7 @@ export function HomePage() {
     [setSearchParams]
   );
 
-  // Use recipes from recipe-loader
-  const allRecipes = ALL_RECIPES;
+  const loading = authLoading || recipesLoading;
 
   // Random recipe for hero section
   const randomRecipe = useMemo(() => {
@@ -159,6 +159,15 @@ export function HomePage() {
 
         {/* Example loading spinner */}
         {loading && <LoadingSpinner />}
+
+        {/* Error state */}
+        {recipesError && (
+          <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg m-6">
+            <p className="text-red-600 dark:text-red-400">
+              Failed to load recipes. Please try again later.
+            </p>
+          </div>
+        )}
 
         {/* Main Content Area */}
         <main className="flex-1 p-4 pb-6 md:p-6">

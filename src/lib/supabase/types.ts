@@ -35,33 +35,52 @@ export type UserPreferenceFormData = Omit<
 
 export type PublicProfileFormData = Omit<PublicProfile, 'id' | 'created_at' | 'updated_at'>;
 
-// ============================================
-// Weekplan & Recipe Types
-// ============================================
+export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
+export type Difficulty = 'easy' | 'medium' | 'hard';
 
-export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snacks';
-
-export interface Recipe {
+export interface DBRecipe {
   uid: string;
   name: string;
-  creator: string;
+  creator: string | null;
   time: number;
   servings: number;
   category: string;
-  difficulty: string;
-  image: string;
-  area: string;
+  difficulty: Difficulty;
+  image: string | null;
+  area: string | null;
 }
 
-export interface Weekplan {
+export interface DBIngredient {
+  uid: string;
+  name: string;
+}
+
+export interface DBRecipeIngredient {
+  uid: string;
+  recipe_id: string;
+  ingredient_id: string;
+  amount: number;
+  unit: string;
+  note: string | null;
+}
+
+export interface DBDirection {
+  uid: string;
+  recipe_id: string;
+  sequence: number;
+  description: string;
+  image: string | null;
+}
+
+export interface DBWeekplan {
   id: string;
   user_id: string;
-  name: string;
+  name: string | null;
   start_date: string;
   created_at: string;
 }
 
-export interface WeekplanEntry {
+export interface DBWeekplanEntry {
   id: string;
   weekplan_id: string;
   day_index: number;
@@ -70,6 +89,8 @@ export interface WeekplanEntry {
   sequence: number;
 }
 
-// Form types for creating/updating
-export type WeekplanFormData = Omit<Weekplan, 'id' | 'created_at'>;
-export type WeekplanEntryFormData = Omit<WeekplanEntry, 'id'>;
+export interface DBUserTriedRecipe {
+  user_id: string;
+  recipe_id: string;
+  tried_at: string;
+}

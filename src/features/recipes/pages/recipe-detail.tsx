@@ -1,16 +1,32 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, Share2, Clock, Users, ChefHat, Flame, Check } from 'lucide-react';
-import { ALL_RECIPES } from '@utils/recipe-loader';
+import {
+  ArrowLeft,
+  Heart,
+  Share2,
+  Clock,
+  Users,
+  ChefHat,
+  Flame,
+  Check,
+  Edit,
+  Trash2,
+} from 'lucide-react';
 import { useSavedRecipesContext } from '../context/SavedRecipesContext';
 import { useCookMode } from '../hooks/useCookMode';
 import { useTriedRecipe } from '../hooks/useTriedRecipe';
 import { useRecipeShare } from '../hooks/use-recipe-share';
+import { useRecipe } from '../hooks/use-recipes';
+import { useRecipeIngredients, useRecipeDirections } from '../hooks/use-recipe-details';
+import { useAuth } from '@/common/hooks/use-auth';
+import { useRecipeUpload } from '../hooks/use-recipe-upload';
 
 export default function RecipeDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { isSaved, toggle } = useSavedRecipesContext();
+  const { user } = useAuth();
+  const { deleteRecipe, loading: deleteLoading } = useRecipeUpload();
 
   // State for interactive features
   const [servings, setServings] = useState(4);
@@ -22,8 +38,13 @@ export default function RecipeDetail() {
   const { hasTriedRecipe, toggleTriedRecipe } = useTriedRecipe(id);
   const { handleShare } = useRecipeShare();
 
-  // Recipe fetching - in production, fetch from API or database
-  const recipe = useMemo(() => ALL_RECIPES.find((r) => r.id === id), [id]);
+  // Fetch recipe and its details from database
+  const { recipe, loading: recipeLoading, error: recipeError } = useRecipe(id);
+  const { ingredients: dbIngredients, loading: ingredientsLoading } = useRecipeIngredients(id);
+  const { directions: dbDirections, loading: directionsLoading } = useRecipeDirections(id);
+
+  const loading = recipeLoading || ingredientsLoading || directionsLoading;
+  const error = recipeError;
 
   useEffect(() => {
     if (recipe) {
@@ -50,11 +71,37 @@ export default function RecipeDetail() {
   const toggleStep = (index: number) => toggleInSet(setCheckedSteps, index);
   const toggleIngredient = (index: number) => toggleInSet(setCheckedIngredients, index);
 
-  if (!recipe) {
+  const handleDelete = async () => {
+    if (!id) return;
+
+    const confirmed = window.confirm(
+      'Are you sure you want to delete this recipe? This action cannot be undone.'
+    );
+    if (!confirmed) return;
+
+    const success = await deleteRecipe(id);
+    if (success) {
+      navigate('/');
+    }
+  };
+
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6">
         <div className="text-center">
-          <p className="text-gray-600 dark:text-gray-400 mb-4 text-lg">Recipe not found</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-4 text-lg">Loading recipe...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !recipe) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6">
+        <div className="text-center">
+          <p className="text-gray-600 dark:text-gray-400 mb-4 text-lg">
+            {error ? 'Error loading recipe' : 'Recipe not found'}
+          </p>
           <button
             onClick={() => navigate(-1)}
             className="px-4 py-2 bg-orange-500 text-white rounded-lg"
@@ -66,12 +113,28 @@ export default function RecipeDetail() {
     );
   }
 
+  const isOwner = user && recipe.createdBy === user.id;
   const baseServings = recipe.servings ?? 4;
   const difficulty = recipe.difficulty || 'Medium';
   const cookingTime = recipe.cookingTime || 30;
   const scaleFactor = servings / baseServings;
-  const ingredients = recipe.ingredients ?? [];
-  const steps = recipe.steps ?? [];
+
+  // Format ingredients from database into display strings
+  const ingredients = dbIngredients.map((ing) => {
+    const amount = ing.amount * scaleFactor;
+    const unit = ing.unit;
+    const name = ing.ingredient.name;
+    const note = ing.note;
+
+    let displayText = `${amount} ${unit} ${name}`;
+    if (note) {
+      displayText += ` (${note})`;
+    }
+    return displayText;
+  });
+
+  // Get steps from directions (sorted by sequence)
+  const steps = dbDirections.map((dir) => dir.description);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-8">
@@ -101,6 +164,27 @@ export default function RecipeDetail() {
         >
           <Flame size={20} />
         </button>
+
+        {/* Edit and Delete buttons - only visible to recipe owner */}
+        {isOwner && (
+          <>
+            <button
+              onClick={() => navigate(`/recipe/edit/${id}`)}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              aria-label="Edit recipe"
+            >
+              <Edit size={20} className="text-gray-700 dark:text-gray-200" />
+            </button>
+            <button
+              onClick={handleDelete}
+              disabled={deleteLoading}
+              className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-50"
+              aria-label="Delete recipe"
+            >
+              <Trash2 size={20} className="text-red-600 dark:text-red-400" />
+            </button>
+          </>
+        )}
 
         <button
           onClick={() => recipe && handleShare(recipe.title, window.location.href)}
