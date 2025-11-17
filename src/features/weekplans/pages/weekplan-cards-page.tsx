@@ -37,26 +37,26 @@ export function WeekplanPage() {
     <div className="min-h-screen bg-gray-100 flex overflow-x-clip">
       {/* Left Navbar */}
       <Navbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
-
       {/* Main Content */}
-      <main className="flex-1 p-6 space-y-6">
+      <main className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <header className="p-4 py-8 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-4 flex items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Saved Week Plans</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
+            <p className="text-gray-600 dark:text-white mt-1">
               {weekplans.length} {weekplans.length === 1 ? 'plan' : 'plans'}
             </p>
           </div>
           <button
             onClick={() => navigate('/weekplans/new')}
-            className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-full hover:from-orange-600 hover:to-orange-700 transition shadow-lg"
+            className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-orange-700 transition shadow-lg"
           >
-            + Create New Plan
+          Create New Plan +
           </button>
-        </div>
+        </header>
 
         {/* Loading State */}
+        <div className="p-6 flex-1">
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
@@ -80,7 +80,6 @@ export function WeekplanPage() {
             {/* Empty state */}
             {weekplans.length === 0 && (
               <div className="text-center py-20">
-                <div className="text-6xl mb-4">📅</div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                   No week plans yet
                 </h3>
@@ -97,6 +96,7 @@ export function WeekplanPage() {
             )}
           </>
         )}
+        </div>
       </main>
     </div>
   );

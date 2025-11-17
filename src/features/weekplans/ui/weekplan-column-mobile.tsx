@@ -25,6 +25,7 @@ interface WeekplanColumnMobileProps {
   };
   onOpenRecipeModal: (dayIndex: number, dayName: string, mealType: MealType) => void;
   onRemoveRecipe: (dayIndex: number, mealType: MealType, recipeId: string) => void;
+  onViewRecipe: (recipeId: string) => void;
 }
 
 const MEALS: { label: string; type: MealType }[] = [
@@ -41,6 +42,7 @@ export function WeekplanColumnMobile({
   recipes,
   onOpenRecipeModal,
   onRemoveRecipe,
+  onViewRecipe,
 }: WeekplanColumnMobileProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -111,6 +113,7 @@ export function WeekplanColumnMobile({
                 isEditMode={isEditMode}
                 onOpenRecipeModal={onOpenRecipeModal}
                 onRemoveRecipe={onRemoveRecipe}
+                onViewRecipe={onViewRecipe}
               />
             </div>
           ))}

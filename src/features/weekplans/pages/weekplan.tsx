@@ -5,6 +5,7 @@ import { WeekplanHeader } from '../ui/weekplan-header';
 import { WeekplanTable } from '../ui/weekplan-table';
 import { Navbar } from '../../../shared/navbar';
 import { RecipeSelectionModal } from '../ui/recipe-selection-modal';
+import { RecipeDetailModal } from '../ui/recipe-detail-modal';
 import { WeekplanRepository } from '../repositories/weekplan.repository';
 import { supabase } from '@/lib/supabase/supabase';
 import type { MealType, DBRecipe } from '@/lib/supabase/types';
@@ -63,6 +64,10 @@ export default function WeekPlanner() {
     dayIndex: number;
     dayName: string;
     mealType: MealType;
+  } | null>(null);
+  const [recipeDetailModal, setRecipeDetailModal] = useState<{
+    isOpen: boolean;
+    recipeId: string;
   } | null>(null);
   const [availableRecipes, setAvailableRecipes] = useState<Recipe[]>([]);
   const [likedRecipes, setLikedRecipes] = useState<Recipe[]>([]);
@@ -301,6 +306,14 @@ export default function WeekPlanner() {
     });
   };
 
+  const handleViewRecipe = (recipeId: string) => {
+    setRecipeDetailModal({ isOpen: true, recipeId });
+  };
+
+  const handleCloseRecipeDetail = () => {
+    setRecipeDetailModal(null);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex overflow-x-clip">
       {/* Left Navbar */}
@@ -347,6 +360,7 @@ export default function WeekPlanner() {
               weekplanData={weekplanData}
               onOpenRecipeModal={handleOpenRecipeModal}
               onRemoveRecipe={handleRemoveRecipe}
+              onViewRecipe={handleViewRecipe}
             />
 
             {/* Recipe Selection Modal */}
@@ -362,6 +376,15 @@ export default function WeekPlanner() {
                 currentRecipes={
                   weekplanData.recipes[modalState.dayIndex]?.[modalState.mealType] || []
                 }
+              />
+            )}
+
+            {/* Recipe Detail Modal */}
+            {recipeDetailModal && (
+              <RecipeDetailModal
+                isOpen={recipeDetailModal.isOpen}
+                onClose={handleCloseRecipeDetail}
+                recipeId={recipeDetailModal.recipeId}
               />
             )}
           </>

@@ -27,6 +27,7 @@ interface WeekplanTableProps {
   weekplanData: WeekplanData;
   onOpenRecipeModal: (dayIndex: number, dayName: string, mealType: MealType) => void;
   onRemoveRecipe: (dayIndex: number, mealType: MealType, recipeId: string) => void;
+  onViewRecipe: (recipeId: string) => void;
 }
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -36,6 +37,7 @@ export function WeekplanTable({
   weekplanData,
   onOpenRecipeModal,
   onRemoveRecipe,
+  onViewRecipe,
 }: WeekplanTableProps) {
   return (
     <section className="px-6 py-8">
@@ -51,6 +53,7 @@ export function WeekplanTable({
                 recipes={weekplanData.recipes[dayIndex] || {}}
                 onOpenRecipeModal={onOpenRecipeModal}
                 onRemoveRecipe={onRemoveRecipe}
+                onViewRecipe={onViewRecipe}
               />
             </div>
           ))}
@@ -68,6 +71,7 @@ export function WeekplanTable({
             recipes={weekplanData.recipes[dayIndex] || {}}
             onOpenRecipeModal={onOpenRecipeModal}
             onRemoveRecipe={onRemoveRecipe}
+            onViewRecipe={onViewRecipe}
           />
         ))}
       </div>

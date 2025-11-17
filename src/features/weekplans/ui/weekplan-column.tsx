@@ -23,6 +23,7 @@ interface WeekplanColumnProps {
   };
   onOpenRecipeModal: (dayIndex: number, dayName: string, mealType: MealType) => void;
   onRemoveRecipe: (dayIndex: number, mealType: MealType, recipeId: string) => void;
+  onViewRecipe: (recipeId: string) => void;
 }
 
 const MEALS: { label: string; type: MealType }[] = [
@@ -39,6 +40,7 @@ export function WeekplanColumn({
   recipes,
   onOpenRecipeModal,
   onRemoveRecipe,
+  onViewRecipe,
 }: WeekplanColumnProps) {
   // Calculate daily nutrition totals
   const dailyNutrition = {
@@ -80,6 +82,7 @@ export function WeekplanColumn({
               isEditMode={isEditMode}
               onOpenRecipeModal={onOpenRecipeModal}
               onRemoveRecipe={onRemoveRecipe}
+              onViewRecipe={onViewRecipe}
             />
           </div>
         ))}
