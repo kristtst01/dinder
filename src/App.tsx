@@ -24,7 +24,8 @@ function App() {
           <Route path="/recipe/:id" element={<RecipeDetail />} />
           <Route path="/preferences" element={<SettingsPage />} />
           <Route path="/weekplans" element={<WeekplanPage />} />
-          <Route path="/weekplanner" element={<WeekPlanner />} />
+          <Route path="/weekplans/new" element={<WeekPlanner />} />
+          <Route path="/weekplans/:id" element={<WeekPlanner />} />
           <Route path="/profile" element={<EditProfilePage />} />
         </Routes>
       </BrowserRouter>
