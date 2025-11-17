@@ -52,7 +52,9 @@ export function RecipeSelectionModal({
     snack: 'Snack',
   }[mealType];
 
-  const isSlotFull = (mealType === 'breakfast' || mealType === 'lunch' || mealType === 'dinner') && currentRecipes.length > 0;
+  const isSlotFull =
+    (mealType === 'breakfast' || mealType === 'lunch' || mealType === 'dinner') &&
+    currentRecipes.length > 0;
   const allowsMultiple = mealType === 'snack';
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
@@ -105,7 +107,7 @@ export function RecipeSelectionModal({
         {isSlotFull && (
           <div className="mx-6 mt-4 px-4 py-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
             <p className="text-sm text-orange-800 dark:text-orange-200 font-medium">
-                This slot already has a recipe. Selecting a new recipe will replace the existing one.
+              This slot already has a recipe. Selecting a new recipe will replace the existing one.
             </p>
           </div>
         )}

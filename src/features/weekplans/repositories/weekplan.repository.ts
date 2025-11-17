@@ -62,7 +62,8 @@ export class WeekplanRepository {
    */
   static async createWeekplan(weekplanData: DBWeekplanFormData): Promise<DBWeekplan> {
     if (!weekplanData.user_id) throw new Error('User ID is required');
-    if (!weekplanData.name || weekplanData.name.trim() === '') throw new Error('Weekplan name is required');
+    if (!weekplanData.name || weekplanData.name.trim() === '')
+      throw new Error('Weekplan name is required');
 
     const { data: weekplan, error } = await supabase
       .from('weekplans')
@@ -150,13 +151,12 @@ export class WeekplanRepository {
   /**
    * Add multiple recipes to a weekplan (batch operation)
    */
-  static async addRecipesToWeekplan(entries: DBWeekplanEntryFormData[]): Promise<DBWeekplanEntry[]> {
+  static async addRecipesToWeekplan(
+    entries: DBWeekplanEntryFormData[]
+  ): Promise<DBWeekplanEntry[]> {
     if (!entries || entries.length === 0) throw new Error('No entries provided');
 
-    const { data, error } = await supabase
-      .from('weekplan_entries')
-      .insert(entries)
-      .select();
+    const { data, error } = await supabase.from('weekplan_entries').insert(entries).select();
 
     if (error) throw error;
     return data || [];

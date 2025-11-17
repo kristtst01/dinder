@@ -19,7 +19,8 @@ const transformDBRecipeToRecipe = (dbRecipe: DBRecipe): Recipe => ({
   image: dbRecipe.image || '',
   category: dbRecipe.category,
   area: dbRecipe.area || '',
-  difficulty: dbRecipe.difficulty === 'easy' ? 'Easy' : dbRecipe.difficulty === 'medium' ? 'Medium' : 'Hard',
+  difficulty:
+    dbRecipe.difficulty === 'easy' ? 'Easy' : dbRecipe.difficulty === 'medium' ? 'Medium' : 'Hard',
   cookingTime: dbRecipe.time,
   servings: dbRecipe.servings,
 });
@@ -71,8 +72,6 @@ export default function WeekPlanner() {
   } | null>(null);
   const [availableRecipes, setAvailableRecipes] = useState<Recipe[]>([]);
   const [likedRecipes, setLikedRecipes] = useState<Recipe[]>([]);
-
-
 
   // Load recipes and weekplan from Supabase
   useEffect(() => {
@@ -351,7 +350,9 @@ export default function WeekPlanner() {
               onToggleEditMode={handleToggleEditMode}
               onSaveWeekplan={handleSaveWeekplan}
               onTitleChange={handleTitleChange}
-              onDelete={isEditMode && weekplanData.id ? () => setShowDeleteConfirm(true) : undefined}
+              onDelete={
+                isEditMode && weekplanData.id ? () => setShowDeleteConfirm(true) : undefined
+              }
               saving={saving}
               createdAt={weekplanData.createdAt}
             />
@@ -404,7 +405,8 @@ export default function WeekPlanner() {
                 Delete Week Plan?
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Are you sure you want to delete "{weekplanData.title}"? This action cannot be undone.
+                Are you sure you want to delete "{weekplanData.title}"? This action cannot be
+                undone.
               </p>
               <div className="flex gap-3 justify-end">
                 <button

@@ -51,51 +51,51 @@ export function WeekplanPage() {
             onClick={() => navigate('/weekplans/new')}
             className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-orange-700 transition shadow-lg"
           >
-          Create New Plan +
+            Create New Plan +
           </button>
         </header>
 
         {/* Loading State */}
         <div className="p-6 flex-1">
-        {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
-          </div>
-        ) : (
-          <>
-            {/* Weekplan grid */}
-            {weekplans.length > 0 && (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {weekplans.map((plan) => (
-                  <WeekplanCard
-                    key={plan.id}
-                    id={plan.id}
-                    title={plan.name || 'Untitled Plan'}
-                    createdAt={plan.created_at}
-                  />
-                ))}
-              </div>
-            )}
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+            </div>
+          ) : (
+            <>
+              {/* Weekplan grid */}
+              {weekplans.length > 0 && (
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {weekplans.map((plan) => (
+                    <WeekplanCard
+                      key={plan.id}
+                      id={plan.id}
+                      title={plan.name || 'Untitled Plan'}
+                      createdAt={plan.created_at}
+                    />
+                  ))}
+                </div>
+              )}
 
-            {/* Empty state */}
-            {weekplans.length === 0 && (
-              <div className="text-center py-20">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  No week plans yet
-                </h3>
-                <p className="text-gray-500 dark:text-gray-400 mb-6">
-                  Create your first week plan to get started!
-                </p>
-                <button
-                  onClick={() => navigate('/weekplans/new')}
-                  className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-full hover:from-orange-600 hover:to-orange-700 transition shadow-lg"
-                >
-                  + Create Week Plan
-                </button>
-              </div>
-            )}
-          </>
-        )}
+              {/* Empty state */}
+              {weekplans.length === 0 && (
+                <div className="text-center py-20">
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                    No week plans yet
+                  </h3>
+                  <p className="text-gray-500 dark:text-gray-400 mb-6">
+                    Create your first week plan to get started!
+                  </p>
+                  <button
+                    onClick={() => navigate('/weekplans/new')}
+                    className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-full hover:from-orange-600 hover:to-orange-700 transition shadow-lg"
+                  >
+                    + Create Week Plan
+                  </button>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </main>
     </div>

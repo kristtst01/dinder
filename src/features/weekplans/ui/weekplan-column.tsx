@@ -73,7 +73,9 @@ export function WeekplanColumn({
       <div className="flex flex-col gap-4">
         {MEALS.map((meal) => (
           <div key={meal.type}>
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">{meal.label}</p>
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
+              {meal.label}
+            </p>
             <MealBlock
               dayIndex={dayIndex}
               dayName={day}

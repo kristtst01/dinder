@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 import { X, Heart, Share2, Clock, Users, ChefHat, Flame, Check, Edit, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useRecipe } from '@/features/recipes/hooks/use-recipes';
-import { useRecipeIngredients, useRecipeDirections } from '@/features/recipes/hooks/use-recipe-details';
+import {
+  useRecipeIngredients,
+  useRecipeDirections,
+} from '@/features/recipes/hooks/use-recipe-details';
 import { useSavedRecipesContext } from '@/features/recipes/context/SavedRecipesContext';
 import { useRecipeShare } from '@/features/recipes/hooks/use-recipe-share';
 import { useCookMode } from '@/features/recipes/hooks/useCookMode';
@@ -34,7 +37,8 @@ export function RecipeDetailModal({ isOpen, onClose, recipeId }: RecipeDetailMod
 
   // Fetch recipe and its details from database
   const { recipe, loading: recipeLoading, error: recipeError } = useRecipe(recipeId);
-  const { ingredients: dbIngredients, loading: ingredientsLoading } = useRecipeIngredients(recipeId);
+  const { ingredients: dbIngredients, loading: ingredientsLoading } =
+    useRecipeIngredients(recipeId);
   const { directions: dbDirections, loading: directionsLoading } = useRecipeDirections(recipeId);
 
   const loading = recipeLoading || ingredientsLoading || directionsLoading;
@@ -103,10 +107,7 @@ export function RecipeDetailModal({ isOpen, onClose, recipeId }: RecipeDetailMod
             <p className="text-gray-600 dark:text-gray-400 mb-4">
               {error ? 'Error loading recipe' : 'Recipe not found'}
             </p>
-            <button
-              onClick={onClose}
-              className="px-4 py-2 bg-orange-500 text-white rounded-lg"
-            >
+            <button onClick={onClose} className="px-4 py-2 bg-orange-500 text-white rounded-lg">
               Close
             </button>
           </div>
@@ -139,9 +140,14 @@ export function RecipeDetailModal({ isOpen, onClose, recipeId }: RecipeDetailMod
   const steps = dbDirections.map((dir) => dir.description);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] flex flex-col m-4 overflow-hidden" onClick={(e) => e.stopPropagation()}>
-        
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] flex flex-col m-4 overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header - sticky with actions */}
         <header className="sticky top-0 z-30 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center gap-3">
           <button
@@ -193,7 +199,9 @@ export function RecipeDetailModal({ isOpen, onClose, recipeId }: RecipeDetailMod
           )}
 
           <button
-            onClick={() => recipe && handleShare(recipe.title, `${window.location.origin}/recipe/${recipeId}`)}
+            onClick={() =>
+              recipe && handleShare(recipe.title, `${window.location.origin}/recipe/${recipeId}`)
+            }
             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
             aria-label="Share recipe"
           >
@@ -229,7 +237,9 @@ export function RecipeDetailModal({ isOpen, onClose, recipeId }: RecipeDetailMod
 
           {/* Title & Meta */}
           <div className="px-4 py-4 bg-white dark:bg-gray-800">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{recipe.title}</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              {recipe.title}
+            </h2>
 
             {/* Quick Stats */}
             <div className="grid grid-cols-3 gap-2 mt-4">
@@ -243,7 +253,9 @@ export function RecipeDetailModal({ isOpen, onClose, recipeId }: RecipeDetailMod
               <div className="flex flex-col items-center p-3 bg-orange-50 dark:bg-gray-700 rounded-lg">
                 <Users size={20} className="text-orange-600 dark:text-orange-400 mb-1" />
                 <span className="text-xs text-gray-600 dark:text-gray-300">Servings</span>
-                <span className="text-sm font-semibold text-gray-900 dark:text-white">{servings}</span>
+                <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                  {servings}
+                </span>
               </div>
               <div className="flex flex-col items-center p-3 bg-orange-50 dark:bg-gray-700 rounded-lg">
                 <ChefHat size={20} className="text-orange-600 dark:text-orange-400 mb-1" />

@@ -59,7 +59,9 @@ export function MealBlock({
                 <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                   {recipe.name}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{recipe.category}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                  {recipe.category}
+                </p>
               </div>
               {isEditMode && (
                 <button
@@ -82,7 +84,7 @@ export function MealBlock({
           <div className="flex-1 flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm">
             {isEditMode ? 'Drop recipe here' : 'No recipes'}
           </div>
-          
+
           {/* Plus icon in edit mode */}
           {isEditMode && (
             <button
@@ -95,7 +97,7 @@ export function MealBlock({
           )}
         </div>
       )}
-      
+
       {/* Replace button when recipe exists in edit mode */}
       {isEditMode && recipes.length > 0 && (
         <button
@@ -103,7 +105,7 @@ export function MealBlock({
           className="w-full py-2 flex items-center justify-center gap-2 text-sm font-medium text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 transition mt-2"
         >
           <Plus size={16} />
-          {(mealType === 'breakfast' || mealType === 'lunch' || mealType === 'dinner')
+          {mealType === 'breakfast' || mealType === 'lunch' || mealType === 'dinner'
             ? 'Replace Recipe'
             : 'Add Recipe'}
         </button>
