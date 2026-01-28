@@ -1,7 +1,6 @@
 import LoadingSpinner from '@/components/loading-spinner';
 import { useAuth } from '@common/hooks/use-auth';
-import { Menu } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { EmptyState } from '../../../components/empty-state';
 import { FilterPanel, type FilterState } from '../../../shared/filter-panel';
@@ -15,7 +14,6 @@ export function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { loading: authLoading } = useAuth();
   const { recipes: allRecipes, loading: recipesLoading, error: recipesError } = useRecipes();
-  const [navOpen, setNavOpen] = useState(false);
   // Get search and filter values from URL
   const kitchenParam = searchParams.get('kitchen') || 'all';
   const difficultyParam = searchParams.get('difficulty') || 'all';
@@ -126,97 +124,80 @@ export function HomePage() {
     filters.searchQuery || hasActiveFilters ? filteredRecipes.length === 0 : false;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex overflow-x-clip">
-      {/* Left Navbar */}
-      <Navbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+      <Navbar />
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Mobile Header */}
-        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-4 flex items-center justify-between gap-4 sticky top-0 z-30 md:hidden">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setNavOpen(true)}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-            >
-              <Menu size={24} className="text-gray-700 dark:text-gray-200" />
-            </button>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Home</h1>
-          </div>
-        </header>
+      {/* Page Header */}
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-6">
+        <div className="mb-4">
+          <p className="text-xs text-gray-400 dark:text-gray-500 mb-2 font-medium">
+            New Update 1.4
+          </p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white leading-tight">
+            What Do You Want To Cook Today?
+          </h1>
+        </div>
+      </div>
 
-        {/* Desktop Header */}
-        <div className="hidden md:block bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-6">
-          <div className="mb-4">
-            <p className="text-xs text-gray-400 dark:text-gray-500 mb-2 font-medium">
-              New Update 1.4
-            </p>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white leading-tight">
-              What Do You Want To Cook Today?
-            </h1>
-          </div>
+      {/* Example loading spinner */}
+      {loading && <LoadingSpinner />}
+
+      {/* Error state */}
+      {recipesError && (
+        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg m-6">
+          <p className="text-red-600 dark:text-red-400">
+            Failed to load recipes. Please try again later.
+          </p>
+        </div>
+      )}
+
+      {/* Main Content Area */}
+      <main className="flex-1 p-4 pb-6 md:p-6">
+        {/* Featured Recipe */}
+        {!filters.searchQuery && !hasActiveFilters && randomRecipe && (
+          <FeaturedRecipe recipe={randomRecipe} />
+        )}
+
+        {/* Filter Panel */}
+        <div className="mb-6">
+          <FilterPanel filters={filters} onChange={updateFilters} recipes={allRecipes} />
         </div>
 
-        {/* Example loading spinner */}
-        {loading && <LoadingSpinner />}
+        {/* Week Plan CTA - Only show when no filters/search active */}
+        {!filters.searchQuery && !hasActiveFilters && <WeekplanCTA />}
 
-        {/* Error state */}
-        {recipesError && (
-          <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg m-6">
-            <p className="text-red-600 dark:text-red-400">
-              Failed to load recipes. Please try again later.
-            </p>
+        {/* Popular Recipes Section - Only show when no filters/search active */}
+        {!filters.searchQuery && !hasActiveFilters && popularRecipes.length > 0 && (
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                Popular This Week
+              </h3>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {popularRecipes.map((recipe) => (
+                <RecipeCard key={recipe.id} recipe={recipe} />
+              ))}
+            </div>
           </div>
         )}
 
-        {/* Main Content Area */}
-        <main className="flex-1 p-4 pb-6 md:p-6">
-          {/* Featured Recipe */}
-          {!filters.searchQuery && !hasActiveFilters && randomRecipe && (
-            <FeaturedRecipe recipe={randomRecipe} />
-          )}
+        {/* Empty State */}
+        {hasNoResults && (
+          <EmptyState searchQuery={filters.searchQuery} hasFilters={hasActiveFilters} />
+        )}
 
-          {/* Filter Panel */}
-          <div className="mb-6">
-            <FilterPanel filters={filters} onChange={updateFilters} recipes={allRecipes} />
-          </div>
-
-          {/* Week Plan CTA - Only show when no filters/search active */}
-          {!filters.searchQuery && !hasActiveFilters && <WeekplanCTA />}
-
-          {/* Popular Recipes Section - Only show when no filters/search active */}
-          {!filters.searchQuery && !hasActiveFilters && popularRecipes.length > 0 && (
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-5">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  Popular This Week
-                </h3>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {popularRecipes.map((recipe) => (
-                  <RecipeCard key={recipe.id} recipe={recipe} />
-                ))}
-              </div>
+        {/* All Recipes Grid - Show when filtering/searching */}
+        {(filters.searchQuery || hasActiveFilters) &&
+          !hasNoResults &&
+          filteredRecipes.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {filteredRecipes.map((recipe) => (
+                <RecipeCard key={recipe.id} recipe={recipe} />
+              ))}
             </div>
           )}
-
-          {/* Empty State */}
-          {hasNoResults && (
-            <EmptyState searchQuery={filters.searchQuery} hasFilters={hasActiveFilters} />
-          )}
-
-          {/* All Recipes Grid - Show when filtering/searching */}
-          {(filters.searchQuery || hasActiveFilters) &&
-            !hasNoResults &&
-            filteredRecipes.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {filteredRecipes.map((recipe) => (
-                  <RecipeCard key={recipe.id} recipe={recipe} />
-                ))}
-              </div>
-            )}
-        </main>
-      </div>
+      </main>
     </div>
   );
 }

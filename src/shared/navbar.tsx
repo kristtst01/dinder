@@ -2,30 +2,11 @@ import { useAuth } from '@common/hooks/use-auth';
 import { AuthModal } from '@features/login/ui/auth-modal';
 import { useProfile } from '@features/profile/hooks/useProfile';
 import type { LucideIcon } from 'lucide-react';
-import {
-  BarChart3,
-  BookOpen,
-  Calendar,
-  ChefHat,
-  Home,
-  LogIn,
-  LogOut,
-  Moon,
-  Plus,
-  Settings,
-  Sun,
-  User,
-  X,
-} from 'lucide-react';
+import { BookOpen, Calendar, ChefHat, Home, LogIn, LogOut, Moon, Plus, Sun } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../common/hooks/use-theme';
 import getInitials from './getInitials';
-
-interface NavbarProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
 
 interface NavLinkItem {
   path: string;
@@ -38,18 +19,15 @@ const navLinks: NavLinkItem[] = [
   { path: '/recipe/create', label: 'Create Recipe', icon: Plus },
   { path: '/cookbook', label: 'Cookbook', icon: BookOpen },
   { path: '/weekplans', label: 'Week Plans', icon: Calendar },
-  { path: '/statistics', label: 'Statistics', icon: BarChart3 },
-  { path: '/preferences', label: 'Preferences', icon: Settings },
 ];
 
-export function Navbar({ isOpen, onClose }: NavbarProps) {
+export function Navbar() {
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
   const { user, loading, signOut } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const isActive = (path: string) => location.pathname === path;
 
-  // Get user display name and initials
   const userName = user?.user_metadata?.full_name || user?.email || 'Guest';
   const userInitials = getInitials(userName);
   const { data: profile, isLoading: profileLoading, error } = useProfile(user?.id);
@@ -58,155 +36,136 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
     <>
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
 
-      {/* Overlay */}
-      {isOpen && <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={onClose} />}
-
-      {/* Sidebar */}
-      <div
-        className={`
-          fixed top-0 left-0 h-screen w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 z-50
-          transform transition-transform duration-300 ease-in-out
-          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-          md:translate-x-0 md:sticky md:top-0 md:h-screen md:z-auto
-          flex flex-col shadow-lg
-        `}
+      <nav
+        className="w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 shadow-sm shrink-0"
+        style={{ height: 'clamp(64px, 11vh, 200px)' }}
       >
-        {/* Close button (mobile only) */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-2 md:hidden text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all z-10"
+        <div
+          className="flex items-center h-full gap-6 px-6"
+          style={{ fontSize: 'clamp(13px, 1.6vh, 20px)' }}
         >
-          <X size={20} />
-        </button>
-
-        {/* Brand Header */}
-        <div className="p-6 md:px-6 md:py-8 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center shadow-md">
-              <ChefHat className="text-white" size={24} />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Dinder</h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Recipe Manager</p>
-            </div>
-          </div>
-          {/* Profile Card */}
-          {loading ? (
-            <div className="bg-orange-50 dark:bg-gray-800 rounded-2xl p-4 border border-orange-100 dark:border-gray-700 animate-pulse">
-              <div className="flex items-center gap-3">
-                <div className="w-14 h-14 rounded-full bg-gray-300 dark:bg-gray-700" />
-                <div className="flex-1 min-w-0 space-y-2">
-                  <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4" />
-                  <div className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-1/2" />
-                </div>
-              </div>
-            </div>
-          ) : !user ? (
-            <>
-              <button
-                onClick={() => setShowAuthModal(true)}
-                className="w-full flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-medium hover:shadow-lg transition-all"
-              >
-                <LogIn className="w-5 h-5" />
-                Sign In
-              </button>
-            </>
-          ) : (
-            <Link
-              to="/profile"
-              className="bg-orange-50 dark:bg-gray-800 rounded-2xl p-4 border border-orange-100 dark:border-gray-700 hover:bg-orange-100 dark:hover:bg-gray-700 transition-all cursor-pointer group block"
+          {/* Brand */}
+          <Link to="/" className="flex items-center gap-2 shrink-0">
+            <div
+              className="aspect-square bg-gradient-to-br from-orange-400 to-orange-600 rounded-lg flex items-center justify-center"
+              style={{ height: 'clamp(28px, 5vh, 56px)' }}
             >
-              <div className="flex items-center gap-3">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
-                  {!error && !profileLoading && profile?.avatar_url ? (
-                    <img
-                      src={profile.avatar_url}
-                      alt="Profile"
-                      className="w-full h-full rounded-full object-cover"
-                    />
-                  ) : (
-                    userInitials
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                    {userName}
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
-                    {user?.email || 'No email'}
-                  </p>
-                </div>
-                <User
-                  size={16}
-                  className="text-gray-400 dark:text-gray-500 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors"
-                />
-              </div>
-            </Link>
-          )}
-        </div>
+              <ChefHat className="text-white w-[60%] h-[60%]" />
+            </div>
+            <span
+              className="font-bold text-gray-900 dark:text-white"
+              style={{ fontSize: 'clamp(18px, 2.2vh, 28px)' }}
+            >
+              Dinder
+            </span>
+          </Link>
 
-        {/* Navigation Sections */}
-        <nav className="flex-1 px-4 overflow-y-auto flex flex-col">
-          <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-4 py-2 mb-2">
-            Menu
-          </div>
-
-          <div className="flex-1 flex flex-col space-y-1">
+          {/* Nav Links */}
+          <div className="@container/nav flex items-center gap-0.5 flex-1 min-w-0">
             {navLinks.map(({ path, label, icon: Icon }) => (
-              <Link
-                key={path}
-                to={path}
-                className={`
-                flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all group
-                ${
-                  isActive(path)
-                    ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-800 hover:text-orange-600 dark:hover:text-orange-400'
-                }
-              `}
-                onClick={onClose}
-              >
-                <div
-                  className={`p-1.5 rounded-lg ${isActive(path) ? 'bg-white/20' : 'bg-orange-100 dark:bg-gray-700'}`}
+              <div key={path} className="relative group flex-1 min-w-0">
+                <Link
+                  to={path}
+                  className={`
+                    w-full overflow-hidden flex items-center justify-center gap-1.5 rounded-lg font-medium transition-all
+                    ${
+                      isActive(path)
+                        ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-sm cursor-pointer'
+                        : 'text-gray-600 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-800 hover:text-orange-600 dark:hover:text-orange-400'
+                    }
+                  `}
+                  style={{ padding: 'clamp(6px, 1vh, 12px) clamp(6px, 1vh, 12px)' }}
                 >
-                  <Icon size={20} />
-                </div>
-                <span className="font-medium">{label}</span>
-                {isActive(path) && (
-                  <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                )}
-              </Link>
+                  <Icon
+                    className="shrink-0"
+                    style={{ width: 'clamp(14px, 2vh, 24px)', height: 'clamp(14px, 2vh, 24px)' }}
+                  />
+                  <span className="hidden @[700px]/nav:inline whitespace-nowrap">{label}</span>
+                </Link>
+                <span className="invisible group-hover:visible absolute top-full left-1/2 -translate-x-1/2 mt-1 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-40 @[700px]/nav:hidden">
+                  {label}
+                </span>
+              </div>
             ))}
           </div>
-        </nav>
 
-        {/* Bottom Section */}
-        <div className="p-4 space-y-3 border-t border-gray-200 dark:border-gray-700">
-          <button
-            onClick={toggleTheme}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-800 hover:text-orange-600 dark:hover:text-orange-400 transition-all group"
-          >
-            <div className="p-1.5 rounded-lg bg-orange-50 dark:bg-gray-800 group-hover:bg-orange-100 dark:group-hover:bg-gray-700 transition-colors">
-              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-            </div>
-            <span className="font-medium">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
-          </button>
+          {/* Right side: theme toggle + profile/auth */}
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={toggleTheme}
+              className="rounded-lg text-gray-600 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-800 hover:text-orange-600 dark:hover:text-orange-400 transition-all"
+              style={{ padding: 'clamp(6px, 1vh, 12px)' }}
+            >
+              {theme === 'dark' ? (
+                <Sun
+                  style={{ width: 'clamp(16px, 2vh, 24px)', height: 'clamp(16px, 2vh, 24px)' }}
+                />
+              ) : (
+                <Moon
+                  style={{ width: 'clamp(16px, 2vh, 24px)', height: 'clamp(16px, 2vh, 24px)' }}
+                />
+              )}
+            </button>
 
-          <button
-            onClick={signOut}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-all group"
-          >
-            <div className="p-1.5 rounded-lg bg-red-50 dark:bg-red-900/20 group-hover:bg-red-100 dark:group-hover:bg-red-900/30 transition-colors">
-              <LogOut size={20} />
-            </div>
-            <span className="font-medium">Logout</span>
-          </button>
-
-          <div className="text-center py-2">
-            <p className="text-xs text-gray-500 dark:text-gray-400">Dinder v1.0.0</p>
+            {loading ? (
+              <div
+                className="rounded-full bg-gray-300 dark:bg-gray-700 animate-pulse"
+                style={{ width: 'clamp(28px, 4vh, 44px)', height: 'clamp(28px, 4vh, 44px)' }}
+              />
+            ) : !user ? (
+              <button
+                onClick={() => setShowAuthModal(true)}
+                className="flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium hover:shadow-md transition-all cursor-pointer"
+                style={{ padding: 'clamp(6px, 1vh, 12px) clamp(12px, 1.8vh, 24px)' }}
+              >
+                <LogIn
+                  style={{ width: 'clamp(14px, 2vh, 24px)', height: 'clamp(14px, 2vh, 24px)' }}
+                />
+                <span>Sign In</span>
+              </button>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link
+                  to="/profile"
+                  className="flex items-center gap-2 rounded-lg hover:bg-orange-50 dark:hover:bg-gray-800 transition-all group"
+                  style={{ padding: 'clamp(4px, 0.7vh, 10px) clamp(6px, 1vh, 14px)' }}
+                >
+                  <div
+                    className="rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold overflow-hidden"
+                    style={{
+                      width: 'clamp(28px, 4vh, 44px)',
+                      height: 'clamp(28px, 4vh, 44px)',
+                      fontSize: 'clamp(11px, 1.4vh, 18px)',
+                    }}
+                  >
+                    {!error && !profileLoading && profile?.avatar_url ? (
+                      <img
+                        src={profile.avatar_url}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      userInitials
+                    )}
+                  </div>
+                  <span className="text-gray-700 dark:text-gray-300 group-hover:text-orange-600 dark:group-hover:text-orange-400">
+                    {userName}
+                  </span>
+                </Link>
+                <button
+                  onClick={signOut}
+                  className="rounded-lg text-gray-500 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-all"
+                  style={{ padding: 'clamp(6px, 1vh, 12px)' }}
+                >
+                  <LogOut
+                    style={{ width: 'clamp(14px, 2vh, 24px)', height: 'clamp(14px, 2vh, 24px)' }}
+                  />
+                </button>
+              </div>
+            )}
           </div>
         </div>
-      </div>
+      </nav>
     </>
   );
 }

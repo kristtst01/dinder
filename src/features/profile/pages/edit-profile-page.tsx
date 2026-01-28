@@ -3,12 +3,11 @@ import type { PublicProfileFormData } from '@/lib/supabase/types';
 import { useAuth } from '@common/hooks/use-auth';
 import getInitials from '@shared/getInitials';
 import { Navbar } from '@shared/navbar';
-import { Camera, Menu, Save, X } from 'lucide-react';
+import { Camera, Save, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useProfile } from '../hooks/useProfile';
 import { ProfileRepository } from '../repositories/profile.repository';
 export default function EditProfilePage() {
-  const [navOpen, setNavOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -344,23 +343,9 @@ export default function EditProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex overflow-x-clip">
-      {/* Left Navbar */}
-      <Navbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20 flex-1 flex flex-col min-w-0">
-        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-4 flex items-center justify-between gap-4 sticky top-0 z-30 md:hidden">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setNavOpen(true)}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-            >
-              <Menu size={24} className="text-gray-700 dark:text-gray-200" />
-            </button>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Edit Profile</h1>
-          </div>
-        </header>
-        {renderContent()}
-      </div>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+      <Navbar />
+      <div className="pb-20 flex-1">{renderContent()}</div>
     </div>
   );
 }
