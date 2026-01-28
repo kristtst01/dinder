@@ -11,7 +11,6 @@ import {
   LogOut,
   Moon,
   Plus,
-  Settings,
   Sun,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -30,7 +29,6 @@ const navLinks: NavLinkItem[] = [
   { path: '/recipe/create', label: 'Create Recipe', icon: Plus },
   { path: '/cookbook', label: 'Cookbook', icon: BookOpen },
   { path: '/weekplans', label: 'Week Plans', icon: Calendar },
-  { path: '/preferences', label: 'Preferences', icon: Settings },
 ];
 
 export function Navbar() {
@@ -49,7 +47,7 @@ export function Navbar() {
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
 
       <nav
-        className="w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 shadow-sm shrink-0 overflow-hidden"
+        className="w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 shadow-sm shrink-0"
         style={{ height: 'clamp(64px, 11vh, 200px)' }}
       >
         <div className="flex items-center h-full gap-6 px-6" style={{ fontSize: 'clamp(13px, 1.6vh, 20px)' }}>
@@ -65,24 +63,28 @@ export function Navbar() {
           </Link>
 
           {/* Nav Links */}
-          <div className="flex items-center gap-1 flex-1">
+          <div className="@container/nav flex items-center gap-0.5 flex-1 min-w-0">
             {navLinks.map(({ path, label, icon: Icon }) => (
-              <Link
-                key={path}
-                to={path}
-                className={`
-                  flex items-center gap-1.5 rounded-lg font-medium transition-all
-                  ${
-                    isActive(path)
-                      ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-sm cursor-pointer'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-800 hover:text-orange-600 dark:hover:text-orange-400'
-                  }
-                `}
-                style={{ padding: 'clamp(6px, 1vh, 12px) clamp(10px, 1.5vh, 20px)' }}
-              >
-                <Icon style={{ width: 'clamp(14px, 2vh, 24px)', height: 'clamp(14px, 2vh, 24px)' }} />
-                <span>{label}</span>
-              </Link>
+              <div key={path} className="relative group flex-1 min-w-0">
+                <Link
+                  to={path}
+                  className={`
+                    w-full overflow-hidden flex items-center justify-center gap-1.5 rounded-lg font-medium transition-all
+                    ${
+                      isActive(path)
+                        ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-sm cursor-pointer'
+                        : 'text-gray-600 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-800 hover:text-orange-600 dark:hover:text-orange-400'
+                    }
+                  `}
+                  style={{ padding: 'clamp(6px, 1vh, 12px) clamp(6px, 1vh, 12px)' }}
+                >
+                  <Icon className="shrink-0" style={{ width: 'clamp(14px, 2vh, 24px)', height: 'clamp(14px, 2vh, 24px)' }} />
+                  <span className="hidden @[700px]/nav:inline whitespace-nowrap">{label}</span>
+                </Link>
+                <span className="invisible group-hover:visible absolute top-full left-1/2 -translate-x-1/2 mt-1 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-40 @[700px]/nav:hidden">
+                  {label}
+                </span>
+              </div>
             ))}
           </div>
 
@@ -105,7 +107,7 @@ export function Navbar() {
                 style={{ padding: 'clamp(6px, 1vh, 12px) clamp(12px, 1.8vh, 24px)' }}
               >
                 <LogIn style={{ width: 'clamp(14px, 2vh, 24px)', height: 'clamp(14px, 2vh, 24px)' }} />
-                Sign In
+                <span>Sign In</span>
               </button>
             ) : (
               <div className="flex items-center gap-2">
@@ -124,7 +126,7 @@ export function Navbar() {
                       userInitials
                     )}
                   </div>
-                  <span className="text-gray-700 dark:text-gray-300 group-hover:text-orange-600 dark:group-hover:text-orange-400 hidden sm:inline">
+                  <span className="text-gray-700 dark:text-gray-300 group-hover:text-orange-600 dark:group-hover:text-orange-400">
                     {userName}
                   </span>
                 </Link>
