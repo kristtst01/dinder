@@ -2,17 +2,7 @@ import { useAuth } from '@common/hooks/use-auth';
 import { AuthModal } from '@features/login/ui/auth-modal';
 import { useProfile } from '@features/profile/hooks/useProfile';
 import type { LucideIcon } from 'lucide-react';
-import {
-  BookOpen,
-  Calendar,
-  ChefHat,
-  Home,
-  LogIn,
-  LogOut,
-  Moon,
-  Plus,
-  Sun,
-} from 'lucide-react';
+import { BookOpen, Calendar, ChefHat, Home, LogIn, LogOut, Moon, Plus, Sun } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../common/hooks/use-theme';
@@ -50,7 +40,10 @@ export function Navbar() {
         className="w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 shadow-sm shrink-0"
         style={{ height: 'clamp(64px, 11vh, 200px)' }}
       >
-        <div className="flex items-center h-full gap-6 px-6" style={{ fontSize: 'clamp(13px, 1.6vh, 20px)' }}>
+        <div
+          className="flex items-center h-full gap-6 px-6"
+          style={{ fontSize: 'clamp(13px, 1.6vh, 20px)' }}
+        >
           {/* Brand */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
             <div
@@ -59,7 +52,12 @@ export function Navbar() {
             >
               <ChefHat className="text-white w-[60%] h-[60%]" />
             </div>
-            <span className="font-bold text-gray-900 dark:text-white" style={{ fontSize: 'clamp(18px, 2.2vh, 28px)' }}>Dinder</span>
+            <span
+              className="font-bold text-gray-900 dark:text-white"
+              style={{ fontSize: 'clamp(18px, 2.2vh, 28px)' }}
+            >
+              Dinder
+            </span>
           </Link>
 
           {/* Nav Links */}
@@ -78,7 +76,10 @@ export function Navbar() {
                   `}
                   style={{ padding: 'clamp(6px, 1vh, 12px) clamp(6px, 1vh, 12px)' }}
                 >
-                  <Icon className="shrink-0" style={{ width: 'clamp(14px, 2vh, 24px)', height: 'clamp(14px, 2vh, 24px)' }} />
+                  <Icon
+                    className="shrink-0"
+                    style={{ width: 'clamp(14px, 2vh, 24px)', height: 'clamp(14px, 2vh, 24px)' }}
+                  />
                   <span className="hidden @[700px]/nav:inline whitespace-nowrap">{label}</span>
                 </Link>
                 <span className="invisible group-hover:visible absolute top-full left-1/2 -translate-x-1/2 mt-1 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-40 @[700px]/nav:hidden">
@@ -95,18 +96,31 @@ export function Navbar() {
               className="rounded-lg text-gray-600 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-800 hover:text-orange-600 dark:hover:text-orange-400 transition-all"
               style={{ padding: 'clamp(6px, 1vh, 12px)' }}
             >
-              {theme === 'dark' ? <Sun style={{ width: 'clamp(16px, 2vh, 24px)', height: 'clamp(16px, 2vh, 24px)' }} /> : <Moon style={{ width: 'clamp(16px, 2vh, 24px)', height: 'clamp(16px, 2vh, 24px)' }} />}
+              {theme === 'dark' ? (
+                <Sun
+                  style={{ width: 'clamp(16px, 2vh, 24px)', height: 'clamp(16px, 2vh, 24px)' }}
+                />
+              ) : (
+                <Moon
+                  style={{ width: 'clamp(16px, 2vh, 24px)', height: 'clamp(16px, 2vh, 24px)' }}
+                />
+              )}
             </button>
 
             {loading ? (
-              <div className="rounded-full bg-gray-300 dark:bg-gray-700 animate-pulse" style={{ width: 'clamp(28px, 4vh, 44px)', height: 'clamp(28px, 4vh, 44px)' }} />
+              <div
+                className="rounded-full bg-gray-300 dark:bg-gray-700 animate-pulse"
+                style={{ width: 'clamp(28px, 4vh, 44px)', height: 'clamp(28px, 4vh, 44px)' }}
+              />
             ) : !user ? (
               <button
                 onClick={() => setShowAuthModal(true)}
                 className="flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium hover:shadow-md transition-all cursor-pointer"
                 style={{ padding: 'clamp(6px, 1vh, 12px) clamp(12px, 1.8vh, 24px)' }}
               >
-                <LogIn style={{ width: 'clamp(14px, 2vh, 24px)', height: 'clamp(14px, 2vh, 24px)' }} />
+                <LogIn
+                  style={{ width: 'clamp(14px, 2vh, 24px)', height: 'clamp(14px, 2vh, 24px)' }}
+                />
                 <span>Sign In</span>
               </button>
             ) : (
@@ -118,10 +132,18 @@ export function Navbar() {
                 >
                   <div
                     className="rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold overflow-hidden"
-                    style={{ width: 'clamp(28px, 4vh, 44px)', height: 'clamp(28px, 4vh, 44px)', fontSize: 'clamp(11px, 1.4vh, 18px)' }}
+                    style={{
+                      width: 'clamp(28px, 4vh, 44px)',
+                      height: 'clamp(28px, 4vh, 44px)',
+                      fontSize: 'clamp(11px, 1.4vh, 18px)',
+                    }}
                   >
                     {!error && !profileLoading && profile?.avatar_url ? (
-                      <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                      <img
+                        src={profile.avatar_url}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       userInitials
                     )}
@@ -135,7 +157,9 @@ export function Navbar() {
                   className="rounded-lg text-gray-500 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-all"
                   style={{ padding: 'clamp(6px, 1vh, 12px)' }}
                 >
-                  <LogOut style={{ width: 'clamp(14px, 2vh, 24px)', height: 'clamp(14px, 2vh, 24px)' }} />
+                  <LogOut
+                    style={{ width: 'clamp(14px, 2vh, 24px)', height: 'clamp(14px, 2vh, 24px)' }}
+                  />
                 </button>
               </div>
             )}

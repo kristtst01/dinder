@@ -345,9 +345,7 @@ export default function EditProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <Navbar />
-      <div className="pb-20 flex-1">
-        {renderContent()}
-      </div>
+      <div className="pb-20 flex-1">{renderContent()}</div>
     </div>
   );
 }
