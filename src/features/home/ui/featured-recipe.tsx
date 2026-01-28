@@ -11,7 +11,7 @@ export function FeaturedRecipe({ recipe }: FeaturedRecipeProps) {
   return (
     <div
       onClick={() => navigate(`/recipe/${recipe.id}`)}
-      className="mb-8 relative rounded-2xl overflow-hidden text-white shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
+      className="mb-8 relative overflow-hidden text-white border border-gray-300 dark:border-gray-700 cursor-pointer hover:opacity-95 transition-opacity"
     >
       <div className="absolute inset-0">
         <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" />
@@ -19,16 +19,16 @@ export function FeaturedRecipe({ recipe }: FeaturedRecipeProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
       </div>
       <div className="relative p-6 md:p-8">
-        <p className="text-sm font-medium text-orange-50 mb-2">RECIPE OF THE DAY</p>
+        <p className="text-xs font-medium text-gray-300 mb-2 tracking-wider">RECIPE OF THE DAY</p>
         <h2 className="text-2xl md:text-3xl font-bold mb-3">{recipe.title}</h2>
         <p className="text-white/90 mb-4">
           Try this amazing {recipe.category.toLowerCase()} recipe from {recipe.area} cuisine!
         </p>
         <div className="flex gap-4 text-sm">
-          <span className="bg-white/20 px-3 py-1 rounded-full">{recipe.area}</span>
-          <span className="bg-white/20 px-3 py-1 rounded-full">{recipe.category}</span>
+          <span className="bg-white/20 px-3 py-1.5 border border-white/30">{recipe.area}</span>
+          <span className="bg-white/20 px-3 py-1.5 border border-white/30">{recipe.category}</span>
           {recipe.difficulty && (
-            <span className="bg-white/20 px-3 py-1 rounded-full">{recipe.difficulty}</span>
+            <span className="bg-white/20 px-3 py-1.5 border border-white/30">{recipe.difficulty}</span>
           )}
         </div>
       </div>
