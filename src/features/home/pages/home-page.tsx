@@ -124,45 +124,35 @@ export function HomePage() {
     filters.searchQuery || hasActiveFilters ? filteredRecipes.length === 0 : false;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+    <div className="h-screen overflow-y-auto scroll-smooth snap-y snap-mandatory bg-white dark:bg-gray-950">
       <Navbar />
 
-      {/* Page Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-6">
-        <div className="mb-4">
-          <p className="text-xs text-gray-400 dark:text-gray-500 mb-2 font-medium">
-            New Update 1.4
+      {/* Example loading spinner */}
+      {loading && <LoadingSpinner />}
+
+      {/* Error state */}
+      {recipesError && (
+        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 mx-4 md:mx-6 mt-6">
+          <p className="text-red-600 dark:text-red-400">
+            Failed to load recipes. Please try again later.
           </p>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white leading-tight">
-            What Do You Want To Cook Today?
-          </h1>
         </div>
-      </div>
+      )}
 
-        {/* Example loading spinner */}
-        {loading && <LoadingSpinner />}
+      {/* Hero Section - Full Width Featured Recipe */}
+      {!filters.searchQuery && !hasActiveFilters && randomRecipe && (
+        <section className="w-full">
+          <FeaturedRecipe recipe={randomRecipe} />
+        </section>
+      )}
 
-        {/* Error state */}
-        {recipesError && (
-          <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 m-6">
-            <p className="text-red-600 dark:text-red-400">
-              Failed to load recipes. Please try again later.
-            </p>
-          </div>
-        )}
-
-        {/* Main Content Area */}
-        <main className="flex-1 p-4 pb-6 md:p-6">
-          {/* Featured Recipe */}
-          {!filters.searchQuery && !hasActiveFilters && randomRecipe && (
-            <FeaturedRecipe recipe={randomRecipe} />
-          )}
-
+      {/* Recipes Section - Different Background */}
+      <section className="flex-1 bg-gray-50 dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto p-4 pb-6 md:p-6">
           {/* Filter Panel */}
           <div className="mb-6">
             <FilterPanel filters={filters} onChange={updateFilters} recipes={allRecipes} />
           </div>
-
 
           {/* Popular Recipes Section - Only show when no filters/search active */}
           {!filters.searchQuery && !hasActiveFilters && popularRecipes.length > 0 && (
@@ -195,7 +185,8 @@ export function HomePage() {
                 ))}
               </div>
             )}
-        </main>
+        </div>
+      </section>
     </div>
   );
 }
