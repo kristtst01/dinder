@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { Menu, Bookmark, ChefHat } from 'lucide-react';
 import { RecipeCard } from '../../../shared/recipe-card';
 import { FilterPanel, type FilterState } from '../../../shared/filter-panel';
 import { Navbar } from '../../../shared/navbar';
@@ -14,7 +13,6 @@ export default function CookbookPage() {
   const { isSaved } = useSavedRecipesContext();
   const { recipes: allRecipes, loading: recipesLoading } = useRecipes();
   const { user } = useAuth();
-  const [navOpen, setNavOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('saved');
   const [filters, setFilters] = useState<FilterState>({
     kitchen: 'all',
@@ -91,52 +89,12 @@ export default function CookbookPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex overflow-x-clip">
-      {/* Left Navbar */}
-      <Navbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+      <Navbar />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Mobile Cookbook Page Header */}
-        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-4 flex items-center justify-between gap-4 sticky top-0 z-30 md:hidden">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setNavOpen(true)}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-            >
-              <Menu size={24} className="text-gray-700 dark:text-gray-200" />
-            </button>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Cookbook</h1>
-          </div>
-
-          {/* Mobile view toggle - compact icon buttons */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setViewMode('saved')}
-              aria-label="Show saved recipes"
-              className={`p-2 rounded-md transition ${
-                viewMode === 'saved'
-                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
-                  : 'text-gray-500 dark:text-gray-400'
-              }`}
-            >
-              <Bookmark size={18} />
-            </button>
-            <button
-              onClick={() => setViewMode('mine')}
-              aria-label="Show my recipes"
-              className={`p-2 rounded-md transition ${
-                viewMode === 'mine'
-                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
-                  : 'text-gray-500 dark:text-gray-400'
-              }`}
-            >
-              <ChefHat size={18} />
-            </button>
-          </div>
-        </header>
-
-        {/* Desktop Dashboard Header */}
+        {/* Cookbook Header with view toggle */}
         <CookbookHeader
           filteredCount={filteredRecipes.length}
           filters={filters}
@@ -203,7 +161,7 @@ export default function CookbookPage() {
           className={`
             md:hidden fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-gray-50 dark:from-gray-900 via-gray-50 dark:via-gray-900 to-transparent
             transition-transform duration-300 ease-in-out z-20
-            ${showMobileFilter && !navOpen ? 'translate-y-0' : 'translate-y-full'}
+            ${showMobileFilter ? 'translate-y-0' : 'translate-y-full'}
           `}
         >
           <div className="flex items-end gap-3">

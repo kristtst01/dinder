@@ -37,6 +37,9 @@ export function WeekplanPage() {
     <div className="min-h-screen bg-gray-100 flex overflow-x-clip">
       {/* Left Navbar */}
       <Navbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      <Navbar />
+
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0">
         {/* Header */}
