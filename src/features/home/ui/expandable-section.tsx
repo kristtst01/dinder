@@ -100,7 +100,7 @@ export function ExpandableSection<T>({
             {displayedItems.map((item, index) => (
               <div
                 key={index}
-                className="flex-none snap-start scale-90 origin-top"
+                className="flex-none snap-start scale-80 origin-top"
                 style={{ width: 'calc((100% - 24px) / 3)' }}
               >
                 {renderItem(item)}

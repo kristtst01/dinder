@@ -10,6 +10,7 @@ import { useRecipes } from '../../recipes/hooks/use-recipes';
 import { FeaturedRecipe } from '../ui/featured-recipe';
 import { WeekplanCTA } from '../ui/weekplan-cta';
 import { ExpandableSection } from '../ui/expandable-section';
+import { WeekplanCard } from '@shared/weekplan-card';
 
 export function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -81,6 +82,70 @@ export function HomePage() {
     const shuffled = [...allRecipes].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, 8);
   }, [allRecipes]);
+
+  // Mock weekplan data
+  const mockWeekplans = useMemo(() => [
+    {
+      id: '1',
+      title: 'Healthy January Reset',
+      createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      type: 'vegan' as const,
+      budget: 'medium' as const,
+      userProfile: {
+        name: 'Sarah Johnson',
+      },
+    },
+    {
+      id: '2',
+      title: 'High Protein Muscle Building',
+      createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      type: 'protein' as const,
+      budget: 'high' as const,
+      userProfile: {
+        name: 'Mike Chen',
+      },
+    },
+    {
+      id: '3',
+      title: 'Budget-Friendly Keto',
+      createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+      type: 'keto' as const,
+      budget: 'low' as const,
+      userProfile: {
+        name: 'Emma Davis',
+      },
+    },
+    {
+      id: '4',
+      title: 'Paleo Family Meals',
+      createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+      type: 'paleo' as const,
+      budget: 'medium' as const,
+      userProfile: {
+        name: 'David Smith',
+      },
+    },
+    {
+      id: '5',
+      title: 'Mediterranean Diet Plan',
+      createdAt: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
+      type: 'vegan' as const,
+      budget: 'medium' as const,
+      userProfile: {
+        name: 'Lisa Anderson',
+      },
+    },
+    {
+      id: '6',
+      title: 'Quick Weeknight Dinners',
+      createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+      type: 'protein' as const,
+      budget: 'low' as const,
+      userProfile: {
+        name: 'John Wilson',
+      },
+    },
+  ], []);
 
   // Filter recipes based on FilterState
   const filteredRecipes = useMemo(() => {
@@ -156,6 +221,29 @@ export function HomePage() {
               items={popularRecipes}
               renderItem={(recipe) => <RecipeCard recipe={recipe} />}
               initialCarouselCount={9}
+            />
+          </div>
+        </section>
+      )}
+
+      {/* Popular Weekplans Section */}
+      {!filters.searchQuery && !hasActiveFilters && (
+        <section className="w-full bg-white dark:bg-gray-950 py-8">
+          <div className="max-w-7xl mx-auto px-4 md:px-6">
+            <ExpandableSection
+              title="Popular Week Plans"
+              items={mockWeekplans}
+              renderItem={(weekplan) => (
+                <WeekplanCard
+                  id={weekplan.id}
+                  title={weekplan.title}
+                  createdAt={weekplan.createdAt}
+                  type={weekplan.type}
+                  budget={weekplan.budget}
+                  userProfile={weekplan.userProfile}
+                />
+              )}
+              initialCarouselCount={6}
             />
           </div>
         </section>
