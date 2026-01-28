@@ -181,8 +181,6 @@ export function HomePage() {
             <FilterPanel filters={filters} onChange={updateFilters} recipes={allRecipes} />
           </div>
 
-          {/* Week Plan CTA - Only show when no filters/search active */}
-          {!filters.searchQuery && !hasActiveFilters && <WeekplanCTA />}
 
           {/* Popular Recipes Section - Only show when no filters/search active */}
           {!filters.searchQuery && !hasActiveFilters && popularRecipes.length > 0 && (
