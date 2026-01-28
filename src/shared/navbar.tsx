@@ -15,7 +15,7 @@ interface NavLinkItem {
 }
 
 const navLinks: NavLinkItem[] = [
-  { path: '/', label: 'Home', icon: Home },
+  { path: '/home', label: 'Home', icon: Home },
   { path: '/recipe/create', label: 'Create Recipe', icon: Plus },
   { path: '/cookbook', label: 'Cookbook', icon: BookOpen },
   { path: '/weekplans', label: 'Week Plans', icon: Calendar },
