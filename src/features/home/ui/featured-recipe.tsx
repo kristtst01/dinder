@@ -29,7 +29,8 @@ export function FeaturedRecipe({ recipe }: FeaturedRecipeProps) {
           <span className="bg-white/20 px-3 py-1.5 border border-white/30">{recipe.category}</span>
           {recipe.difficulty && (
             <span className="bg-white/20 px-3 py-1.5 border border-white/30">{recipe.difficulty}</span>
-          )}
+
+)}
         </div>
       </div>
     </div>

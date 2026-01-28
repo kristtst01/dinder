@@ -34,11 +34,9 @@ export function WeekplanPage() {
   }, [user]);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex overflow-x-clip">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex overflow-x-clip">
       {/* Left Navbar */}
-      <Navbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
-    <div className="min-h-screen bg-gray-100 flex flex-col">
-      <Navbar />
+      <Navbar/>
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0">
@@ -52,7 +50,7 @@ export function WeekplanPage() {
           </div>
           <button
             onClick={() => navigate('/weekplans/new')}
-            className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-orange-700 transition shadow-lg"
+            className="px-6 py-3 bg-gray-900 text-white font-medium rounded-full hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200 transition text-sm tracking-wide uppercase"
           >
             Create New Plan +
           </button>
@@ -62,7 +60,7 @@ export function WeekplanPage() {
         <div className="p-6 flex-1">
           {loading ? (
             <div className="flex items-center justify-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-gray-100"></div>
             </div>
           ) : (
             <>
