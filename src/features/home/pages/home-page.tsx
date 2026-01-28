@@ -9,6 +9,7 @@ import { Navbar } from '../../../shared/navbar';
 import { useRecipes } from '../../recipes/hooks/use-recipes';
 import { FeaturedRecipe } from '../ui/featured-recipe';
 import { WeekplanCTA } from '../ui/weekplan-cta';
+import { ExpandableSection } from '../ui/expandable-section';
 
 export function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -146,6 +147,20 @@ export function HomePage() {
         </section>
       )}
 
+      {/* Popular This Week Section - Constrained Height */}
+      {!filters.searchQuery && !hasActiveFilters && popularRecipes.length > 0 && (
+        <section className="w-full bg-gray-50 dark:bg-gray-900 py-8">
+          <div className="max-w-7xl mx-auto px-4 md:px-6">
+            <ExpandableSection
+              title="Popular This Week"
+              items={popularRecipes}
+              renderItem={(recipe) => <RecipeCard recipe={recipe} />}
+              initialCarouselCount={9}
+            />
+          </div>
+        </section>
+      )}
+
       {/* Recipes Section - Different Background */}
       <section className="flex-1 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto p-4 pb-6 md:p-6">
@@ -153,22 +168,6 @@ export function HomePage() {
           <div className="mb-6">
             <FilterPanel filters={filters} onChange={updateFilters} recipes={allRecipes} />
           </div>
-
-          {/* Popular Recipes Section - Only show when no filters/search active */}
-          {!filters.searchQuery && !hasActiveFilters && popularRecipes.length > 0 && (
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-5">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  Popular This Week
-                </h3>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {popularRecipes.map((recipe) => (
-                  <RecipeCard key={recipe.id} recipe={recipe} />
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Empty State */}
           {hasNoResults && (
