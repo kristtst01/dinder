@@ -29,13 +29,55 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/cookbook" element={<CookbookPage />} />
-          <Route path="/recipe/create" element={<ProtectedRoute><RecipeCreatePage /></ProtectedRoute>} />
-          <Route path="/recipe/edit/:id" element={<ProtectedRoute><RecipeEditPage /></ProtectedRoute>} />
+          <Route
+            path="/recipe/create"
+            element={
+              <ProtectedRoute>
+                <RecipeCreatePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/recipe/edit/:id"
+            element={
+              <ProtectedRoute>
+                <RecipeEditPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/recipe/:id" element={<RecipeDetail />} />
-          <Route path="/preferences" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-          <Route path="/weekplans" element={<ProtectedRoute><WeekplanPage /></ProtectedRoute>} />
-          <Route path="/weekplanner" element={<ProtectedRoute><WeekPlanner /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><EditProfilePage /></ProtectedRoute>} />
+          <Route
+            path="/preferences"
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/weekplans"
+            element={
+              <ProtectedRoute>
+                <WeekplanPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/weekplanner"
+            element={
+              <ProtectedRoute>
+                <WeekPlanner />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <EditProfilePage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
       <SpeedInsights />
