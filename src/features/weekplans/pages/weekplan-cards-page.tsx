@@ -1,10 +1,7 @@
-import { useState } from 'react';
 import { Navbar } from '@shared/navbar';
 import { WeekplanCard } from '@shared/weekplan-card';
 
 export function WeekplanPage() {
-  const [navOpen, setNavOpen] = useState(false);
-
   const weekplans = [
     { title: 'Uke 42 – Middager', author: 'Lina' },
     { title: 'Uke 43 – Kjappe retter', author: 'Lina' },
@@ -12,9 +9,8 @@ export function WeekplanPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100 flex overflow-x-clip">
-      {/* Left Navbar */}
-      <Navbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      <Navbar />
 
       {/* Main Content */}
       <main className="flex-1 p-6 space-y-6">

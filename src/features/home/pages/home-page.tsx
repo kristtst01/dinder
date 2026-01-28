@@ -1,7 +1,6 @@
 import LoadingSpinner from '@/components/loading-spinner';
 import { useAuth } from '@common/hooks/use-auth';
-import { Menu } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { EmptyState } from '../../../components/empty-state';
 import { FilterPanel, type FilterState } from '../../../shared/filter-panel';
@@ -15,7 +14,6 @@ export function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { loading: authLoading } = useAuth();
   const { recipes: allRecipes, loading: recipesLoading, error: recipesError } = useRecipes();
-  const [navOpen, setNavOpen] = useState(false);
   // Get search and filter values from URL
   const kitchenParam = searchParams.get('kitchen') || 'all';
   const difficultyParam = searchParams.get('difficulty') || 'all';
@@ -126,36 +124,20 @@ export function HomePage() {
     filters.searchQuery || hasActiveFilters ? filteredRecipes.length === 0 : false;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex overflow-x-clip">
-      {/* Left Navbar */}
-      <Navbar isOpen={navOpen} onClose={() => setNavOpen(false)} />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+      <Navbar />
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Mobile Header */}
-        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-4 flex items-center justify-between gap-4 sticky top-0 z-30 md:hidden">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setNavOpen(true)}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-            >
-              <Menu size={24} className="text-gray-700 dark:text-gray-200" />
-            </button>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Home</h1>
-          </div>
-        </header>
-
-        {/* Desktop Header */}
-        <div className="hidden md:block bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-6">
-          <div className="mb-4">
-            <p className="text-xs text-gray-400 dark:text-gray-500 mb-2 font-medium">
-              New Update 1.4
-            </p>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white leading-tight">
-              What Do You Want To Cook Today?
-            </h1>
-          </div>
+      {/* Page Header */}
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-6">
+        <div className="mb-4">
+          <p className="text-xs text-gray-400 dark:text-gray-500 mb-2 font-medium">
+            New Update 1.4
+          </p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white leading-tight">
+            What Do You Want To Cook Today?
+          </h1>
         </div>
+      </div>
 
         {/* Example loading spinner */}
         {loading && <LoadingSpinner />}
@@ -216,7 +198,6 @@ export function HomePage() {
               </div>
             )}
         </main>
-      </div>
     </div>
   );
 }
