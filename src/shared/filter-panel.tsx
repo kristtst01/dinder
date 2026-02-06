@@ -67,7 +67,10 @@ export function FilterPanel({
   ].filter(Boolean).length;
 
   return (
-    <div ref={panelRef} className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 mb-4">
+    <div
+      ref={panelRef}
+      className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 mb-4"
+    >
       {/* Search Bar and Filter Toggle */}
       <div className="flex items-center gap-3">
         <div className="flex-1 relative">

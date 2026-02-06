@@ -3,12 +3,10 @@ import { useAuth } from '@common/hooks/use-auth';
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { EmptyState } from '../../../components/empty-state';
-import { FilterPanel, type FilterState } from '../../../shared/filter-panel';
 import { RecipeCard } from '../../../shared/recipe-card';
 import { Navbar } from '../../../shared/navbar';
 import { useRecipes } from '../../recipes/hooks/use-recipes';
 import { FeaturedRecipe } from '../ui/featured-recipe';
-import { WeekplanCTA } from '../ui/weekplan-cta';
 import { ExpandableSection } from '../ui/expandable-section';
 import { WeekplanCard } from '@shared/weekplan-card';
 
@@ -84,68 +82,71 @@ export function HomePage() {
   }, [allRecipes]);
 
   // Mock weekplan data
-  const mockWeekplans = useMemo(() => [
-    {
-      id: '1',
-      title: 'Healthy January Reset',
-      createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-      type: 'vegan' as const,
-      budget: 'medium' as const,
-      userProfile: {
-        name: 'Sarah Johnson',
+  const mockWeekplans = useMemo(
+    () => [
+      {
+        id: '1',
+        title: 'Healthy January Reset',
+        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        type: 'vegan' as const,
+        budget: 'medium' as const,
+        userProfile: {
+          name: 'Sarah Johnson',
+        },
       },
-    },
-    {
-      id: '2',
-      title: 'High Protein Muscle Building',
-      createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-      type: 'protein' as const,
-      budget: 'high' as const,
-      userProfile: {
-        name: 'Mike Chen',
+      {
+        id: '2',
+        title: 'High Protein Muscle Building',
+        createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+        type: 'protein' as const,
+        budget: 'high' as const,
+        userProfile: {
+          name: 'Mike Chen',
+        },
       },
-    },
-    {
-      id: '3',
-      title: 'Budget-Friendly Keto',
-      createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-      type: 'keto' as const,
-      budget: 'low' as const,
-      userProfile: {
-        name: 'Emma Davis',
+      {
+        id: '3',
+        title: 'Budget-Friendly Keto',
+        createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+        type: 'keto' as const,
+        budget: 'low' as const,
+        userProfile: {
+          name: 'Emma Davis',
+        },
       },
-    },
-    {
-      id: '4',
-      title: 'Paleo Family Meals',
-      createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-      type: 'paleo' as const,
-      budget: 'medium' as const,
-      userProfile: {
-        name: 'David Smith',
+      {
+        id: '4',
+        title: 'Paleo Family Meals',
+        createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+        type: 'paleo' as const,
+        budget: 'medium' as const,
+        userProfile: {
+          name: 'David Smith',
+        },
       },
-    },
-    {
-      id: '5',
-      title: 'Mediterranean Diet Plan',
-      createdAt: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
-      type: 'vegan' as const,
-      budget: 'medium' as const,
-      userProfile: {
-        name: 'Lisa Anderson',
+      {
+        id: '5',
+        title: 'Mediterranean Diet Plan',
+        createdAt: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
+        type: 'vegan' as const,
+        budget: 'medium' as const,
+        userProfile: {
+          name: 'Lisa Anderson',
+        },
       },
-    },
-    {
-      id: '6',
-      title: 'Quick Weeknight Dinners',
-      createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
-      type: 'protein' as const,
-      budget: 'low' as const,
-      userProfile: {
-        name: 'John Wilson',
+      {
+        id: '6',
+        title: 'Quick Weeknight Dinners',
+        createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+        type: 'protein' as const,
+        budget: 'low' as const,
+        userProfile: {
+          name: 'John Wilson',
+        },
       },
-    },
-  ], []);
+    ],
+    []
+  );
 
   // Filter recipes based on FilterState
   const filteredRecipes = useMemo(() => {
@@ -191,9 +192,9 @@ export function HomePage() {
 
   return (
     <div className="h-screen overflow-y-auto scroll-smooth snap-y snap-mandatory bg-white dark:bg-gray-950">
-      <Navbar 
-        filters={filters} 
-        onFiltersChange={updateFilters} 
+      <Navbar
+        filters={filters}
+        onFiltersChange={updateFilters}
         recipes={allRecipes}
         showSearch={true}
       />

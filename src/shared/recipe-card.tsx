@@ -75,7 +75,8 @@ export function RecipeCard({ recipe, onClick, badge }: RecipeCardProps) {
         <Link
           to={`/recipe/${recipe.id}`}
           state={{ recipe }}
-          className="w-full bg-gray-900 hover:bg-gray-800 dark:bg-gray-100 dark:hover:bg-gray-200 text-white dark:text-gray-900 font-medium py-3 px-4 rounded-full transition-colors text-center mt-auto text-sm tracking-wide">
+          className="w-full bg-gray-900 hover:bg-gray-800 dark:bg-gray-100 dark:hover:bg-gray-200 text-white dark:text-gray-900 font-medium py-3 px-4 rounded-full transition-colors text-center mt-auto text-sm tracking-wide"
+        >
           Check out recipe
         </Link>
       </div>

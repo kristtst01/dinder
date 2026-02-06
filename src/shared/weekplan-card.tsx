@@ -62,7 +62,11 @@ export function WeekplanCard({
         {userProfile && (
           <div className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white dark:bg-gray-800 border-2 border-white dark:border-gray-700 shadow-lg flex items-center justify-center overflow-hidden">
             {userProfile.avatar ? (
-              <img src={userProfile.avatar} alt={userProfile.name} className="w-full h-full object-cover" />
+              <img
+                src={userProfile.avatar}
+                alt={userProfile.name}
+                className="w-full h-full object-cover"
+              />
             ) : (
               <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                 {getInitials(userProfile.name)}
@@ -70,7 +74,7 @@ export function WeekplanCard({
             )}
           </div>
         )}
-        
+
         {/* Weekplan Title Overlay */}
         <div className="absolute inset-0 flex items-center justify-center p-6">
           <h3 className="text-2xl font-bold text-white text-center line-clamp-3 drop-shadow-lg">
@@ -89,7 +93,9 @@ export function WeekplanCard({
 
           {/* Type Badge */}
           {type && (
-            <span className={`text-xs font-semibold px-2.5 py-1 whitespace-nowrap capitalize ${getTypeColor(type)}`}>
+            <span
+              className={`text-xs font-semibold px-2.5 py-1 whitespace-nowrap capitalize ${getTypeColor(type)}`}
+            >
               {type}
             </span>
           )}
@@ -105,7 +111,8 @@ export function WeekplanCard({
 
         <Link
           to={`/weekplans/${id}`}
-          className="w-full bg-gray-900 hover:bg-gray-800 dark:bg-gray-100 dark:hover:bg-gray-200 text-white dark:text-gray-900 font-medium py-3 px-4 rounded-full transition-colors text-center mt-auto text-sm tracking-wide">
+          className="w-full bg-gray-900 hover:bg-gray-800 dark:bg-gray-100 dark:hover:bg-gray-200 text-white dark:text-gray-900 font-medium py-3 px-4 rounded-full transition-colors text-center mt-auto text-sm tracking-wide"
+        >
           View Week Plan
         </Link>
       </div>

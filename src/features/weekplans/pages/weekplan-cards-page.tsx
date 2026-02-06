@@ -7,7 +7,6 @@ import { useAuth } from '@common/hooks/use-auth';
 import type { DBWeekplan } from '@/lib/supabase/types';
 
 export function WeekplanPage() {
-  const [navOpen, setNavOpen] = useState(false);
   const [weekplans, setWeekplans] = useState<DBWeekplan[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
@@ -36,7 +35,7 @@ export function WeekplanPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex overflow-x-clip">
       {/* Left Navbar */}
-      <Navbar/>
+      <Navbar />
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0">

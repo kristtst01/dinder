@@ -32,7 +32,9 @@ export default function RecipeDetail() {
   const [servings, setServings] = useState(4);
   const [checkedSteps, setCheckedSteps] = useState<Set<number>>(new Set());
   const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
-  const [activeTab, setActiveTab] = useState<'ingredients' | 'instructions' | 'reviews' | 'macros'>('ingredients');
+  const [activeTab, setActiveTab] = useState<'ingredients' | 'instructions' | 'reviews' | 'macros'>(
+    'ingredients'
+  );
 
   // Custom hooks for feature logic
   const { cookMode, toggleCookMode } = useCookMode();
@@ -428,7 +430,9 @@ export default function RecipeDetail() {
             <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Reviews</h3>
             <div className="text-center py-12">
               <p className="text-gray-500 dark:text-gray-400 mb-4">No reviews yet</p>
-              <p className="text-sm text-gray-400 dark:text-gray-500">Be the first to review this recipe!</p>
+              <p className="text-sm text-gray-400 dark:text-gray-500">
+                Be the first to review this recipe!
+              </p>
             </div>
           </section>
         )}
@@ -444,7 +448,7 @@ export default function RecipeDetail() {
                   <p className="text-3xl font-bold text-gray-900 dark:text-white">--</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">calories</p>
                 </div>
-                
+
                 <div className="grid grid-cols-3 gap-4 mt-4">
                   <div className="text-center">
                     <p className="text-lg font-semibold text-gray-900 dark:text-white">--g</p>
@@ -460,7 +464,7 @@ export default function RecipeDetail() {
                   </div>
                 </div>
               </div>
-              
+
               <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
                 Nutrition information coming soon
               </p>
