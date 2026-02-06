@@ -3,12 +3,13 @@ import { useAuth } from '@common/hooks/use-auth';
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { EmptyState } from '../../../components/empty-state';
-import { FilterPanel, type FilterState } from '../../../shared/filter-panel';
+import { type FilterState } from '../../../shared/filter-panel';
 import { RecipeCard } from '../../../shared/recipe-card';
 import { Navbar } from '../../../shared/navbar';
 import { useRecipes } from '../../recipes/hooks/use-recipes';
 import { FeaturedRecipe } from '../ui/featured-recipe';
-import { WeekplanCTA } from '../ui/weekplan-cta';
+import { ExpandableSection } from '../ui/expandable-section';
+import { WeekplanCard } from '@shared/weekplan-card';
 
 export function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -81,6 +82,73 @@ export function HomePage() {
     return shuffled.slice(0, 8);
   }, [allRecipes]);
 
+  // Mock weekplan data
+  const mockWeekplans = useMemo(
+    () => [
+      {
+        id: '1',
+        title: 'Healthy January Reset',
+        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        type: 'vegan' as const,
+        budget: 'medium' as const,
+        userProfile: {
+          name: 'Sarah Johnson',
+        },
+      },
+      {
+        id: '2',
+        title: 'High Protein Muscle Building',
+        createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+        type: 'protein' as const,
+        budget: 'high' as const,
+        userProfile: {
+          name: 'Mike Chen',
+        },
+      },
+      {
+        id: '3',
+        title: 'Budget-Friendly Keto',
+        createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+        type: 'keto' as const,
+        budget: 'low' as const,
+        userProfile: {
+          name: 'Emma Davis',
+        },
+      },
+      {
+        id: '4',
+        title: 'Paleo Family Meals',
+        createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+        type: 'paleo' as const,
+        budget: 'medium' as const,
+        userProfile: {
+          name: 'David Smith',
+        },
+      },
+      {
+        id: '5',
+        title: 'Mediterranean Diet Plan',
+        createdAt: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
+        type: 'vegan' as const,
+        budget: 'medium' as const,
+        userProfile: {
+          name: 'Lisa Anderson',
+        },
+      },
+      {
+        id: '6',
+        title: 'Quick Weeknight Dinners',
+        createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+        type: 'protein' as const,
+        budget: 'low' as const,
+        userProfile: {
+          name: 'John Wilson',
+        },
+      },
+    ],
+    []
+  );
+
   // Filter recipes based on FilterState
   const filteredRecipes = useMemo(() => {
     return allRecipes.filter((recipe) => {
@@ -124,80 +192,90 @@ export function HomePage() {
     filters.searchQuery || hasActiveFilters ? filteredRecipes.length === 0 : false;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-      <Navbar />
-
-      {/* Page Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-6">
-        <div className="mb-4">
-          <p className="text-xs text-gray-400 dark:text-gray-500 mb-2 font-medium">
-            New Update 1.4
-          </p>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white leading-tight">
-            What Do You Want To Cook Today?
-          </h1>
-        </div>
-      </div>
+    <div className="h-screen overflow-y-auto scroll-smooth snap-y snap-mandatory bg-white dark:bg-gray-950">
+      <Navbar
+        filters={filters}
+        onFiltersChange={updateFilters}
+        recipes={allRecipes}
+        showSearch={true}
+      />
 
       {/* Example loading spinner */}
       {loading && <LoadingSpinner />}
 
       {/* Error state */}
       {recipesError && (
-        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg m-6">
+        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 mx-4 md:mx-6 mt-6">
           <p className="text-red-600 dark:text-red-400">
             Failed to load recipes. Please try again later.
           </p>
         </div>
       )}
 
-      {/* Main Content Area */}
-      <main className="flex-1 p-4 pb-6 md:p-6">
-        {/* Featured Recipe */}
-        {!filters.searchQuery && !hasActiveFilters && randomRecipe && (
+      {/* Hero Section - Full Width Featured Recipe */}
+      {!filters.searchQuery && !hasActiveFilters && randomRecipe && (
+        <section className="w-full">
           <FeaturedRecipe recipe={randomRecipe} />
-        )}
+        </section>
+      )}
 
-        {/* Filter Panel */}
-        <div className="mb-6">
-          <FilterPanel filters={filters} onChange={updateFilters} recipes={allRecipes} />
-        </div>
-
-        {/* Week Plan CTA - Only show when no filters/search active */}
-        {!filters.searchQuery && !hasActiveFilters && <WeekplanCTA />}
-
-        {/* Popular Recipes Section - Only show when no filters/search active */}
-        {!filters.searchQuery && !hasActiveFilters && popularRecipes.length > 0 && (
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-5">
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Popular This Week
-              </h3>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {popularRecipes.map((recipe) => (
-                <RecipeCard key={recipe.id} recipe={recipe} />
-              ))}
-            </div>
+      {/* Popular This Week Section - Constrained Height */}
+      {!filters.searchQuery && !hasActiveFilters && popularRecipes.length > 0 && (
+        <section className="w-full bg-gray-50 dark:bg-gray-900 py-8">
+          <div className="max-w-7xl mx-auto px-4 md:px-6">
+            <ExpandableSection
+              title="Popular This Week"
+              items={popularRecipes}
+              renderItem={(recipe) => <RecipeCard recipe={recipe} />}
+              initialCarouselCount={9}
+            />
           </div>
-        )}
+        </section>
+      )}
 
-        {/* Empty State */}
-        {hasNoResults && (
-          <EmptyState searchQuery={filters.searchQuery} hasFilters={hasActiveFilters} />
-        )}
+      {/* Popular Weekplans Section */}
+      {!filters.searchQuery && !hasActiveFilters && (
+        <section className="w-full bg-white dark:bg-gray-950 py-8">
+          <div className="max-w-7xl mx-auto px-4 md:px-6">
+            <ExpandableSection
+              title="Popular Week Plans"
+              items={mockWeekplans}
+              renderItem={(weekplan) => (
+                <WeekplanCard
+                  id={weekplan.id}
+                  title={weekplan.title}
+                  createdAt={weekplan.createdAt}
+                  type={weekplan.type}
+                  budget={weekplan.budget}
+                  userProfile={weekplan.userProfile}
+                />
+              )}
+              initialCarouselCount={6}
+            />
+          </div>
+        </section>
+      )}
 
-        {/* All Recipes Grid - Show when filtering/searching */}
-        {(filters.searchQuery || hasActiveFilters) &&
-          !hasNoResults &&
-          filteredRecipes.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {filteredRecipes.map((recipe) => (
-                <RecipeCard key={recipe.id} recipe={recipe} />
-              ))}
-            </div>
+      {/* Recipes Section - Different Background */}
+      <section className="flex-1 bg-gray-50 dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto p-4 pb-6 md:p-6">
+          {/* Empty State */}
+          {hasNoResults && (
+            <EmptyState searchQuery={filters.searchQuery} hasFilters={hasActiveFilters} />
           )}
-      </main>
+
+          {/* All Recipes Grid - Show when filtering/searching */}
+          {(filters.searchQuery || hasActiveFilters) &&
+            !hasNoResults &&
+            filteredRecipes.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {filteredRecipes.map((recipe) => (
+                  <RecipeCard key={recipe.id} recipe={recipe} />
+                ))}
+              </div>
+            )}
+        </div>
+      </section>
     </div>
   );
 }

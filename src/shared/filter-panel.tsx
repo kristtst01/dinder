@@ -1,5 +1,5 @@
 import { Plus, Search, Sliders, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { Recipe } from '@features/recipes/types/recipe';
 import { Link } from 'react-router-dom';
 export type FilterState = {
@@ -27,6 +27,24 @@ export function FilterPanel({
   const [kitchenSearch, setKitchenSearch] = useState('');
   const [showKitchenDropdown, setShowKitchenDropdown] = useState(false);
   const showFilters = controlledShowFilters ?? internalShowFilters;
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  // Close filters when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (panelRef.current && !panelRef.current.contains(event.target as Node)) {
+        toggleFilters(false);
+      }
+    };
+
+    if (showFilters) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showFilters]);
 
   const toggleFilters = (newValue: boolean) => {
     if (onToggleFilters) {
@@ -49,7 +67,10 @@ export function FilterPanel({
   ].filter(Boolean).length;
 
   return (
-    <div className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 mb-4">
+    <div
+      ref={panelRef}
+      className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 mb-4"
+    >
       {/* Search Bar and Filter Toggle */}
       <div className="flex items-center gap-3">
         <div className="flex-1 relative">

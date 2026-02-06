@@ -63,7 +63,15 @@ function App() {
             }
           />
           <Route
-            path="/weekplanner"
+            path="/weekplans/new"
+            element={
+              <ProtectedRoute>
+                <WeekPlanner />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/weekplans/:id"
             element={
               <ProtectedRoute>
                 <WeekPlanner />

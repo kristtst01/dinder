@@ -1,34 +1,79 @@
-import { WeekplanColumnSkeleton } from './weekplan-column';
+import { WeekplanColumn } from './weekplan-column';
+import { WeekplanColumnMobile } from './weekplan-column-mobile';
+import type { MealType } from '@/lib/supabase/types';
 
-export function WeekplanTableSkeleton() {
+interface WeekplanData {
+  title: string;
+  recipes: {
+    [dayIndex: number]: {
+      [key in MealType]?: Array<{
+        id: string;
+        name: string;
+        image: string;
+        category: string;
+        nutrition?: {
+          calories: number;
+          protein: string;
+          carbs: string;
+          fat: string;
+        };
+      }>;
+    };
+  };
+}
+
+interface WeekplanTableProps {
+  isEditMode: boolean;
+  weekplanData: WeekplanData;
+  onOpenRecipeModal: (dayIndex: number, dayName: string, mealType: MealType) => void;
+  onRemoveRecipe: (dayIndex: number, mealType: MealType, recipeId: string) => void;
+  onViewRecipe: (recipeId: string) => void;
+}
+
+const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+export function WeekplanTable({
+  isEditMode,
+  weekplanData,
+  onOpenRecipeModal,
+  onRemoveRecipe,
+  onViewRecipe,
+}: WeekplanTableProps) {
   return (
     <section className="px-6 py-8">
-      {/* Week title */}
-      <div className="h-6 w-40 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mb-6 mx-auto" />
-
-      {/* Table grid: responsive columns */}
-      <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide">
-        {Array.from({ length: 7 }).map((_, i) => (
-          <div key={i} className="flex-shrink-0 w-72">
-            <WeekplanColumnSkeleton />
-          </div>
-        ))}
-      </div>
-
-      {/* Weekly totals summary (bottom bar) */}
-      <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-6">
-        <div className="max-w-5xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {['Calories', 'Protein', 'Carbs', 'Fat'].map((label, i) => (
-            <div key={i} className="text-center">
-              {/* Static label */}
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">{label}</p>
-              {/* Skeleton value */}
-              <div className="h-5 w-20 mx-auto bg-gray-200 dark:bg-gray-700 rounded animate-pulse mb-1" />
-              {/* Placeholder progress bar */}
-              <div className="h-1 w-12 mx-auto rounded-full bg-gradient-to-r from-orange-500 to-orange-600 opacity-40" />
+      {/* Desktop View - All 7 days in horizontal scroll */}
+      <div className="hidden md:block">
+        <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide">
+          {DAYS.map((day, dayIndex) => (
+            <div key={dayIndex} className="flex-shrink-0 w-72">
+              <WeekplanColumn
+                day={day}
+                dayIndex={dayIndex}
+                isEditMode={isEditMode}
+                recipes={weekplanData.recipes[dayIndex] || {}}
+                onOpenRecipeModal={onOpenRecipeModal}
+                onRemoveRecipe={onRemoveRecipe}
+                onViewRecipe={onViewRecipe}
+              />
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Mobile View - Expandable stacks per day */}
+      <div className="md:hidden space-y-3">
+        {DAYS.map((day, dayIndex) => (
+          <WeekplanColumnMobile
+            key={dayIndex}
+            day={day}
+            dayIndex={dayIndex}
+            isEditMode={isEditMode}
+            recipes={weekplanData.recipes[dayIndex] || {}}
+            onOpenRecipeModal={onOpenRecipeModal}
+            onRemoveRecipe={onRemoveRecipe}
+            onViewRecipe={onViewRecipe}
+          />
+        ))}
       </div>
     </section>
   );

@@ -32,6 +32,9 @@ export default function RecipeDetail() {
   const [servings, setServings] = useState(4);
   const [checkedSteps, setCheckedSteps] = useState<Set<number>>(new Set());
   const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
+  const [activeTab, setActiveTab] = useState<'ingredients' | 'instructions' | 'reviews' | 'macros'>(
+    'ingredients'
+  );
 
   // Custom hooks for feature logic
   const { cookMode, toggleCookMode } = useCookMode();
@@ -137,7 +140,7 @@ export default function RecipeDetail() {
   const steps = dbDirections.map((dir) => dir.description);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-8">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pb-8">
       {/* Header - sticky with actions */}
       <header className="sticky top-0 z-30 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center gap-3">
         <button
@@ -247,8 +250,231 @@ export default function RecipeDetail() {
         </div>
       </div>
 
-      {/* Ingredients Section - with scaling */}
-      <section className="px-4 py-5 bg-white dark:bg-gray-800 mt-2">
+      {/* Mobile Tab Navigation */}
+      <div className=" bg-white border rounded-full p-1 border-gray-200 overflow-hidden mx-4 my-2">
+        <div className="grid grid-cols-4 gap-0">
+          <button
+            onClick={() => setActiveTab('ingredients')}
+            className={`py-3 text-xs font-medium transition-colors border ${
+              activeTab === 'ingredients'
+                ? 'border-orange-500 rounded-full bg-orange-100 text-orange-600 dark:text-orange-400'
+                : 'border-transparent rounded-full text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+            }`}
+          >
+            Ingredients
+          </button>
+          <button
+            onClick={() => setActiveTab('instructions')}
+            className={`py-3 text-xs font-medium transition-colors border ${
+              activeTab === 'instructions'
+                ? 'border-orange-500 rounded-full bg-orange-100 text-orange-600 dark:text-orange-400'
+                : 'border-transparent rounded-full text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+            }`}
+          >
+            Instructions
+          </button>
+          <button
+            onClick={() => setActiveTab('reviews')}
+            className={`py-3 text-xs font-medium transition-colors border ${
+              activeTab === 'reviews'
+                ? 'border-orange-500 rounded-full bg-orange-100 text-orange-600 dark:text-orange-400'
+                : 'border-transparent rounded-full text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+            }`}
+          >
+            Reviews
+          </button>
+          <button
+            onClick={() => setActiveTab('macros')}
+            className={`py-3 text-xs font-medium transition-colors border ${
+              activeTab === 'macros'
+                ? 'border-orange-500 rounded-full bg-orange-100 text-orange-600 dark:text-orange-400'
+                : 'border-transparent rounded-full text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+            }`}
+          >
+            Macros
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Tab Content */}
+      <div className="md:hidden">
+        {/* Ingredients Tab */}
+        {activeTab === 'ingredients' && (
+          <section className="px-4 py-5 bg-white dark:bg-gray-800">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Ingredients</h3>
+              <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                <button
+                  onClick={() => setServings(Math.max(1, servings - 1))}
+                  className="px-3 py-1 text-gray-700 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-600 rounded transition-colors"
+                  aria-label="Decrease servings"
+                >
+                  -
+                </button>
+                <span className="px-2 text-sm font-medium text-gray-900 dark:text-white">
+                  {servings} servings
+                </span>
+                <button
+                  onClick={() => setServings(servings + 1)}
+                  className="px-3 py-1 text-gray-700 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-600 rounded transition-colors"
+                  aria-label="Increase servings"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <ul className="space-y-3">
+              {ingredients.map((ingredient, index) => {
+                const displayIngredient =
+                  scaleFactor !== 1 ? `${ingredient} (×${scaleFactor.toFixed(1)})` : ingredient;
+
+                return (
+                  <li key={index} className="flex items-start gap-3">
+                    <button
+                      onClick={() => toggleIngredient(index)}
+                      className={`
+                        mt-0.5 w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors
+                        ${
+                          checkedIngredients.has(index)
+                            ? 'bg-orange-500 border-orange-500'
+                            : 'border-gray-300 dark:border-gray-600 hover:border-orange-400'
+                        }
+                      `}
+                      aria-label={`Mark ingredient ${index + 1} as ${checkedIngredients.has(index) ? 'unchecked' : 'checked'}`}
+                    >
+                      {checkedIngredients.has(index) && (
+                        <svg
+                          className="w-3 h-3 text-white"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={3}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                    <span
+                      className={`text-base ${checkedIngredients.has(index) ? 'line-through text-gray-400 dark:text-gray-500' : 'text-gray-700 dark:text-gray-300'}`}
+                    >
+                      {displayIngredient}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+
+        {/* Instructions Tab */}
+        {activeTab === 'instructions' && (
+          <section className="px-4 py-5 bg-white dark:bg-gray-800">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Instructions</h3>
+            <div className="space-y-4">
+              {steps.map((step, index) => (
+                <div key={index} className="flex gap-3 items-start">
+                  <button
+                    onClick={() => toggleStep(index)}
+                    className={`
+                      mt-0.5 w-6 h-6 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors
+                      ${
+                        checkedSteps.has(index)
+                          ? 'bg-orange-500 border-orange-500'
+                          : 'border-gray-300 dark:border-gray-600 hover:border-orange-400'
+                      }
+                    `}
+                    aria-label={`Mark step ${index + 1} as ${checkedSteps.has(index) ? 'incomplete' : 'complete'}`}
+                  >
+                    {checkedSteps.has(index) && (
+                      <svg
+                        className="w-4 h-4 text-white"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={3}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    )}
+                  </button>
+                  <div className="flex-1">
+                    <div className="flex items-start gap-2">
+                      <span className="flex-shrink-0 w-7 h-7 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded-full text-sm font-semibold flex items-center justify-center">
+                        {index + 1}
+                      </span>
+                      <p
+                        className={`flex-1 text-base leading-relaxed ${checkedSteps.has(index) ? 'text-gray-400 dark:text-gray-500 line-through' : 'text-gray-700 dark:text-gray-300'}`}
+                      >
+                        {step}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Reviews Tab */}
+        {activeTab === 'reviews' && (
+          <section className="px-4 py-5 bg-white dark:bg-gray-800">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Reviews</h3>
+            <div className="text-center py-12">
+              <p className="text-gray-500 dark:text-gray-400 mb-4">No reviews yet</p>
+              <p className="text-sm text-gray-400 dark:text-gray-500">
+                Be the first to review this recipe!
+              </p>
+            </div>
+          </section>
+        )}
+
+        {/* Macros Tab */}
+        {activeTab === 'macros' && (
+          <section className="px-4 py-5 bg-white dark:bg-gray-800">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Nutrition Info</h3>
+            <div className="space-y-4">
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <div className="text-center mb-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Per Serving</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">--</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">calories</p>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 mt-4">
+                  <div className="text-center">
+                    <p className="text-lg font-semibold text-gray-900 dark:text-white">--g</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Protein</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-lg font-semibold text-gray-900 dark:text-white">--g</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Carbs</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-lg font-semibold text-gray-900 dark:text-white">--g</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Fat</p>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
+                Nutrition information coming soon
+              </p>
+            </div>
+          </section>
+        )}
+      </div>
+
+      {/* Desktop View - Ingredients Section */}
+      <section className="hidden md:block px-4 py-5 bg-white dark:bg-gray-800 mt-2">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-bold text-gray-900 dark:text-white">Ingredients</h3>
           <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
@@ -274,7 +500,6 @@ export default function RecipeDetail() {
 
         <ul className="space-y-3">
           {ingredients.map((ingredient, index) => {
-            // Simple scaling display (in production, parse and scale quantities properly)
             const displayIngredient =
               scaleFactor !== 1 ? `${ingredient} (×${scaleFactor.toFixed(1)})` : ingredient;
 
@@ -319,8 +544,8 @@ export default function RecipeDetail() {
         </ul>
       </section>
 
-      {/* Instructions Section - with checkboxes for cooking mode */}
-      <section className="px-4 py-5 bg-white dark:bg-gray-800 mt-2">
+      {/* Desktop View - Instructions Section */}
+      <section className="hidden md:block px-4 py-5 bg-white dark:bg-gray-800 mt-2">
         <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Instructions</h3>
         <div className="space-y-4">
           {steps.map((step, index) => (
