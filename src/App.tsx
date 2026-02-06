@@ -7,26 +7,85 @@ import { WeekplanPage } from '@features/weekplans/pages/weekplan-cards-page';
 import WeekPlanner from '@features/weekplans/pages/weekplan';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { HomePage } from './features/home/pages/home-page';
 import SettingsPage from './features/preferences/pages/preferences-page';
 import { SavedRecipesProvider } from './features/recipes/context/SavedRecipesContext';
+import { LandingPage } from './features/login/pages/landing-page';
+import { useAuth } from '@common/hooks/use-auth';
+
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (!user) return <Navigate to="/" replace />;
+  return <>{children}</>;
+}
 
 function App() {
   return (
     <SavedRecipesProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/home" element={<HomePage />} />
           <Route path="/cookbook" element={<CookbookPage />} />
-          <Route path="/recipe/create" element={<RecipeCreatePage />} />
-          <Route path="/recipe/edit/:id" element={<RecipeEditPage />} />
+          <Route
+            path="/recipe/create"
+            element={
+              <ProtectedRoute>
+                <RecipeCreatePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/recipe/edit/:id"
+            element={
+              <ProtectedRoute>
+                <RecipeEditPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/recipe/:id" element={<RecipeDetail />} />
-          <Route path="/preferences" element={<SettingsPage />} />
-          <Route path="/weekplans" element={<WeekplanPage />} />
-          <Route path="/weekplans/new" element={<WeekPlanner />} />
-          <Route path="/weekplans/:id" element={<WeekPlanner />} />
-          <Route path="/profile" element={<EditProfilePage />} />
+          <Route
+            path="/preferences"
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/weekplans"
+            element={
+              <ProtectedRoute>
+                <WeekplanPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/weekplans/new"
+            element={
+              <ProtectedRoute>
+                <WeekPlanner />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/weekplans/:id"
+            element={
+              <ProtectedRoute>
+                <WeekPlanner />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <EditProfilePage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
       <SpeedInsights />

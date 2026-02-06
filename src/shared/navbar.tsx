@@ -6,7 +6,6 @@ import {
   BookOpen,
   Calendar,
   ChefHat,
-  Flame,
   Home,
   LogIn,
   LogOut,
@@ -29,8 +28,7 @@ interface NavLinkItem {
 }
 
 const navLinks: NavLinkItem[] = [
-  { path: '/', label: 'Home', icon: Home },
-  { path: '/discover', label: 'Discover', icon: Flame },
+  { path: '/home', label: 'Home', icon: Home },
   { path: '/recipe/create', label: 'Create Recipe', icon: Plus },
   { path: '/cookbook', label: 'Cookbook', icon: BookOpen },
   { path: '/weekplans', label: 'Week Plans', icon: Calendar },
