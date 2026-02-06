@@ -191,7 +191,12 @@ export function HomePage() {
 
   return (
     <div className="h-screen overflow-y-auto scroll-smooth snap-y snap-mandatory bg-white dark:bg-gray-950">
-      <Navbar />
+      <Navbar 
+        filters={filters} 
+        onFiltersChange={updateFilters} 
+        recipes={allRecipes}
+        showSearch={true}
+      />
 
       {/* Example loading spinner */}
       {loading && <LoadingSpinner />}
@@ -252,11 +257,6 @@ export function HomePage() {
       {/* Recipes Section - Different Background */}
       <section className="flex-1 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto p-4 pb-6 md:p-6">
-          {/* Filter Panel */}
-          <div className="mb-6">
-            <FilterPanel filters={filters} onChange={updateFilters} recipes={allRecipes} />
-          </div>
-
           {/* Empty State */}
           {hasNoResults && (
             <EmptyState searchQuery={filters.searchQuery} hasFilters={hasActiveFilters} />

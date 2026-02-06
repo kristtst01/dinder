@@ -12,12 +12,15 @@ import {
   LogOut,
   Moon,
   Plus,
+  Search,
   Sun,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../common/hooks/use-theme';
 import getInitials from './getInitials';
+import { FilterPanel, type FilterState } from './filter-panel';
+import type { Recipe } from '@features/recipes/types/recipe';
 
 interface NavLinkItem {
   path: string;
@@ -33,11 +36,19 @@ const navLinks: NavLinkItem[] = [
   { path: '/weekplans', label: 'Week Plans', icon: Calendar },
 ];
 
-export function Navbar() {
+interface NavbarProps {
+  filters?: FilterState;
+  onFiltersChange?: (filters: FilterState) => void;
+  recipes?: Recipe[];
+  showSearch?: boolean;
+}
+
+export function Navbar({ filters, onFiltersChange, recipes = [], showSearch = false }: NavbarProps = {}) {
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
   const { user, loading, signOut } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
   const isActive = (path: string) => location.pathname === path;
 
   const userName = user?.user_metadata?.full_name || user?.email || 'Guest';
@@ -50,9 +61,8 @@ export function Navbar() {
 
       <nav
         className="w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 shadow-sm shrink-0"
-        style={{ height: 'clamp(64px, 11vh, 200px)' }}
       >
-        <div className="flex items-center h-full gap-6 px-6" style={{ fontSize: 'clamp(13px, 1.6vh, 20px)' }}>
+        <div className="flex items-center gap-6 px-6" style={{ height: 'clamp(64px, 11vh, 200px)', fontSize: 'clamp(13px, 1.6vh, 20px)' }}>
           {/* Brand */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
             <div
@@ -90,8 +100,21 @@ export function Navbar() {
             ))}
           </div>
 
-          {/* Right side: theme toggle + profile/auth */}
+          {/* Right side: search, theme toggle + profile/auth */}
           <div className="flex items-center gap-2 shrink-0">
+            {showSearch && filters && onFiltersChange && (
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`rounded-lg font-medium transition-all ${
+                  showFilters
+                    ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-sm'
+                    : 'text-gray-600 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-800 hover:text-orange-600 dark:hover:text-orange-400'
+                }`}
+                style={{ padding: 'clamp(6px, 1vh, 12px)' }}
+              >
+                <Search style={{ width: 'clamp(16px, 2vh, 24px)', height: 'clamp(16px, 2vh, 24px)' }} />
+              </button>
+            )}
             <button
               onClick={toggleTheme}
               className="rounded-lg text-gray-600 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-800 hover:text-orange-600 dark:hover:text-orange-400 transition-all"
@@ -143,6 +166,25 @@ export function Navbar() {
             )}
           </div>
         </div>
+
+        {/* Expandable Filter Panel */}
+        {showSearch && filters && onFiltersChange && (
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out border-t border-gray-200 dark:border-gray-700 ${
+              showFilters ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            <div className="px-6 py-4">
+              <FilterPanel
+                filters={filters}
+                onChange={onFiltersChange}
+                recipes={recipes}
+                showFilters={true}
+                onToggleFilters={setShowFilters}
+              />
+            </div>
+          </div>
+        )}
       </nav>
     </>
   );
