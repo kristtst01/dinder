@@ -1,5 +1,11 @@
-import { useState, useRef } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 
 interface ExpandableSectionProps<T> {
   title: string;
@@ -16,27 +22,9 @@ export function ExpandableSection<T>({
 }: ExpandableSectionProps<T>) {
   const [isGridMode, setIsGridMode] = useState(false);
   const [visibleCount, setVisibleCount] = useState(initialCarouselCount);
-  const [showLeftArrow, setShowLeftArrow] = useState(false);
-  const [showRightArrow, setShowRightArrow] = useState(false);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const displayedItems = isGridMode ? items.slice(0, visibleCount) : items.slice(0, initialCarouselCount);
+  const displayedItems = isGridMode ? items.slice(0, visibleCount) : items;
   const hasMore = isGridMode && visibleCount < items.length;
-
-  const handleScroll = (direction: 'left' | 'right') => {
-    if (!scrollContainerRef.current) return;
-    
-    const container = scrollContainerRef.current;
-    // Calculate width of 3 cards plus gaps (3 cards * width + 2 gaps of 12px)
-    const cardWidth = (container.clientWidth - 24) / 3; // 24px = 2 gaps between 3 cards
-    const scrollAmount = (cardWidth * 3) + 24; // 3 cards + 2 gaps
-    
-    if (direction === 'left') {
-      container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    } else {
-      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  };
 
   const handleShowMore = () => {
     setVisibleCount(prev => Math.min(prev + 8, items.length));
@@ -66,59 +54,25 @@ export function ExpandableSection<T>({
 
       {/* Carousel Mode */}
       {!isGridMode && (
-        <div 
-          className="relative group"
-          onMouseEnter={() => {
-            setShowLeftArrow(true);
-            setShowRightArrow(true);
+        <Carousel
+          opts={{
+            align: 'start',
+            slidesToScroll: 3,
           }}
-          onMouseLeave={() => {
-            setShowLeftArrow(false);
-            setShowRightArrow(false);
-          }}
+          className="w-full"
         >
-          {/* Left Arrow */}
-          <button
-            onClick={() => handleScroll('left')}
-            className={`absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 p-3 rounded-full shadow-lg transition-all duration-200 ${
-              showLeftArrow ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            }`}
-            aria-label="Scroll left"
-          >
-            <ChevronLeft className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-          </button>
-
-          {/* Carousel Container */}
-          <div
-            ref={scrollContainerRef}
-            className="flex gap-3 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 transition-all duration-300 scrollbar-hide"
-            style={{
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none',
-            }}
-          >
+          <CarouselContent className="-ml-3">
             {displayedItems.map((item, index) => (
-              <div
-                key={index}
-                className="flex-none snap-start scale-80 origin-top"
-                style={{ width: 'calc((100% - 24px) / 3)' }}
-              >
-                {renderItem(item)}
-              </div>
+              <CarouselItem key={index} className="pl-3 basis-1/3">
+                <div className="scale-80 origin-top">
+                  {renderItem(item)}
+                </div>
+              </CarouselItem>
             ))}
-          </div>
-
-          {/* Right Arrow */}
-          <button
-            onClick={() => handleScroll('right')}
-            className={`absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 p-3 rounded-full shadow-lg transition-all duration-200 ${
-              showRightArrow ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            }`}
-            aria-label="Scroll right"
-          >
-            <ChevronRight className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-          </button>
-        </div>
+          </CarouselContent>
+          <CarouselPrevious className="left-2 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-lg" />
+          <CarouselNext className="right-2 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-lg" />
+        </Carousel>
       )}
 
       {/* Grid Mode */}
@@ -145,12 +99,6 @@ export function ExpandableSection<T>({
           )}
         </div>
       )}
-
-      <style jsx>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
     </div>
   );
 }

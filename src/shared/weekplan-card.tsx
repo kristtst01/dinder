@@ -56,7 +56,7 @@ export function WeekplanCard({
   };
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-900 overflow-hidden transition-all min-h-[120px] flex flex-col h-full">
+    <div className=" dark:bg-gray-900 overflow-hidden transition-all min-h-[120px] flex flex-col h-full">
       <div className="relative aspect-[4/5] w-full bg-gradient-to-br from-orange-400 to-orange-600 dark:from-orange-600 dark:to-orange-800">
         {/* User Profile Circle on the right */}
         {userProfile && (
