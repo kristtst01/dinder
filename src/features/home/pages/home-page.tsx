@@ -3,6 +3,7 @@ import { useAuth } from '@common/hooks/use-auth';
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { EmptyState } from '../../../components/empty-state';
+import { type FilterState } from '../../../shared/filter-panel';
 import { RecipeCard } from '../../../shared/recipe-card';
 import { Navbar } from '../../../shared/navbar';
 import { useRecipes } from '../../recipes/hooks/use-recipes';
