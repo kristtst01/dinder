@@ -346,15 +346,13 @@ export function LandingPage() {
           </div>
 
           {/* Footer */}
-          <div className="mt-auto pt-12 flex gap-8">
+          <div className="mt-auto pt-12">
             <button
               onClick={() => navigate('/home')}
               className="text-gray-400 hover:text-gray-600 text-xs font-bold transition-colors cursor-pointer"
             >
               Continue as Guest
             </button>
-            <span className="text-gray-200">|</span>
-            <span className="text-gray-400 text-xs font-medium">© 2024 Dinder Inc.</span>
           </div>
         </div>
       </div>

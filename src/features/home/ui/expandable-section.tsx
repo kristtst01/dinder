@@ -66,8 +66,8 @@ export function ExpandableSection<T>({
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="bg-gray-900 hover:bg-gray-800 dark:bg-gray-100 dark:hover:bg-gray-200 text-white dark:text-gray-900 shadow-lg border-0" />
-          <CarouselNext className="bg-gray-900 hover:bg-gray-800 dark:bg-gray-100 dark:hover:bg-gray-200 text-white dark:text-gray-900 shadow-lg border-0" />
+          <CarouselPrevious className="bg-white/90 hover:bg-white dark:bg-gray-900/90 dark:hover:bg-gray-900 backdrop-blur-sm text-gray-900 dark:text-white shadow-xl border-0 hover:scale-110 transition-all" />
+          <CarouselNext className="bg-white/90 hover:bg-white dark:bg-gray-900/90 dark:hover:bg-gray-900 backdrop-blur-sm text-gray-900 dark:text-white shadow-xl border-0 hover:scale-110 transition-all" />
         </Carousel>
       )}
 
