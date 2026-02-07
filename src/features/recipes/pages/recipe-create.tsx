@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/common/hooks/use-auth';
 import { RecipeUploadForm } from '../components/recipe-upload-form';
-import { ArrowLeft } from 'lucide-react';
 
 export function RecipeCreatePage() {
   const navigate = useNavigate();
@@ -16,7 +15,7 @@ export function RecipeCreatePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-600 dark:text-gray-400">Loading...</p>
@@ -30,15 +29,16 @@ export function RecipeCreatePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-orange-600 dark:hover:text-orange-400 mb-6 transition-colors"
-        >
-          <ArrowLeft size={20} />
-          <span>Back</span>
-        </button>
+    <div className="min-h-screen bg-white dark:bg-gray-900 py-8 lg:py-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <h1 className="text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-3 tracking-tight">
+            Create Recipe
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">
+            Share your culinary masterpiece with the community.
+          </p>
+        </div>
 
         <RecipeUploadForm />
       </div>

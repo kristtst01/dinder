@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { RecipeCard } from '../../../shared/recipe-card';
 import { FilterPanel, type FilterState } from '../../../shared/filter-panel';
-import { Navbar } from '../../../shared/navbar';
 import { CookbookHeader } from '../ui/cookbook-header';
 import { useSavedRecipesContext } from '../../recipes/context/SavedRecipesContext';
 import { useRecipes } from '../../recipes/hooks/use-recipes';
@@ -90,8 +89,6 @@ export default function CookbookPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-      <Navbar />
-
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Cookbook Header with view toggle */}
