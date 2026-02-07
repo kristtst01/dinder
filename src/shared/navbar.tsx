@@ -108,7 +108,7 @@ export function Navbar() {
 
           {/* Right side: search, theme toggle + profile/auth */}
           <div className="flex items-center gap-2 shrink-0">
-            {isHomePage && filterContext && filterContext.onFiltersChange && (
+            {isHomePage && filterContext && filterContext.onFiltersChange ? (
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className={`p-2 lg:p-2.5 rounded-lg font-medium transition-all ${
@@ -116,6 +116,16 @@ export function Navbar() {
                     ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-sm'
                     : 'text-gray-600 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-800 hover:text-orange-600 dark:hover:text-orange-400'
                 }`}
+              >
+                <Search className="w-4 h-4 lg:w-5 lg:h-5" />
+              </button>
+            ) : (
+              // Render hidden placeholder for search icon to prevent navbar shift
+              // A bit hacky, but doesn't have the delay problem as changing icon visibility
+              <button
+                className="p-2 lg:p-2.5 rounded-lg font-medium"
+                style={{ visibility: 'hidden' }}
+                aria-hidden="true"
               >
                 <Search className="w-4 h-4 lg:w-5 lg:h-5" />
               </button>
