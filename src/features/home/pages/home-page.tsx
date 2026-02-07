@@ -204,8 +204,8 @@ export function HomePage() {
 
   return (
     <div className="h-screen overflow-y-auto scroll-smooth snap-y snap-mandatory bg-white dark:bg-gray-950">
-        {/* Example loading spinner */}
-        {loading && <LoadingSpinner />}
+      {/* Example loading spinner */}
+      {loading && <LoadingSpinner />}
 
       {/* Error state */}
       {recipesError && (

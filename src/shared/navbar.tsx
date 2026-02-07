@@ -52,7 +52,9 @@ export function Navbar() {
     () => ({
       kitchen: searchParams.get('kitchen') || 'all',
       difficulty: (searchParams.get('difficulty') || 'all') as FilterState['difficulty'],
-      maxPrepTime: searchParams.get('maxPrepTime') ? parseInt(searchParams.get('maxPrepTime')!) : undefined,
+      maxPrepTime: searchParams.get('maxPrepTime')
+        ? parseInt(searchParams.get('maxPrepTime')!)
+        : undefined,
       vegetarian: (searchParams.get('vegetarian') || 'any') as FilterState['vegetarian'],
       searchQuery: searchParams.get('q') || '',
     }),

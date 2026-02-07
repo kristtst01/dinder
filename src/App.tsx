@@ -43,70 +43,70 @@ function App() {
       <BrowserRouter>
         <FilterContextProvider>
           <Layout>
-          <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/auth/callback" element={<AuthCallback />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/cookbook" element={<CookbookPage />} />
-          <Route
-            path="/recipe/create"
-            element={
-              <ProtectedRoute>
-                <RecipeCreatePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/recipe/edit/:id"
-            element={
-              <ProtectedRoute>
-                <RecipeEditPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/recipe/:id" element={<RecipeDetail />} />
-          <Route
-            path="/preferences"
-            element={
-              <ProtectedRoute>
-                <SettingsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/weekplans"
-            element={
-              <ProtectedRoute>
-                <WeekplanPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/weekplans/new"
-            element={
-              <ProtectedRoute>
-                <WeekPlanner />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/weekplans/:id"
-            element={
-              <ProtectedRoute>
-                <WeekPlanner />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <EditProfilePage />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-        </Layout>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
+              <Route path="/home" element={<HomePage />} />
+              <Route path="/cookbook" element={<CookbookPage />} />
+              <Route
+                path="/recipe/create"
+                element={
+                  <ProtectedRoute>
+                    <RecipeCreatePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/recipe/edit/:id"
+                element={
+                  <ProtectedRoute>
+                    <RecipeEditPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/recipe/:id" element={<RecipeDetail />} />
+              <Route
+                path="/preferences"
+                element={
+                  <ProtectedRoute>
+                    <SettingsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weekplans"
+                element={
+                  <ProtectedRoute>
+                    <WeekplanPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weekplans/new"
+                element={
+                  <ProtectedRoute>
+                    <WeekPlanner />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weekplans/:id"
+                element={
+                  <ProtectedRoute>
+                    <WeekPlanner />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <EditProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </Layout>
         </FilterContextProvider>
       </BrowserRouter>
       <SpeedInsights />
