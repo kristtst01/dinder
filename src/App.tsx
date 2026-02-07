@@ -12,6 +12,7 @@ import { HomePage } from './features/home/pages/home-page';
 import SettingsPage from './features/preferences/pages/preferences-page';
 import { SavedRecipesProvider } from './features/recipes/context/SavedRecipesContext';
 import { LandingPage } from './features/login/pages/landing-page';
+import { AuthCallback } from './features/login/pages/auth-callback';
 import { useAuth } from '@common/hooks/use-auth';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -27,6 +28,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/cookbook" element={<CookbookPage />} />
           <Route
