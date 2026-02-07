@@ -7,13 +7,15 @@ import { WeekplanPage } from '@features/weekplans/pages/weekplan-cards-page';
 import WeekPlanner from '@features/weekplans/pages/weekplan';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { HomePage } from './features/home/pages/home-page';
 import SettingsPage from './features/preferences/pages/preferences-page';
 import { SavedRecipesProvider } from './features/recipes/context/SavedRecipesContext';
 import { LandingPage } from './features/login/pages/landing-page';
 import { AuthCallback } from './features/login/pages/auth-callback';
 import { useAuth } from '@common/hooks/use-auth';
+import { Navbar } from '@/shared/navbar';
+import { FilterContextProvider } from '@/common/contexts/filter-context';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -22,11 +24,26 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function Layout({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+  // Hide navbar only on landing page and auth callback
+  const hideNavbar = location.pathname === '/' || location.pathname === '/auth/callback';
+
+  return (
+    <>
+      {!hideNavbar && <Navbar />}
+      {children}
+    </>
+  );
+}
+
 function App() {
   return (
     <SavedRecipesProvider>
       <BrowserRouter>
-        <Routes>
+        <FilterContextProvider>
+          <Layout>
+          <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/home" element={<HomePage />} />
@@ -89,6 +106,8 @@ function App() {
             }
           />
         </Routes>
+        </Layout>
+        </FilterContextProvider>
       </BrowserRouter>
       <SpeedInsights />
       <Analytics />

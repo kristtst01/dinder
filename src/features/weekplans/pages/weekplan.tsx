@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { WeekplanHeader } from '../ui/weekplan-header';
 import { WeekplanTable } from '../ui/weekplan-table';
-import { Navbar } from '../../../shared/navbar';
 import { RecipeSelectionModal } from '../ui/recipe-selection-modal';
 import { RecipeDetailModal } from '../ui/recipe-detail-modal';
 import { WeekplanRepository } from '../repositories/weekplan.repository';
@@ -312,30 +311,20 @@ export default function WeekPlanner() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex overflow-x-clip">
-      {/* Left Navbar */}
-      <Navbar />
-
+    <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col">
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Mobile Header */}
-        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-4 flex items-center justify-between gap-4 sticky top-0 z-30 md:hidden">
-          <div className="flex items-center gap-4">
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Week Planner</h1>
-          </div>
-        </header>
-
         {/* Loading State */}
         {loading ? (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+              <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
               <p className="text-gray-600 dark:text-gray-400">Loading weekplan...</p>
             </div>
           </div>
         ) : (
           <>
-            {/* Desktop Header and Content */}
+            {/* Header and Content */}
             <WeekplanHeader
               isEditMode={isEditMode}
               weekplanTitle={weekplanData.title}

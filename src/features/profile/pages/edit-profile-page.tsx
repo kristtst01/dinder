@@ -2,7 +2,6 @@ import { supabase } from '@/lib/supabase/supabase';
 import type { PublicProfileFormData } from '@/lib/supabase/types';
 import { useAuth } from '@common/hooks/use-auth';
 import getInitials from '@shared/getInitials';
-import { Navbar } from '@shared/navbar';
 import { Camera, Save, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useProfile } from '../hooks/useProfile';
@@ -344,7 +343,6 @@ export default function EditProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-      <Navbar />
       <div className="pb-20 flex-1">{renderContent()}</div>
     </div>
   );

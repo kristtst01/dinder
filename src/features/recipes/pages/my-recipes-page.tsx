@@ -4,7 +4,6 @@ import { Plus } from 'lucide-react';
 import { useAuth } from '@/common/hooks/use-auth';
 import { useUserRecipes } from '../hooks/use-user-recipes';
 import { RecipeCard } from '@/shared/recipe-card';
-import { Navbar } from '@/shared/navbar';
 
 export function MyRecipesPage() {
   const navigate = useNavigate();
@@ -23,8 +22,6 @@ export function MyRecipesPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-      <Navbar />
-
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Page Header */}

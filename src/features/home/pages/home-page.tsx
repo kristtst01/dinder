@@ -1,11 +1,11 @@
 import LoadingSpinner from '@/components/loading-spinner';
 import { useAuth } from '@common/hooks/use-auth';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { EmptyState } from '../../../components/empty-state';
 import { type FilterState } from '../../../shared/filter-panel';
 import { RecipeCard } from '../../../shared/recipe-card';
-import { Navbar } from '../../../shared/navbar';
+import { useFilters } from '@/common/contexts/filter-context';
 import { useRecipes } from '../../recipes/hooks/use-recipes';
 import { FeaturedRecipe } from '../ui/featured-recipe';
 import { ExpandableSection } from '../ui/expandable-section';
@@ -15,6 +15,7 @@ export function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { loading: authLoading } = useAuth();
   const { recipes: allRecipes, loading: recipesLoading, error: recipesError } = useRecipes();
+  const filterContext = useFilters();
   // Get search and filter values from URL
   const kitchenParam = searchParams.get('kitchen') || 'all';
   const difficultyParam = searchParams.get('difficulty') || 'all';
@@ -67,6 +68,16 @@ export function HomePage() {
     },
     [setSearchParams]
   );
+
+  // Register filter data with context (not filters, Navbar reads those from URL)
+  useEffect(() => {
+    if (filterContext) {
+      filterContext.setFilterData({
+        onFiltersChange: updateFilters,
+        recipes: allRecipes,
+      });
+    }
+  }, [updateFilters, allRecipes]);
 
   const loading = authLoading || recipesLoading;
 
@@ -193,15 +204,8 @@ export function HomePage() {
 
   return (
     <div className="h-screen overflow-y-auto scroll-smooth snap-y snap-mandatory bg-white dark:bg-gray-950">
-      <Navbar
-        filters={filters}
-        onFiltersChange={updateFilters}
-        recipes={allRecipes}
-        showSearch={true}
-      />
-
-      {/* Example loading spinner */}
-      {loading && <LoadingSpinner />}
+        {/* Example loading spinner */}
+        {loading && <LoadingSpinner />}
 
       {/* Error state */}
       {recipesError && (
