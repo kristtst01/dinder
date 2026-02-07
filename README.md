@@ -1,73 +1,67 @@
-# React + TypeScript + Vite
+[Setup](docs/SETUP.md) | [Architecture](docs/ARCHITECTURE.md) | [Tech Stack](docs/TECH_STACK.md) | [Project Structure](docs/PROJECT_STRUCTURE.md) | [Database](docs/DATABASE.md) | [Features](docs/FEATURES.md) | [Deployment](docs/DEPLOYMENT.md) | [Roadmap](docs/ROADMAP.md)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---
 
-Currently, two official plugins are available:
+# Dinder
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+> Recipe discovery and meal planning application
 
-## React Compiler
+<!-- TODO: Add logo/banner image here -->
+<!-- ![Dinder Banner](./public/banner.png) -->
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![pnpm](https://img.shields.io/badge/maintained%20with-pnpm-cc00ff.svg)](https://pnpm.io/)
 
-## Expanding the ESLint configuration
+<!-- TODO: Add live demo link here -->
+<!-- **[Live Demo](https://your-demo-url.vercel.app)** -->
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+**Note:** This README is a framework/placeholder. Some details may be outdated or require verification.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## About
+
+Full-stack recipe discovery and meal planning application. Browse recipes, save favorites, create custom dishes, and plan weekly meals.
+
+Built with React, TypeScript, and Supabase.
+
+---
+
+## Quick Start
+
+```bash
+git clone https://github.com/kristtst01/dinder.git
+cd dinder
+pnpm install
+cp .env.example .env
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+See [Setup Guide](docs/SETUP.md) for detailed instructions.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Documentation
+
+| Guide | Description |
+|-------|-------------|
+| **[Setup](docs/SETUP.md)** | Installation and getting started |
+| **[Architecture](docs/ARCHITECTURE.md)** | Design patterns and decisions |
+| **[Tech Stack](docs/TECH_STACK.md)** | Complete technology breakdown |
+| **[Project Structure](docs/PROJECT_STRUCTURE.md)** | Folder organization |
+| **[Database](docs/DATABASE.md)** | Schema and tables |
+| **[Features](docs/FEATURES.md)** | Implementation details |
+| **[Deployment](docs/DEPLOYMENT.md)** | Deployment guide |
+| **[Roadmap](docs/ROADMAP.md)** | Future features |
+
+---
+
+## License
+
+MIT License. See [LICENSE](LICENSE) file for details.
+
+---
+
+[Setup](docs/SETUP.md) | [Architecture](docs/ARCHITECTURE.md) | [Tech Stack](docs/TECH_STACK.md) | [Project Structure](docs/PROJECT_STRUCTURE.md) | [Database](docs/DATABASE.md) | [Features](docs/FEATURES.md) | [Deployment](docs/DEPLOYMENT.md) | [Roadmap](docs/ROADMAP.md)
