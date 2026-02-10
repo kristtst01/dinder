@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Navbar } from '@shared/navbar';
 import { WeekplanCard } from '@shared/weekplan-card';
 import { WeekplanRepository } from '../repositories/weekplan.repository';
 import { useAuth } from '@common/hooks/use-auth';
@@ -33,39 +32,41 @@ export function WeekplanPage() {
   }, [user]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex overflow-x-clip">
-      {/* Left Navbar */}
-      <Navbar />
-
+    <div className="min-h-screen bg-white dark:bg-gray-900 py-8 lg:py-12">
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0">
-        {/* Header */}
-        <header className="p-4 py-8 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-4 flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Saved Week Plans</h1>
-            <p className="text-gray-600 dark:text-white mt-1">
-              {weekplans.length} {weekplans.length === 1 ? 'plan' : 'plans'}
-            </p>
+      <main className="flex-1">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+            <div>
+              <h1 className="text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-3 tracking-tight">
+                Week Plans
+              </h1>
+              <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">
+                {weekplans.length} {weekplans.length === 1 ? 'plan' : 'plans'} saved
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/weekplans/new')}
+              className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-2xl font-bold transition-all shadow-lg hover:shadow-xl cursor-pointer"
+            >
+              Create New Plan
+            </button>
           </div>
-          <button
-            onClick={() => navigate('/weekplans/new')}
-            className="px-6 py-3 bg-gray-900 text-white font-medium rounded-full hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200 transition text-sm tracking-wide uppercase"
-          >
-            Create New Plan +
-          </button>
-        </header>
 
-        {/* Loading State */}
-        <div className="p-6 flex-1">
+          {/* Loading State */}
           {loading ? (
             <div className="flex items-center justify-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-gray-100"></div>
+              <div className="text-center">
+                <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+              </div>
             </div>
           ) : (
             <>
               {/* Weekplan grid */}
               {weekplans.length > 0 && (
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {weekplans.map((plan) => (
                     <WeekplanCard
                       key={plan.id}
@@ -80,17 +81,17 @@ export function WeekplanPage() {
               {/* Empty state */}
               {weekplans.length === 0 && (
                 <div className="text-center py-20">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                     No week plans yet
                   </h3>
-                  <p className="text-gray-500 dark:text-gray-400 mb-6">
+                  <p className="text-gray-500 dark:text-gray-400 text-lg mb-6">
                     Create your first week plan to get started!
                   </p>
                   <button
                     onClick={() => navigate('/weekplans/new')}
-                    className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-full hover:from-orange-600 hover:to-orange-700 transition shadow-lg"
+                    className="px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-2xl font-bold transition-all shadow-xl hover:shadow-2xl cursor-pointer"
                   >
-                    + Create Week Plan
+                    Create Week Plan
                   </button>
                 </div>
               )}

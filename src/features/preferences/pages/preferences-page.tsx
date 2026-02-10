@@ -1,7 +1,6 @@
 import type { UserPreferenceFormData } from '@/lib/supabase/types';
 import { useAuth } from '@common/hooks/use-auth';
 import { useTheme } from '@common/hooks/use-theme';
-import { Navbar } from '@shared/navbar';
 import {
   Bell,
   ChevronRight,
@@ -364,7 +363,6 @@ export default function SettingsPage() {
   }
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-      <Navbar />
       <div className="pb-20 flex-1">{renderContent()}</div>
     </div>
   );
